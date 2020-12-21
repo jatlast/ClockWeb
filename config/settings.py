@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # Local
     'accounts', # New 20201220
+    'pages', # New 20201220
 ]
 
 MIDDLEWARE = [
@@ -57,7 +58,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [str(BASE_DIR.joinpath('templates'))], # New 20201220
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

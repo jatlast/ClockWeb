@@ -31,4 +31,3 @@ class CustomUserTests(TestCase):
         self.assertTrue(admin.is_staff)
         self.assertTrue(admin.is_superuser)
 
-
