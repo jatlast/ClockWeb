@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,12 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # allows one Django project to control multiple sites.
+    'django.contrib.sites', # New 20201221
+
     # Local
     'accounts', # New 20201220
-    'pages', # New 20201220
+    'pages',    # New 20201220
 
     # Third-party
-    'crispy_forms', # New 20201221
+    'crispy_forms',     # New 20201221
+    'allauth',          # New 20201221
+    'allauth.account',  # New 20201221
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4' # New 20201221
@@ -111,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -137,6 +140,25 @@ STATICFILES_FINDERS = [ # new
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-AUTH_USER_MODEL='accounts.CustomUser' # New 20201220
-LOGIN_REDIRECT_URL='home'
-LOGOUT_REDIRECT_URL='home'
+# django-allauth config             # New 20201221
+LOGIN_REDIRECT_URL = 'home'         # New 20201220
+ACCOUNT_LOGOUT_REDIRECT = 'home'    # New 20201221
+SITE_ID = 1
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)                                   # New 20201221
+ACCOUNT_SESSION_REMEMBER = True     # New 20201221
+# Disable the second password field in the signup form (django-allauth facilitates easy password changes)...
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False # New 20201221
+
+# config django-allauth to use unique email address as username  
+ACCOUNT_USERNAME_REQUIRED = False       # New 20201221
+ACCOUNT_AUTHENTICATION_METHOD = 'email' # New 20201221
+ACCOUNT_EMAIL_REQUIRED = True           # New 20201221
+ACCOUNT_UNIQUE_EMAIL = True             # New 20201221
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # New 20201221
+
+AUTH_USER_MODEL = 'accounts.CustomUser' # New 20201220
+
