@@ -41,7 +41,12 @@ INSTALLED_APPS = [
     # Local
     'accounts', # New 20201220
     'pages', # New 20201220
+
+    # Third-party
+    'crispy_forms', # New 20201221
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4' # New 20201221
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -112,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Detroit'
 
 USE_I18N = True
 
@@ -125,6 +130,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (str(BASE_DIR.joinpath('static')),)
+STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles')) # new
+STATICFILES_FINDERS = [ # new
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
+
 AUTH_USER_MODEL='accounts.CustomUser' # New 20201220
 LOGIN_REDIRECT_URL='home'
 LOGOUT_REDIRECT_URL='home'
