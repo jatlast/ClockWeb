@@ -175,3 +175,5 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD_KEY")
 EMAIL_PORT = env("EMAIL_PORT_KEY")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS_KEY")
 
+MEDIA_URL = '/media/'                           # New 20201222
+MEDIA_ROOT = str(BASE_DIR.joinpath('media'))    # New 20201222
