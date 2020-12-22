@@ -18,9 +18,14 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+# Get the global variables to dynamically set the admin url
+from environs import Env
+env = Env()
+env.read_env()
+
 urlpatterns = [
     # Django admin
-    path('admin/', admin.site.urls),
+    path(env("DJANGO_ADMIN_URL"), admin.site.urls),
 
     # User management
     path('accounts/', include('allauth.urls')),
