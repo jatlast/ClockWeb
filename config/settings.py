@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+# FYI: After creating a new application in Django with "startapp"
+#   ones still needs to configure: the model, view, url, and template for each page 
 from pathlib import Path
 from environs import Env # New 20201221
 
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     # Local
     'accounts', # New 20201220
     'pages',    # New 20201220
+    'books',    # New 20201221
 
     # Third-party
     'crispy_forms',     # New 20201221
