@@ -13,6 +13,12 @@ services:
     environment: # NOTE: Any dollar signs '$' need to be escaped with an additional dollar sign '$$'
       - "DJANGO_SECRET_KEY=gl0s1f=_+29rg35vqjc)pvg+zagv#!jsb(2^@!_rm%w-ycx&e&"
       - "DJANGO_DEBUG=True"
+      # Amazon's (AWS) Simple Email Service Settings
+      - "EMAIL_HOST_KEY=email-smtp.us-east-2.amazonaws.com"
+      - "EMAIL_HOST_USER_KEY=AKIA257AFI4BPCQFC226"
+      - "EMAIL_HOST_PASSWORD_KEY=BMXGG2uyy+Zv4DYI0e4Ou4DoaAUhgFy284qsADju4cak"
+      - "EMAIL_PORT_KEY=25"
+      - "EMAIL_USE_TLS_KEY=True"
   db:
     image: postgres:11
     volumes:

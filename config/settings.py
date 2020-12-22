@@ -19,7 +19,6 @@ env.read_env()  # New 20201221
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -132,14 +131,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (str(BASE_DIR.joinpath('static')),)
-STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles')) # new
-STATICFILES_FINDERS = [ # new
+STATIC_ROOT = str(BASE_DIR.joinpath('staticfiles'))
+STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
@@ -162,7 +160,16 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email' # New 20201221
 ACCOUNT_EMAIL_REQUIRED = True           # New 20201221
 ACCOUNT_UNIQUE_EMAIL = True             # New 20201221
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # New 20201221
-
 AUTH_USER_MODEL = 'accounts.CustomUser' # New 20201220
+
+#DEFAULT_FROM_EMAIL = 'admin@djangobookstore.com'    # New 20201221
+DEFAULT_FROM_EMAIL = 'jatlast@hotmail.com'    # New 20201221
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # New 20201221
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # New 20201221
+EMAIL_HOST = env("EMAIL_HOST_KEY")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER_KEY")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD_KEY")
+EMAIL_PORT = env("EMAIL_PORT_KEY")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS_KEY")
 
