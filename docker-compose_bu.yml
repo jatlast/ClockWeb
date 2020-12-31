@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python /code/manage.py runserver 0.0.0.0:8000
+#    command: gunicorn config.wsgi -b 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      # NOTE: Any dollar signs '$' need to be escaped with an additional dollar sign '$$'
+      - "DJANGO_SECRET_KEY=gl0s1f=_+29rg35vqjc)pvg+zagv#!jsb(2^@!_rm%w-ycx&e&"
+      # NON-Production, Debug Settings...
+      - "DJANGO_DEBUG=True"
+      - "DJANGO_SECURE_SSL_REDIRECT=False"
+      - "DJANGO_SECURE_HSTS_SECONDS=0"
+      - "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS=False"
+      - "DJANGO_SECURE_HSTS_PRELOAD=False"
+      - "DJANGO_SESSION_COOKIE_SECURE=False"
+      - "DJANGO_CSRF_COOKIE_SECURE=False"
+
+      - "DJANGO_ADMIN_URL=admin/"
+
+      # Amazon's (AWS) Simple Email Service Settings
+      - "EMAIL_HOST_KEY=email-smtp.us-east-2.amazonaws.com"
+      - "EMAIL_HOST_USER_KEY=AKIA257AFI4BPCQFC226"
+      - "EMAIL_HOST_PASSWORD_KEY=BMXGG2uyy+Zv4DYI0e4Ou4DoaAUhgFy284qsADju4cak"
+      - "EMAIL_PORT_KEY=25"
+      - "EMAIL_USE_TLS_KEY=True"
+  db:
+    image: postgres:11
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+
+volumes:
+  postgres_data:

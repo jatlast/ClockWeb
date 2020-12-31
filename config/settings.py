@@ -48,10 +48,11 @@ INSTALLED_APPS = [
     # Local
     'accounts', # New 20201220
     'pages',    # New 20201220
-#    'books',    # New 20201221 | Removed 20201228
+#    'books',   # New 20201221 | Removed 20201228
     'customer', # New 20201223
     'clocktype',# New 20201224
     'clock',    # New 20201224
+    'repairer', # New 20201231
 
     # Third-party
     'crispy_forms',     # New 20201221
