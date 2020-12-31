@@ -27,8 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
+#DEBUG = False
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1']
+ALLOWED_HOSTS = ['miclockrepair.com', 'localhost','127.0.0.1', '10.16.0.114']
 
 # Application definition
 
@@ -47,16 +48,22 @@ INSTALLED_APPS = [
     # Local
     'accounts', # New 20201220
     'pages',    # New 20201220
-    'books',    # New 20201221
+#    'books',    # New 20201221 | Removed 20201228
+    'customer', # New 20201223
+    'clocktype',# New 20201224
+    'clock',    # New 20201224
 
     # Third-party
     'crispy_forms',     # New 20201221
     'allauth',          # New 20201221
     'allauth.account',  # New 20201221
     'debug_toolbar',    # New 20201222
+#    'phone_field',     # New 20201223
+    'phonenumber_field',# New 20201223
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4' # New 20201221
+#PHONENUMBER_DB_FORMAT = 'NATIONAL' # New 20201223
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

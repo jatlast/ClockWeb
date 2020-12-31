@@ -1,0 +1,58 @@
+{% extends '_base.html' %}
+
+{% block title %}{{ clock.title }}{% endblock title %}
+
+{% block content %}
+<div class="card" style="width: 18rem;">
+  {% if clock.image_1 %}
+  <img class="card-img-top" src="{{clock.image_1.url}}" alt="{{clock.clock_type}}">
+  {% endif %}
+  <div class="card-body">
+    <h5 class="card-title"><a href="{% url 'clock_update' clock.id %}">{{ clock.clock_type_fk }}</a></h5>
+    <p class="card-text">This type of {{ clock.footprint }} clock typically has a 
+      train count of {{ clock.train_count }} 
+      (i.e., it winds in {{ clock.train_count }} places), and a wind interval of 
+      {{ clock.wind_interval_days }} days.  It might be {{ clock.drive_type }} 
+      driven and it probably has {{ clock.chime_count }} chime options and a 
+      {{ clock.strike_type }} strike.
+      <h6>Common features:</h6>
+      <ul>
+      {% if clock.has_pendulum %}
+       <li>Has pendulum of some sort</li>
+      {% endif %}
+      {% if clock.has_self_adjusting_beat %}
+      <li>Has self adjusting beat</li>
+      {% endif %}
+      {% if clock.has_self_adjusting_strike %}
+      <li>Has self adjusting strike</li>
+      {% endif %}
+      {% if clock.has_second_hand %}
+      <li>Has a second hand</li>
+      {% endif %}
+      {% if clock.has_off_at_night %}
+      <li>Chime and strike can be set to "Off at Night"</li>
+      {% endif %}
+      {% if clock.has_calendar %}
+      <li>Has a calendar</li>
+      {% endif %}
+      {% if clock.has_moon_dial %}
+      <li>Has a moon dial</li>
+      {% endif %}
+      {% if clock.has_alarm %}
+      <li>Has an alarm</li>
+      {% endif %}
+      {% if clock.has_activity_other %}
+      <li>May have additional moving figures</li>
+      {% endif %}
+      {% if clock.has_tubes %}
+      <li>May have tubes</li>
+      {% endif %}
+      {% if clock.tube_count > 0 %}
+      <li>May have {{ clock.tube_count }} or more tubes </li>
+      {% endif %}
+    </ul>
+    <a target="_blank" href="https://www.antiqueclockspriceguide.com/clocktyperesults.php?t={{ clock.clock_type }}" class="btn btn-primary">Visit Antique Clock Price Guide</a>
+  </p>
+  </div>
+</div>
+{% endblock content %}

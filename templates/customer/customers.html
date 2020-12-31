@@ -1,0 +1,37 @@
+{% extends '_base.html' %}
+
+{% block title %}Customers{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if customers.count > 0 %}
+    {% for customer in customers %}
+    <!-- ({{ customer.user_fk_id }}) =? ({{ user.id }}) -->
+      {% if customer.user_fk_id == user.id %}
+      <h2>{{ customer.first_name }} {{ customer.last_name }}</h2>
+      <p>{{ customer.address_street }}
+          {% if customer.address_other %}
+          {{ customer.address_other }}
+          {% endif %}
+          <br>{{ customer.city }}, {{ customer.state }} {{ customer.zipcode }}
+          <br>{{ customer.phone_number.as_national }}
+      </p>
+      <div>
+        <a class="btn btn-outline-primary" href="{% url 'update' customer.id %}">Edit Address</a>
+        <a class="btn btn-outline-primary" href="{% url 'clocks' %}">View Clocks</a>
+        <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Add Clocks</a>
+      </div>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+  <div class="row">
+    <div class="col-sm">
+      If you would like to get a clock repaird, please <a href="{% url 'create' %}">add your address...</a>
+    </div>
+  </div>
+{% endif %}
+{% else %}
+  <a class="p-2 text-dark" href="{% url 'account_login' %}">Log In</a>
+  <a class="btn btn-outline-primary" href="{% url 'account_signup' %}">Sign Up</a>
+{% endif %}
+{% endblock content %}

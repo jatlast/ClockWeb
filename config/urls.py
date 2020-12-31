@@ -32,9 +32,13 @@ urlpatterns = [
 
     # Local apps
     path('', include('pages.urls')),
-    path('books/', include('books.urls')),
+#    path('books/', include('books.urls')),
+    path('customers/', include('customer.urls')),
+    path('clocktypes/', include('clocktype.urls')),
+    path('clocks/', include('clock.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+# Use the debug toolbar
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns = [

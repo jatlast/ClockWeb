@@ -1,0 +1,18 @@
+{% extends '_base.html' %}
+
+{% block title %}Update {{ customer.first_name }} {{ customer.last_name }}{% endblock title %}
+
+{% block content %}
+<div class="row">
+  <div class="col">
+    <h4>Please add your address:</h4><br>
+    <form action="" method="post">
+      {% csrf_token %}
+      <table>
+      {{ form.as_table }}
+      </table>
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+</div>
+{% endblock content %}

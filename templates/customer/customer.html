@@ -1,0 +1,19 @@
+{% extends '_base.html' %}
+
+{% block title %}{{ customer.first_name }} {{ customer.last_name }}{% endblock title %}
+
+{% block content %}
+  <div class="customer-detail">
+    <h2>{{ customer.first_name }} {{ customer.last_name }}</h2>
+    <p>{{ customer.address_street }}
+        {% if customer.address_other %}
+        {{ customer.address_other }}
+        {% endif %}
+        <br>{{ customer.city }}, {{ customer.state }} {{ customer.zipcode }}
+        <br>{{ customer.phone_number.as_national }}
+    </p>
+  </div>
+  <div>
+    <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">View/Add Clocks</a>
+  </div>
+{% endblock content %}
