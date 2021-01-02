@@ -1,8 +1,23 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.contrib.gis.geos import Point
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Repairer
+
+repairer_fields_viewable_by_everyone = [
+        'first_name',
+        'last_name',
+        'phone_number',
+        'address_street',
+        'address_other',
+        'city',
+        'state',
+        'zipcode',
+        'latitude',
+        'longitude',
+#        'location',
+]
 
 class RepairerListView(ListView):
 #    model = Repairer
@@ -26,16 +41,19 @@ class RepairerDetailView(DetailView):
 # Form Views 
 class RepairerCreateView(CreateView):
     model = Repairer
-    fields = '__all__'
+    fields = repairer_fields_viewable_by_everyone
     context_object_name = 'repairer_create'
     template_name = 'repairer/create.html'
 
     def form_valid(self, form):
-        form.instance.user_fk= self.request.user
+        longitude = form.cleaned_data['longitude']
+        latitude = form.cleaned_data['latitude']
+        form.instance.user_fk = self.request.user
+        form.instance.location = Point(longitude, latitude, srid=4326)
         return super().form_valid(form)
 
 class RepairerUpdateView(UpdateView):
     model = Repairer
-    fields = '__all__'
+    fields = repairer_fields_viewable_by_everyone
     context_object_name = 'repairer_update'
     template_name = 'repairer/update.html'

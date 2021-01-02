@@ -1,10 +1,13 @@
 import uuid
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
+#from django.db import models
 from django.urls import reverse
 #from phone_field import PhoneField
 from phonenumber_field.modelfields import PhoneNumberField
 from datetime import datetime
+from customer.models import Customer
 
 class Repairer(models.Model):
     FULL_OR_PART_TIME_CHOICES = [
@@ -31,12 +34,12 @@ class Repairer(models.Model):
     user_fk = models.ForeignKey(
         get_user_model()
         , on_delete = models.CASCADE
-        , editable = False
+#        , editable = False
         , default=1
     )
 
     # General contact information fields...
-    date_created = models.DateTimeField(default=datetime.now, editable = False)
+    date_created = models.DateTimeField(default=datetime.now, editable=False)
     first_name = models.CharField(blank=False, max_length=16)
     last_name = models.CharField(blank=False, max_length=16)
     company_name = models.CharField(blank=True, max_length=32)
@@ -44,11 +47,15 @@ class Repairer(models.Model):
     address_street = models.CharField(blank=False, max_length=32)
     address_other = models.CharField(blank=True, max_length=16)
     city = models.CharField(blank=False, max_length=32)
-    state = models.CharField(blank=False, max_length=2)
+    state = models.CharField(blank=False, max_length=2, choices=Customer.US_STATE_CHOICES)
     zipcode = models.CharField(blank=False, max_length=32)
 
+    latitude = models.FloatField(default=42.95)
+    longitude = models.FloatField(default=-83.64)
+    location = models.PointField(blank=False, default=Point(0.0, 0.0), editable=False)
+
     experience_in_years = models.PositiveSmallIntegerField(blank=False, default=1)
-    still_accepting_jobs = models.BooleanField(blank=False, default=False)
+    still_accepting_jobs = models.BooleanField(blank=False, default=True)
 
     # Fields to dynamically determine pricing...
     hourly_rate = models.DecimalField(max_digits=5, decimal_places=2, blank=False, default=25.00)
@@ -77,10 +84,10 @@ class Repairer(models.Model):
     multiple_per_gf_extra = models.DecimalField(max_digits=3, decimal_places=2, blank=False, default=0.10)
     multiple_per_part_cost = models.DecimalField(max_digits=3, decimal_places=2, blank=False, default=4.00)
 
-    class Meta:
-        indexes = [
-            models.Index(fields=['id'], name='repairer_id_index'),
-        ]
+    # class Meta:
+    #     indexes = [
+    #         models.Index(fields=['id'], name='repairer_id_index'),
+    #     ]
 
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)

@@ -65,7 +65,7 @@ class Clocktype(models.Model):
 
     WIND_INTERVAL_CHOICES = [
         (0,'Never'),
-        (1,'Once Every DAy'),
+        (1,'Once Every Day'),
         (8,'Once Every Week'),
         (15,'Once Every Other Week'),
         (31,'Once Every Month'),

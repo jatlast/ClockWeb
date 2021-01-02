@@ -1,8 +1,25 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
+from django.contrib.gis.geos import Point
+from django.contrib.gis.db.models.functions import Distance
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Customer
+from repairer.models import Repairer
+
+customer_fields_viewable_by_everyone = [
+        'first_name',
+        'last_name',
+        'phone_number',
+        'address_street',
+        'address_other',
+        'city',
+        'state',
+        'zipcode',
+        'latitude',
+        'longitude',
+#        'location',
+]
 
 class CustomerListView(ListView):
 #    model = Customer
@@ -26,21 +43,52 @@ class CustomerDetailView(DetailView):
 # Form Views 
 class CustomerCreateView(CreateView):
     model = Customer
-    fields = '__all__'
+    fields = customer_fields_viewable_by_everyone
     context_object_name = 'customer_create'
     template_name = 'customer/create.html'
 
     def form_valid(self, form):
-        form.instance.user_fk= self.request.user
+        longitude = form.cleaned_data['longitude']
+        latitude = form.cleaned_data['latitude']
+        form.instance.user_fk = self.request.user
+        form.instance.location = Point(longitude, latitude, srid=4326)
         return super().form_valid(form)
 
 class CustomerUpdateView(UpdateView):
     model = Customer
-    fields = '__all__'
+    fields = customer_fields_viewable_by_everyone
     context_object_name = 'customer_update'
     template_name = 'customer/update.html'
 #    success_url = reverse_lazy('customer')
 #    success_url = reverse('customer', kwargs={'pk': model.pk})
+
+
+class RepairersNearMeView(ListView):
+    context_object_name = 'customers'
+    template_name = 'customer/nearme.html'
+
+    def get_queryset(self):
+        if self.request.user:
+            return Customer.objects.filter(user_fk_id__exact=self.request.user)
+        else:
+            return Customer.objects.all()
+
+    def get_context_data(self, **kwargs):
+#        customer_location = Customer.objects.only('location').get(user_fk_id__exact=self.request.user).location
+        customer_location = Customer.objects.values_list('location', flat=True).get(user_fk_id__exact=self.request.user)
+        context = super(RepairersNearMeView, self).get_context_data(**kwargs)
+        context['repairer_list'] = Repairer.objects.annotate(
+            distance=Distance(
+                'location'
+                , customer_location
+                ) * 0.000621371
+            ).order_by('distance')[0:5]
+        # And so on for more models
+        return context
+
+
+#        events = Event.objects.filter(datetime__gte=now).filter(datetime__lte=next_week).annotate(distance=Distance('venue__location', location)).order_by('distance')[0:5]
+
 
 #    new_uuid = str(uuid.uuid4())
 

@@ -14,7 +14,7 @@ class Clock(models.Model):
     user_fk = models.ForeignKey(
         get_user_model()
         , on_delete = models.CASCADE
-        , editable = False
+#        , editable = False
         , default=1
     )
 
@@ -108,6 +108,7 @@ class Clock(models.Model):
 #   docker exec -it postgres-container psql -U postgres
 # Specific for this project
 #   docker exec -it books_db_1 psql -U postgres
+#   docker exec -it books_db_1 psql -h localhost -U docker gis
 # List tables
 #   \dt
 # List Databases
@@ -115,5 +116,8 @@ class Clock(models.Model):
 # View table schema
 #   SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name = 'clock_clock';
 
-
-
+# Docker Commands...
+#   List volumes:
+#       docker volume ls
+#   Inspect a volume:
+#       docker volume inspect books_postgis-data

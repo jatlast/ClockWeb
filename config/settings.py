@@ -26,8 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
-DEBUG = env.bool("DJANGO_DEBUG", default=False)
-#DEBUG = False
+#DEBUG = env.bool("DJANGO_DEBUG", default=False)
+DEBUG = True
 
 ALLOWED_HOSTS = ['miclockrepair.com', 'localhost','127.0.0.1', '10.16.0.114']
 
@@ -44,6 +44,8 @@ INSTALLED_APPS = [
 
     # allows one Django project to control multiple sites.
     'django.contrib.sites', # New 20201221
+    # GeoDjango for location aware web applications
+    'django.contrib.gis',   # New 20210101
 
     # Local
     'accounts', # New 20201220
@@ -61,10 +63,16 @@ INSTALLED_APPS = [
     'debug_toolbar',    # New 20201222
 #    'phone_field',     # New 20201223
     'phonenumber_field',# New 20201223
+    # HTML GEO Location only works in https mode
+    'sslserver',        # New 20210101
+    # for better map displays in HTML
+    'floppyforms',      # New 20210101
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4' # New 20201221
 #PHONENUMBER_DB_FORMAT = 'NATIONAL' # New 20201223
+PHONENUMBER_DEFAULT_FORMAT = 'E164'
+PHONENUMBER_DEFAULT_REGION = 'US'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -104,10 +112,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+#        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': env("POSTGRES_DB", default='gis'),
+        'USER': env("POSTGRES_USER", default='docker'),
+        'PASSWORD': env("POSTGRES_PASS", default='docker'),
+        # 'NAME': env.str("POSTGRES_DB", default='postgres'),
+        # 'USER': env.str("POSTGRES_USER", default='postgres'),
+        # 'PASSWORD': env.str("POSTGRES_PASS", default='postgres'),
         'HOST': 'db',
         'PORT': 5432
     }

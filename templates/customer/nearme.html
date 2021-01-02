@@ -1,6 +1,6 @@
 {% extends '_base.html' %}
 
-{% block title %}Customers{% endblock title %}
+{% block title %}Repair People Near Me{% endblock title %}
 
 {% block content %}
 {% if user.is_authenticated %}
@@ -15,8 +15,12 @@
           {% endif %}
           <br>{{ customer.city }}, {{ customer.state }} {{ customer.zipcode }}
           <br>{{ customer.phone_number.as_national }}
+          <br>{{ customer.location }}
       </p>
-      <div>
+        {% for obj in repairer_list%}
+            {{obj.first_name}} {{obj.distance}}<br>
+        {% endfor %}
+         <div>
         <a class="btn btn-outline-primary" href="{% url 'customer_update' customer.id %}">Edit Address</a>
         <a class="btn btn-outline-primary" href="{% url 'clocks' %}">View Clocks</a>
         <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Add Clocks</a>
