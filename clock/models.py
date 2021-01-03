@@ -18,6 +18,8 @@ class Clock(models.Model):
         , default=1
     )
 
+    # nickname - Wall, Mantel, Floor
+    nickname = models.CharField(blank=False, max_length=32, default='Nickname')
     # customer - Each Customer can have many clocks but each Clock has only one Customer
 #    new_uuid = str(uuid.uuid4())
 #    customer_fk = models.ForeignKey(Customer, on_delete=models.CASCADE, default=new_uuid)
@@ -87,6 +89,7 @@ class Clock(models.Model):
     #     ]
 
     def __str__(self):
+#        return self.clock_type_fk
         return "%s %s" % (self.clock_type_fk, self.footprint)
 
     def get_absolute_url(self):

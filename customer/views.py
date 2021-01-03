@@ -6,6 +6,8 @@ from django.contrib.gis.db.models.functions import Distance
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Customer
 from repairer.models import Repairer
+#from clock.models import Clock
+from django.template import Context
 
 customer_fields_viewable_by_everyone = [
         'first_name',
@@ -62,7 +64,6 @@ class CustomerUpdateView(UpdateView):
 #    success_url = reverse_lazy('customer')
 #    success_url = reverse('customer', kwargs={'pk': model.pk})
 
-
 class RepairersNearMeView(ListView):
     context_object_name = 'customers'
     template_name = 'customer/nearme.html'
@@ -75,15 +76,30 @@ class RepairersNearMeView(ListView):
 
     def get_context_data(self, **kwargs):
 #        customer_location = Customer.objects.only('location').get(user_fk_id__exact=self.request.user).location
-        customer_location = Customer.objects.values_list('location', flat=True).get(user_fk_id__exact=self.request.user)
+#        customer_location = Customer.objects.values_list('location', flat=True).get(user_fk_id__exact=self.request.user)
+#        customer = list(Customer.objects.filter(user_fk_id__exact=self.request.user))
+        customer = Customer.objects.filter(user_fk_id__exact=self.request.user)
+#        clocks = Clock.objects.filter(user_fk_id__exact=self.request.user)
+#         repairer = Repairer.objects.annotate(
+#             distance=Distance(
+#                 'location'
+#                 , customer[0].location
+# #                , customer_location
+#                 ) * 0.000621371
+#             ).order_by('distance')[0:5]
+
         context = super(RepairersNearMeView, self).get_context_data(**kwargs)
-        context['repairer_list'] = Repairer.objects.annotate(
-            distance=Distance(
-                'location'
-                , customer_location
-                ) * 0.000621371
-            ).order_by('distance')[0:5]
-        # And so on for more models
+        context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', customer[0].location)).order_by('distance')[0:5]
+
+        context['estimate_list'] =  Context({"foo": "bar"})
+
+        repairer_count = 0
+        for repairer in context['repairer_list']:
+            context['estimate_list']['id'] = repairer.id
+            context['estimate_list']['dist'] = repairer.distance.mi
+            context['estimate_list'].push()
+            repairer_count += 1
+
         return context
 
 

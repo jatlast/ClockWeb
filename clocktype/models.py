@@ -183,7 +183,8 @@ class Clocktype(models.Model):
         # ]
 
     def __str__(self):
-        return "%s %s" % (self.clock_type, self.footprint)
+        return self.clock_type
+#        return "%s %s" % (self.clock_type, self.footprint)
 
     def get_absolute_url(self):
         return reverse('detail', args=[str(self.id)])

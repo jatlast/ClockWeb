@@ -1,0 +1,154 @@
+{% extends '_base.html' %}
+
+{% block title %}{{ clock.title }}{% endblock title %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm">
+        <div class="card" style="width: 18rem;">
+            {% if clock.image_1 %}
+            <img class="card-img-top" src="{{clock.image_1.url}}" alt="{{clock.clock_type}}">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title"><a href="{% url 'clock_update' clock.id %}">{{ clock.nickname }}</a></h5>
+              <p class="card-text">{{ clock.clock_type_fk }} clocks are usually {{ clock.footprint }} mounted and they typically have a 
+                train count of {{ clock.train_count }} 
+                (i.e., they typically wind in {{ clock.train_count }} places), and a wind interval of 
+                {{ clock.wind_interval_days }} days.  It might be {{ clock.drive_type }} 
+                driven and it probably has {{ clock.chime_count }} chime options and a 
+                {{ clock.strike_type }} strike.
+                <h6>Common features:</h6>
+                <ul>
+                    {% if clock.has_pendulum %}
+                        <li>Has pendulum of some sort</li>
+                    {% endif %}
+                    {% if clock.has_self_adjusting_beat %}
+                        <li>Has self adjusting beat</li>
+                    {% endif %}
+                    {% if clock.has_self_adjusting_strike %}
+                        <li>Has self adjusting strike</li>
+                    {% endif %}
+                    {% if clock.has_second_hand %}
+                        <li>Has a second hand</li>
+                    {% endif %}
+                    {% if clock.has_off_at_night %}
+                        <li>Chime and strike can be set to "Off at Night"</li>
+                    {% endif %}
+                    {% if clock.has_calendar %}
+                        <li>Has a calendar</li>
+                    {% endif %}
+                    {% if clock.has_moon_dial %}
+                        <li>Has a moon dial</li>
+                    {% endif %}
+                    {% if clock.has_alarm %}
+                        <li>Has an alarm</li>
+                    {% endif %}
+                    {% if clock.has_activity_other %}
+                        <li>May have additional moving figures</li>
+                    {% endif %}
+                    {% if clock.has_tubes %}
+                        <li>May have tubes</li>
+                    {% endif %}
+                    {% if clock.tube_count > 0 %}
+                        <li>May have {{ clock.tube_count }} or more tubes </li>
+                    {% endif %}
+                </ul>
+                <a target="_blank" href="https://www.antiqueclockspriceguide.com/clocktyperesults.php?t={{ clock.clock_type }}" class="btn btn-primary">Visit Antique Clock Price Guide</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm">
+        <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet' />
+
+        <div id='map' style='width: 400px; height: 300px;'></div>
+        <br>
+        {% for repairer in repairer_list%}
+        <h4>{{ repairer.distance.mi|floatformat:2 }} miles - {{ repairer.first_name }} {{ repairer.last_name }}</h4>
+        <p>
+            {{ repairer.address_street }}
+            {% if repairer.address_other %}
+            , {{ repairer.address_other }}
+            {% endif %}
+            <br>{{ repairer.city }}, {{ repairer.state }} {{ repairer.zipcode }}
+            <br>{{ repairer.phone_number.as_national }}
+            <br>{{ repairer.first_name }} has {{ repairer.experience_in_years }} years of experience.
+            {% for est in estimate_list%}
+            {% if est.id == repairer.id %}
+            <br>Estimated Repair Cost: ${{ est.estimate }}
+            <!-- Debug: {{ est.debug }} -->
+            {% endif %}
+            {% endfor %}
+        </p>
+        <hr>
+        {% endfor %}        
+    </div>
+</div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamF0bGFzdCIsImEiOiJja2pmdXV2Mm0yOXR6MnluMGtzeng2NXp2In0.-GbX1CJH3huzw-u6B3A8DQ';
+    var longitude = {{ customer_list.0.location.x }}
+    var latitude = {{ customer_list.0.location.y }}
+  
+    var places = {
+        // Add the customer's information
+              'type': 'FeatureCollection',
+              'features': [
+                  {
+                      'type': 'Feature',
+                          'properties': {
+                          'description': '{{ customer_list.0.first_name }} {{ customer_list.0.last_name }}',
+                          'icon': 'circle'
+                          },
+                          'geometry': {
+                              'type': 'Point',
+                              'coordinates': [longitude, latitude]
+                              }
+                  },
+        // Add the repairers' information
+        {% for repairer in repairer_list%}
+              {
+                  'type': 'Feature',
+                      'properties': {
+                      'description': '{{ repairer.first_name }} {{ repairer.last_name }}',
+                      'icon': 'triangle'
+                      },
+                      'geometry': {
+                          'type': 'Point',
+                          'coordinates': [{{repairer.location.x}}, {{repairer.location.y}}]
+                          }
+                      },
+              {% endfor %}
+          ]
+      };
+  
+  var map = new mapboxgl.Map({
+          container: 'map',
+          style: 'mapbox://styles/mapbox/streets-v10',
+          center: [longitude, latitude],
+          zoom: 10
+      });
+   
+  map.on('load', function () {
+      // Add a GeoJSON source containing place coordinates and information.
+      map.addSource('places', {
+          'type': 'geojson',
+          'data': places
+          });
+      
+      map.addLayer({
+              'id': 'poi-labels',
+              'type': 'symbol',
+              'source': 'places',
+              'layout': {
+              'text-field': ['get', 'description'],
+              'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+              'text-radial-offset': 0.5,
+              'text-justify': 'auto',
+              'icon-image': ['concat', ['get', 'icon'], '-15']
+              }
+          });
+      });
+</script>
+  
+{% endblock content %}

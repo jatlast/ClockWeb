@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ClockListView, ClockDetailView, ClockCreateView, ClockUpdateView
+from .views import ClockListView, ClockDetailView, ClockCreateView, ClockUpdateView, ClockRepairEstimateView
 
 urlpatterns = [
     # List
@@ -10,4 +10,6 @@ urlpatterns = [
     path('add/', ClockCreateView.as_view(), name='clock_add'),
     # Update
     path('<int:pk>/update/', ClockUpdateView.as_view(), name='clock_update'),
+    # Estimate Repair Cost Dynamically
+    path('<int:pk>/estimate/', ClockRepairEstimateView.as_view(), name='clock_estimate'),
 ]

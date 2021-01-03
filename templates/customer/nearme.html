@@ -5,7 +5,7 @@
 {% block content %}
 {% if user.is_authenticated %}
   {% if customers.count > 0 %}
-    {% for customer in customers %}
+  {% for customer in customers %}
     <!-- ({{ customer.user_fk_id }}) =? ({{ user.id }}) -->
       {% if customer.user_fk_id == user.id %}
       <h2>{{ customer.first_name }} {{ customer.last_name }}</h2>
@@ -15,16 +15,25 @@
           {% endif %}
           <br>{{ customer.city }}, {{ customer.state }} {{ customer.zipcode }}
           <br>{{ customer.phone_number.as_national }}
-          <br>{{ customer.location }}
       </p>
-        {% for obj in repairer_list%}
-            {{obj.first_name}} {{obj.distance}}<br>
-        {% endfor %}
-         <div>
-        <a class="btn btn-outline-primary" href="{% url 'customer_update' customer.id %}">Edit Address</a>
-        <a class="btn btn-outline-primary" href="{% url 'clocks' %}">View Clocks</a>
-        <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Add Clocks</a>
-      </div>
+      <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js'></script>
+      <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet' />
+      
+      <div id='map' style='width: 400px; height: 300px;'></div>
+      <br>
+              {% for repairer in repairer_list%}
+            <h4>{{ repairer.distance.mi|floatformat:2 }} miles - {{ repairer.first_name }} {{ repairer.last_name }}</h4>
+            <p>
+                {{ repairer.address_street }}
+                {% if repairer.address_other %}
+                    , {{ repairer.address_other }}
+                {% endif %}
+                <br>{{ repairer.city }}, {{ repairer.state }} {{ repairer.zipcode }}
+                <br>{{ repairer.phone_number.as_national }}
+                <br>Years of experience: {{ repairer.experience_in_years }}
+            </p>
+            <hr>
+          {% endfor %}
       {% endif %}
     {% endfor %}
   {% else %}
@@ -38,4 +47,70 @@
   <a class="p-2 text-dark" href="{% url 'account_login' %}">Log In</a>
   <a class="btn btn-outline-primary" href="{% url 'account_signup' %}">Sign Up</a>
 {% endif %}
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiamF0bGFzdCIsImEiOiJja2pmdXV2Mm0yOXR6MnluMGtzeng2NXp2In0.-GbX1CJH3huzw-u6B3A8DQ';
+  var longitude = {{ customers.0.location.x }}
+  var latitude = {{ customers.0.location.y }}
+
+  var places = {
+      // Add the customer's information
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                        'properties': {
+                        'description': '{{ customers.0.first_name }} {{ customers.0.last_name }}',
+                        'icon': 'circle'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [longitude, latitude]
+                            }
+                },
+      // Add the repairers' information
+      {% for repairer in repairer_list%}
+            {
+                'type': 'Feature',
+                    'properties': {
+                    'description': '{{ repairer.first_name }} {{ repairer.last_name }}',
+                    'icon': 'triangle'
+                    },
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [{{repairer.location.x}}, {{repairer.location.y}}]
+                        }
+                    },
+            {% endfor %}
+        ]
+    };
+
+var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v10',
+        center: [longitude, latitude],
+        zoom: 10
+    });
+ 
+map.on('load', function () {
+    // Add a GeoJSON source containing place coordinates and information.
+    map.addSource('places', {
+        'type': 'geojson',
+        'data': places
+        });
+    
+    map.addLayer({
+            'id': 'poi-labels',
+            'type': 'symbol',
+            'source': 'places',
+            'layout': {
+            'text-field': ['get', 'description'],
+            'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+            'text-radial-offset': 0.5,
+            'text-justify': 'auto',
+            'icon-image': ['concat', ['get', 'icon'], '-15']
+            }
+        });
+    });
+</script>
+
 {% endblock content %}
