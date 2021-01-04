@@ -81,6 +81,7 @@
                 <br><h6>Estimate: ${{ est.est_hours|floatformat:2|intcomma }}</h6>
                 <!-- Estimate: {{ est.hours|floatformat:2 }} hrs * ${{ repairer.hourly_rate }} per/hr = ${{ est.est_hours|floatformat:2|intcomma }} cost. -->
                 <!-- Debug: {{ est.debug }} -->
+                <!-- Env: {{ est.env_dump }} -->
                 {% else %}
                     <br><h6>{{ repairer.first_name }} does not work on this type of clock</h6>
                 {% endif %}

@@ -12,22 +12,35 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 # FYI: After creating a new application in Django with "startapp"
 #   ones still needs to configure: the model, view, url, and template for each page 
 from pathlib import Path
-from environs import Env # New 20201221
 
-env = Env()     # New 20201221
-env.read_env()  # New 20201221
+# from environs import Env # New 20201221
+
+# env = Env()     # New 20201221
+# env.read_env()  # New 20201221
+
+import environ # New 20210103
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+# reading .env file
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# For demo purposes only (not working)
+#from pprint import pprint
+#pprint(env.dump(), indent=2)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
-#DEBUG = env.bool("DJANGO_DEBUG", default=False)
-DEBUG = True
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
+#DEBUG = True
 
 ALLOWED_HOSTS = ['miclockrepair.com', 'localhost','127.0.0.1', '10.16.0.114']
 
@@ -39,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic', # New 20201222
+#    'whitenoise.runserver_nostatic', # New 20201222
     'django.contrib.staticfiles',
 
     # allows one Django project to control multiple sites.
@@ -78,7 +91,7 @@ PHONENUMBER_DEFAULT_REGION = 'US'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # New 20201222
+#    'whitenoise.middleware.WhiteNoiseMiddleware', # New 20201222
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -116,12 +129,9 @@ DATABASES = {
     'default': {
 #        'ENGINE': 'django.db.backends.postgresql',
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': env("POSTGRES_DB", default='gis'),
-        'USER': env("POSTGRES_USER", default='docker'),
-        'PASSWORD': env("POSTGRES_PASS", default='docker'),
-        # 'NAME': env.str("POSTGRES_DB", default='postgres'),
-        # 'USER': env.str("POSTGRES_USER", default='postgres'),
-        # 'PASSWORD': env.str("POSTGRES_PASS", default='postgres'),
+        'NAME': env.str("POSTGRES_DB", default='postgres'),
+        'USER': env.str("POSTGRES_USER", default='postgres'),
+        'PASSWORD': env.str("POSTGRES_PASS", default='postgres'),
         'HOST': 'db',
         'PORT': 5432
     }
@@ -216,4 +226,4 @@ SESSION_COOKIE_SECURE = env.bool("DJANGO_SESSION_COOKIE_SECURE", default=True)
 CSRF_COOKIE_SECURE = env.bool("DJANGO_CSRF_COOKIE_SECURE", default=True)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
