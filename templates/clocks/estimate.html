@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load humanize %}
 
 {% block title %}{{ clock.title }}{% endblock title %}
 
@@ -53,7 +54,7 @@
                         <li>May have {{ clock.tube_count }} or more tubes </li>
                     {% endif %}
                 </ul>
-                <a target="_blank" href="https://www.antiqueclockspriceguide.com/clocktyperesults.php?t={{ clock.clock_type }}" class="btn btn-primary">Visit Antique Clock Price Guide</a>
+                <a target="_blank" href="https://www.antiqueclockspriceguide.com/clocktyperesults.php?t={{ clock.clock_type }}" class="btn btn-outline-primary">Visit Antique Clock Price Guide</a>
                 </p>
             </div>
         </div>
@@ -62,7 +63,7 @@
         <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet' />
 
-        <div id='map' style='width: 400px; height: 300px;'></div>
+        <div id='map' style='width: 500px; height: 500px;'></div>
         <br>
         {% for repairer in repairer_list%}
         <h4>{{ repairer.distance.mi|floatformat:2 }} miles - {{ repairer.first_name }} {{ repairer.last_name }}</h4>
@@ -76,8 +77,13 @@
             <br>{{ repairer.first_name }} has {{ repairer.experience_in_years }} years of experience.
             {% for est in estimate_list%}
             {% if est.id == repairer.id %}
-            <br>Estimated Repair Cost: ${{ est.estimate }}
-            <!-- Debug: {{ est.debug }} -->
+                {% if est.available %}
+                <br><h6>Estimate: ${{ est.est_hours|floatformat:2|intcomma }}</h6>
+                <!-- Estimate: {{ est.hours|floatformat:2 }} hrs * ${{ repairer.hourly_rate }} per/hr = ${{ est.est_hours|floatformat:2|intcomma }} cost. -->
+                <!-- Debug: {{ est.debug }} -->
+                {% else %}
+                    <br><h6>{{ repairer.first_name }} does not work on this type of clock</h6>
+                {% endif %}
             {% endif %}
             {% endfor %}
         </p>
@@ -126,7 +132,7 @@
           container: 'map',
           style: 'mapbox://styles/mapbox/streets-v10',
           center: [longitude, latitude],
-          zoom: 10
+          zoom: 9
       });
    
   map.on('load', function () {

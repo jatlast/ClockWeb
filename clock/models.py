@@ -34,6 +34,10 @@ class Clock(models.Model):
 #    clock_type = models.CharField(blank=False, max_length=32, choices=Clocktype.CLOCK_TYPE_CHOICES, default='Longcase/Grandfather')
     # footprint - Wall, Mantel, Floor
     footprint = models.CharField(blank=False, max_length=16, choices=Clocktype.FOOTPRINT_CHOICES, default='Floor')
+    # dial_diameter_millimeters - NULL or integer
+    dial_diameter_millimeters = models.PositiveSmallIntegerField(blank=True, default=0)
+    # has_glass_over_face - Yes/No | 1/0
+    has_glass_over_face = models.BooleanField(blank=False, default=False)
     # train_count - NULL,1,2,3,4
     train_count = models.PositiveSmallIntegerField(blank=True, choices=Clocktype.TRAIN_COUNT_CHOICES, default=3)
     # wind_interval_days - NULL, 1, 8, 15, 31
@@ -66,6 +70,10 @@ class Clock(models.Model):
     has_music_box = models.BooleanField(blank=False, default=False)
     # has_activity_other - Yes/No | 1/0 > such as dancing people, wood choppers, water wheel, etc
     has_activity_other = models.BooleanField(blank=False, default=False)
+    # has_light - Yes/No | 1/0
+    has_light = models.BooleanField(blank=False, default=False)
+    # battery_count - NULL, 5, 9, ?
+    battery_count = models.PositiveSmallIntegerField(blank=True, choices=Clocktype.BATTERY_COUNT_CHOICES, default=0)
     # has_tubes - Yes/No | 1/0
     has_tubes = models.BooleanField(blank=False, default=False)
     # tube_count - NULL, 5, 9, ?

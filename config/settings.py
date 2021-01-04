@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.sites', # New 20201221
     # GeoDjango for location aware web applications
     'django.contrib.gis',   # New 20210101
+    # number formatting in templates
+    'django.contrib.humanize', # New 20210103
 
     # Local
     'accounts', # New 20201220

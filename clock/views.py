@@ -4,6 +4,8 @@ from .models import Clock
 from customer.models import Customer
 from repairer.models import Repairer
 from django.template import Context
+from decimal import Decimal
+import math
 
 clock_fields_viewable_by_everyone = [
         'nickname',
@@ -78,114 +80,194 @@ class ClockRepairEstimateView(DetailView):
         context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', context['customer_list'][0].location)).order_by('distance')[0:5]
 
         context['estimate_list'] =  Context({"foo": "bar"})
+        clock_type_minimum_hours = {
+            'Advertising' : 2.25,
+            'Animated' : 2.00,
+            'Anniversary' : 2.50,
+            'Atmos' : 5.00,
+            'Balloon' : 1.50,
+            'Banjo' : 2.00,
+            'Beehive' : 2.00,
+            'Black Mantel' : 2.50,
+            'Blinking Eye' : 1.25,
+            'Calendar' : 2.25,
+            'Carriage' : 1.25,
+            'China/Porcelain' : 3.00,
+            'Column' : 2.25,
+            'Crystal Regulator' : 3.50,
+            'Cuckoo' : 4.00,
+            'Dial' : 1.00,
+            'Drop Trunk/School House' : 1.25,
+            'Figural' : 1.00,
+            'Garnitures' : 2.25,
+            'Gothic' : 1.50,
+            'Kitchen' : 2.25,
+            'Lantern' : 2.00,
+            'Longcase/Grandfather' : 7.25,
+            'Lyre' : 3.50,
+            'Mission' : 1.50,
+            'Mystery' : 1.25,
+            'Novelty' : 1.00,
+            'Ogee' : 1.50,
+            'Picture' : 2.00,
+            'Portico' : 3.00,
+            'Pillar & Scroll' : 2.00,
+            'Plato' : 2.50,
+            'Shelf' : 2.00,
+            "Ship's" : 4.00,
+            'Skeleton' : 2.00,
+            'Steeple' : 2.00,
+            'Swinging' : 1.50,
+            'Tambour' : 2.00,
+            'Tape' : 3.00,
+            'Vienna Regulator' : 4.50,
+            'Wag on the Wall' : 2.00,
+            'Wall' : 2.00,
+        }
 
         repairer_count = 0
         for repairer in context['repairer_list']:
             context['estimate_list']['id'] = repairer.id
             context['estimate_list']['clock_id'] = self.object.clock_type_fk
-            context['estimate_list']['debug'] = '\n'
+            # Begin each repairer as "available" to field this estimate.
+            context['estimate_list']['available'] = True
+
             # Begin clock repair estimation logic...
             #   convert distance to road time in minutes: miles / mph * 60
             mph = 45 # assuming 45 mph because distance is "as the crow flies" so as not to use direction software
             minutes = 60 # obvious
             miles_to_minutes_multiple = mph / minutes
-            round_trip_minutes = (repairer.distance.mi * miles_to_minutes_multiple * 2)
+            # Repairs reuire both a pick-up and a delivery, hence double round trip
+            double_round_trip_minutes = (repairer.distance.mi * miles_to_minutes_multiple * 4)
+            # The included round trip is singular so it neecs to be doubled to reflect both the pick-up and the delivery
+            double_repairer_round_trip_max = repairer.road_time_minutes_maximum * 2
+            # Two round trips
+            double_repairer_round_trip_included = repairer.road_time_minutes_included * 2
             extra_features = 0 # keep track of GF extra features
-            extra_road_time = 0.0
+#            hourly = repairer.hourly_rate
+            est_hours = 0.00
+            est_debug_text = '\n'
+
+            # Dynamically determine clock minimum hours by clock_type
+            for key, value in clock_type_minimum_hours.items():
+                if key == str(self.object.clock_type_fk):
+                    est_hours += value
+                    est_debug_text += 'clock_type: ' + key + '|' + str(value) + '\n'
+                    break
+
             # check if repairer is accepting jobs and is within the maximum drive time.
-            if repairer.still_accepting_jobs and round_trip_minutes <= repairer.road_time_maximum:
-                context['estimate_list']['debug'] += 'Accepting Jobs\n'
-                
-                # begin by setting minimum repair cost
-                context['estimate_list']['estimate'] = repairer.repair_minimum
+            if repairer.still_accepting_jobs and double_round_trip_minutes <= double_repairer_round_trip_max:
+                est_debug_text += 'Accepting Jobs\n'
+
+        # 'still_accepting_jobs',
+        # 'makes_service_calls',
+        # 'service_call_hours_minimum',
+        # 'repairs_grandfathers',
+        # 'repairs_tubular_grandfathers',
+        # 'repairs_cuckoos',
+        # 'repairs_atmospherics',
+        # 'repairs_anniversarys',
+        # 'repairs_most_mechanical',
+        # 'repairs_most_quartz',
+
+
+                # Determine if repairer works on this clock_type...
+                if str(self.object.clock_type_fk) == 'Longcase/Grandfather':
+                    context['estimate_list']['available'] = repairer.repairs_grandfathers
+                elif str(self.object.clock_type_fk) == 'Cuckoo':
+                    context['estimate_list']['available'] = repairer.repairs_cuckoos
+                elif str(self.object.clock_type_fk) == 'Atmospheric':
+                    context['estimate_list']['available'] = repairer.repairs_atmospherics
+                elif str(self.object.clock_type_fk) == 'Anniversary':
+                    context['estimate_list']['available'] = repairer.repairs_anniversarys
+                elif self.object.drive_type == 'Quartz':
+                    context['estimate_list']['available'] = repairer.repairs_most_quartz
+                    extra_features -= 2
+                else:
+                    context['estimate_list']['available'] = repairer.repairs_most_mechanical
+
+                est_debug_text += 'Available ' + str(context['estimate_list']['available']) + '\n'
+
+                # Exit loop if repairer is not available...
+                # if context['estimate_list']['available'] != True:
+                #     break
 
                 # Check for extra drive time...
-                if repairer.road_time_included < round_trip_minutes:
-                    extra_road_time += (round_trip_minutes - repairer.road_time_included) * round_trip_minutes
+                if double_repairer_round_trip_included < double_round_trip_minutes:
+                    est_hours += (double_round_trip_minutes - double_repairer_round_trip_included) / 60
                 else:
-                    context['estimate_list']['debug'] += 'No extra road time: ' + str(repairer.road_time_included) + ' < ' + str(round_trip_minutes) + '\n'
+                    est_debug_text += 'No extra road time: ' + str(double_repairer_round_trip_included) + ' < ' + str(double_round_trip_minutes) + ' | hours(' + str(round(est_hours,2)) + ')\n'
 
-                # Wooden gears
-                if self.object.gear_material == 'Wood':
-                    extra_features += 1
-                else:
-                    context['estimate_list']['debug'] += self.object.gear_material + ' != Wood\n'
                 # Check for extra features...
                 # Wooden gears
                 if self.object.gear_material == 'Wood':
-                    extra_features += 1
+                    context['estimate_list']['available'] = repairer.repairs_most_mechanical
+                    extra_features += 2
                 else:
-                    context['estimate_list']['debug'] += self.object.gear_material + ' != Wood\n'
+                    est_debug_text += self.object.gear_material + ' != Wood | hours(' + str(round(est_hours,2)) + ')\n'
                 # Not self-adjusting strike
                 if self.object.has_self_adjusting_strike == False:
                     extra_features += 1
                 else:
-                    context['estimate_list']['debug'] += 'Has self adjusting strike: ' + str(self.object.has_self_adjusting_strike) + ' != False\n'
+                    est_debug_text += 'Has self adjusting strike: ' + str(self.object.has_self_adjusting_strike) + ' != False | hours(' + str(round(est_hours,2)) + ')\n'
                 # Has off-at-night
                 if self.object.has_off_at_night:
-                    extra_features += 1
+                    extra_features += 0.5
                 else:
-                    context['estimate_list']['debug'] += 'Has off-at-night: ' + str(self.object.has_off_at_night) + ' != True\n'
+                    est_debug_text += 'Has off-at-night: ' + str(self.object.has_off_at_night) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
                 # Has calendar
                 if self.object.has_calendar:
-                    extra_features += 1
+                    extra_features += 0.5
                 else:
-                    context['estimate_list']['debug'] += 'Has calendar: ' + str(self.object.has_calendar) + ' != True\n'
+                    est_debug_text += 'Has calendar: ' + str(self.object.has_calendar) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
                 # Has moon dial
                 if self.object.has_moon_dial:
-                    extra_features += 1
+                    extra_features += 0.25
                 else:
-                    context['estimate_list']['debug'] += 'Has moon dial: ' + str(self.object.has_moon_dial) + ' != True\n'
+                    est_debug_text += 'Has moon dial: ' + str(self.object.has_moon_dial) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
                 # Has alarm
                 if self.object.has_alarm:
                     extra_features += 1
                 else:
-                    context['estimate_list']['debug'] += 'Has alarm: ' + str(self.object.has_alarm) + ' != True\n'
+                    est_debug_text += 'Has alarm: ' + str(self.object.has_alarm) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
                 # Has music box
                 if self.object.has_music_box:
-                    extra_features += 1
+                    extra_features += 1.5
                 else:
-                    context['estimate_list']['debug'] += 'Has music box: ' + str(self.object.has_music_box) + ' != True\n'
+                    est_debug_text += 'Has music box: ' + str(self.object.has_music_box) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
                 # Has activity other
                 if self.object.has_activity_other:
                     extra_features += 1
                 else:
-                    context['estimate_list']['debug'] += 'Has activity other: ' + str(self.object.has_activity_other) + ' != True\n'
+                    est_debug_text += 'Has activity other: ' + str(self.object.has_activity_other) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
                 # Five tubes included in the price
                 if self.object.tube_count >= 5:
-                    extra_features += 1
+                    extra_features += 0.50
                 else:
-                    context['estimate_list']['debug'] += 'tube_count: ' + str(self.object.tube_count) + ' < 6\n'
+                    est_debug_text += 'tube_count: ' + str(self.object.tube_count) + ' < 6\n'
 
-                context['estimate_list']['debug'] += 'extras: ' + str(extra_features) + '\n'
-
-                # Check for specific clock_type...
-                clock_type = 'Longcase/Grandfather'
-                if str(self.object.clock_type_fk) == clock_type:
-                    context['estimate_list']['debug'] += 'clock_type: ' + clock_type + '\n'
-                    # GF chain drives are the least expensive
-                    context['estimate_list']['estimate'] = repairer.repair_gf_chain
-                    # Check for Cable or String...
-                    if self.object.drive_type == 'Cable' or self.object.drive_type == 'String':
-                        context['estimate_list']['estimate'] = repairer.repair_gf_cable
-                    else:
-                        context['estimate_list']['debug'] += self.object.drive_type + ' != Cable or' + self.object.drive_type + ' != String\n'
-                    # Check if Tubular...
-                    if self.object.has_tubes:
-                        context['estimate_list']['estimate'] = repairer.repair_gf_tubular
-                    else:
-                        context['estimate_list']['debug'] += 'Has tubes: ' + str(self.object.has_tubes) + ' != True\n'
-                    if extra_features > 0:
-                        original_estimate = context['estimate_list']['estimate']
-                        context['estimate_list']['estimate'] += (extra_features * original_estimate * repairer.multiple_per_gf_extra)
-                        context['estimate_list']['debug'] += 'extras: ' + str(original_estimate) + ' += (' + str(extra_features) + ' * ' +  str(original_estimate) + ' * ' + str(repairer.multiple_per_gf_extra) + ' = ' + str(context['estimate_list']['estimate']) + '\n'
-                    else:
-                        context['estimate_list']['debug'] += str(extra_features) + ' <= 0\n'
+                # Check for Cable or String...
+                if self.object.drive_type == 'Cable' or self.object.drive_type == 'String':
+                    est_hours += 1.5
                 else:
-                    context['estimate_list']['debug'] += str(self.object.clock_type_fk) + ' != ' + clock_type + '\n'
+                    est_debug_text += self.object.drive_type + ' != Cable or' + self.object.drive_type + ' != String | hours(' + str(round(est_hours,2)) + ')\n'
+                # Check if Tubular...
+                if self.object.has_tubes:
+                    context['estimate_list']['available'] = repairer.repairs_tubular_grandfathers
+                    est_hours += 5
+                else:
+                    est_debug_text += 'Has tubes: ' + str(self.object.has_tubes) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+
+                est_debug_text += 'extras: ' + str(extra_features) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+
+                est_hours += (extra_features * 0.50)
             else:
-                context['estimate_list']['debug'] += 'Accepting Jobs (' + str(repairer.still_accepting_jobs) + ') and ' + str(round_trip_minutes) + ' <= ' + str(repairer.road_time_maximum) + '\n'
+                context['estimate_list']['available'] = False
+                est_debug_text += 'Accepting Jobs (' + str(repairer.still_accepting_jobs) + ') and ' + str(double_round_trip_minutes) + ' <= ' + str(repairer.road_time_minutes_maximum) + ' | hours(' + str(round(est_hours,2)) + ')\n'
 
+            context['estimate_list']['hours'] = est_hours
+            context['estimate_list']['est_hours'] = math.ceil((est_hours * float(repairer.hourly_rate)))
+            context['estimate_list']['debug'] = est_debug_text
             context['estimate_list'].push()
             repairer_count += 1
 

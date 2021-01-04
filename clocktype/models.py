@@ -64,7 +64,7 @@ class Clocktype(models.Model):
     ]
 
     WIND_INTERVAL_CHOICES = [
-        (0,'Never'),
+        (0,'Never - Quartz/Battery/Atmos'),
         (1,'Once Every Day'),
         (8,'Once Every Week'),
         (15,'Once Every Other Week'),
@@ -73,19 +73,19 @@ class Clocktype(models.Model):
     ]
 
     DRIVE_TYPE_CHOICES = [
-        ('Mainspring','Mainspring'),
-        ('Chain','Chain'),
-        ('Cable','Cable'),
-        ('String','String'),
+        ('Mainspring','Mainspring - Wind Up'),
+        ('Chain','Weights on Chains'),
+        ('Cable','Weights on Cable with Pullies'),
+        ('String','Weights on String'),
         ('Atmospheric','Atmospheric'),
         ('Electric','Electric'),
-        ('Battery','Battery'),
+        ('Quartz','Battery/Quartz'),
     ]
 
     GEAR_MATERIAL_CHOICES = [
-        ('Metal','Metal'),
-        ('Wood','Wood'),
-        ('Plastic','Plastic'),
+        ('Metal','Metal Gears'),
+        ('Wood','Wooden Gears'),
+        ('Plastic','Plastic Gears'),
     ]
 
     CHIME_COUNT_CHOICES = [
@@ -101,6 +101,15 @@ class Clocktype(models.Model):
         ('Bim-Bam','Bim-Bam'),
         ('Note','Hourly Note'),
         ('Chord','Hourly Chord'),
+    ]
+
+    BATTERY_COUNT_CHOICES = [
+        (0,'0'),
+        (1,'1'),
+        (2,'2'),
+        (3,'3'),
+        (4,'4'),
+        (5,'5+'),
     ]
 
     TUBE_COUNT_CHOICES = [
@@ -128,6 +137,10 @@ class Clocktype(models.Model):
     clock_type = models.CharField(blank=False, max_length=32, choices=CLOCK_TYPE_CHOICES, default='Longcase/Grandfather')
     # footprint - Wall, Mantel, Floor
     footprint = models.CharField(blank=False, max_length=16, choices=FOOTPRINT_CHOICES, default='Floor')
+    # dial_diameter_millimeters - NULL or integer
+    dial_diameter_millimeters = models.PositiveSmallIntegerField(blank=True, default=0)
+    # has_glass_over_face - Yes/No | 1/0
+    has_glass_over_face = models.BooleanField(blank=False, default=False)
     # train_count - NULL,1,2,3,4
     train_count = models.PositiveSmallIntegerField(blank=True, choices=TRAIN_COUNT_CHOICES, default=3)
     # wind_interval_days - NULL, 1, 8, 15, 31
@@ -160,6 +173,10 @@ class Clocktype(models.Model):
     has_music_box = models.BooleanField(blank=False, default=False)
     # has_activity_other - Yes/No | 1/0 > such as dancing people, wood choppers, water wheel, etc
     has_activity_other = models.BooleanField(blank=False, default=False)
+    # has_light - Yes/No | 1/0
+    has_light = models.BooleanField(blank=False, default=False)
+    # battery_count - NULL, 5, 9, ?
+    battery_count = models.PositiveSmallIntegerField(blank=True, choices=BATTERY_COUNT_CHOICES, default=0)
     # has_tubes - Yes/No | 1/0
     has_tubes = models.BooleanField(blank=False, default=False)
     # tube_count - NULL, 5, 9, ?

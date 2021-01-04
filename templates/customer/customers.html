@@ -18,8 +18,7 @@
       </p>
       <div>
         <a class="btn btn-outline-primary" href="{% url 'customer_update' customer.id %}">Edit Address</a>
-        <a class="btn btn-outline-primary" href="{% url 'clocks' %}">View Clocks</a>
-        <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Add Clocks</a>
+        <a class="btn btn-outline-primary" href="{% url 'repairers_near_me' %}">Find Repair Person</a>
       </div>
       {% endif %}
     {% endfor %}
