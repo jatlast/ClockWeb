@@ -77,7 +77,6 @@ services:
       - djangoapp
     networks:
       - nginx_network
-#    user: "root"
 
 networks:
   nginx_network:

@@ -34,8 +34,8 @@ class Clock(models.Model):
 #    clock_type = models.CharField(blank=False, max_length=32, choices=Clocktype.CLOCK_TYPE_CHOICES, default='Longcase/Grandfather')
     # footprint - Wall, Mantel, Floor
     footprint = models.CharField(blank=False, max_length=16, choices=Clocktype.FOOTPRINT_CHOICES, default='Floor')
-    # dial_diameter_millimeters - NULL or integer
-    dial_diameter_millimeters = models.PositiveSmallIntegerField(blank=True, default=0)
+    # dial_diameter_centimeters - NULL or integer
+    dial_diameter_centimeters = models.PositiveSmallIntegerField(blank=True, default=0)
     # has_glass_over_face - Yes/No | 1/0
     has_glass_over_face = models.BooleanField(blank=False, default=False)
     # train_count - NULL,1,2,3,4

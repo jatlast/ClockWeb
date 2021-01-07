@@ -64,7 +64,7 @@ class Clocktype(models.Model):
     ]
 
     WIND_INTERVAL_CHOICES = [
-        (0,'Never - Quartz/Battery/Atmos'),
+        (0,'Never - Quartz/Battery/Electric/Atmos'),
         (1,'Once Every Day'),
         (8,'Once Every Week'),
         (15,'Once Every Other Week'),
@@ -137,8 +137,8 @@ class Clocktype(models.Model):
     clock_type = models.CharField(blank=False, max_length=32, choices=CLOCK_TYPE_CHOICES, default='Longcase/Grandfather')
     # footprint - Wall, Mantel, Floor
     footprint = models.CharField(blank=False, max_length=16, choices=FOOTPRINT_CHOICES, default='Floor')
-    # dial_diameter_millimeters - NULL or integer
-    dial_diameter_millimeters = models.PositiveSmallIntegerField(blank=True, default=0)
+    # dial_diameter_centimeters - NULL or integer
+    dial_diameter_centimeters = models.PositiveSmallIntegerField(blank=True, default=0)
     # has_glass_over_face - Yes/No | 1/0
     has_glass_over_face = models.BooleanField(blank=False, default=False)
     # train_count - NULL,1,2,3,4
