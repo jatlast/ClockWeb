@@ -1,0 +1,15 @@
+server {
+    listen 80;
+    server_name miclockrepair.com;
+    location / {
+        return 301 https://$host$request_uri;
+    }    
+}
+server {
+    listen 443 ssl;
+    server_name miclockrepair.com;
+    
+    location / {
+        proxy_pass http://miclockrepair.com; #for demo purposes
+    }
+}

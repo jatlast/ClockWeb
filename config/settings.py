@@ -42,7 +42,7 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 #DEBUG = True
 
-ALLOWED_HOSTS = ['miclockrepair.com', 'localhost','127.0.0.1', '10.16.0.114']
+ALLOWED_HOSTS = ['miclockrepair.com', 'localhost','127.0.0.1', '10.16.0.114', '10.16.0.110']
 
 # Application definition
 

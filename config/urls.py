@@ -19,9 +19,14 @@ from django.contrib import admin
 from django.urls import path, include
 
 # Get the global variables to dynamically set the admin url
-from environs import Env
-env = Env()
-env.read_env()
+import environ # New 20210103
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+# reading .env file
+environ.Env.read_env()
+
 
 urlpatterns = [
     # Django admin

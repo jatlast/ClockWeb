@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+
+  djangoapp:
+    build: .
+    volumes:
+      - .:/usr/src/ClockWeb
+      - static_volume:/usr/src/ClockWeb/staticfiles
+      - media_volume:/usr/src/ClockWeb/media
+#      - ssl_certs:/usr/src/ClockWeb/config/nginx/certs
+    networks:
+      - nginx_network
+      - db_network
+    depends_on:
+      - db
+    environment:
+      - "DJANGO_SECRET_KEY=gl0s1f=_+29rg35vqjc)pvg+zagv#!jsb(2^@!_rm%w-ycx&e&"
+      - "DJANGO_DEBUG=True"
+      - "DJANGO_SECURE_SSL_REDIRECT=False"
+      - "DJANGO_SECURE_HSTS_SECONDS=0"
+      - "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS=False"
+      - "DJANGO_SECURE_HSTS_PRELOAD=False"
+      - "DJANGO_SESSION_COOKIE_SECURE=False"
+      - "DJANGO_CSRF_COOKIE_SECURE=False"
+
+      - "DJANGO_ADMIN_URL=admin/"
+
+      # Amazon's (AWS) Simple Email Service Settings
+      - "EMAIL_HOST_KEY=email-smtp.us-east-2.amazonaws.com"
+      - "EMAIL_HOST_USER_KEY=AKIA257AFI4BPCQFC226"
+      - "EMAIL_HOST_PASSWORD_KEY=BMXGG2uyy+Zv4DYI0e4Ou4DoaAUhgFy284qsADju4cak"
+      - "EMAIL_PORT_KEY=25"
+      - "EMAIL_USE_TLS_KEY=True"
+
+      # If you need to create multiple database you can add comma separated databases eg gis,data
+      - "POSTGRES_DB=postgres"
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASS=mysecretpassword"
+      - "ALLOW_IP_RANGE=0.0.0.0/0"
+      # Add extensions you need to be enabled by default in the DB. Default are the five specified below
+      - "POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting"
+
+  db:
+    image: tobi312/rpi-postgresql-postgis:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - "POSTGRES_PASSWORD=mysecretpassword"
+    ports:
+      - 5432:5432
+    networks:
+      - db_network
+    restart: on-failure
+    healthcheck:
+      test: "exit 0"
+
+  nginx:
+#    build: ./nginx
+    image: nginx:1.13
+#    image: nginx:latest
+#    image: arm64v8/nginx
+    volumes:
+    # Expose the local nginx conf.d dir within the docker container
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+    # Expose the local nginx ss-params.conf file within the docker container
+      - ./config/nginx/ssl-params.conf:/etc/nginx/ssl-params.conf
+    # Expose the local nginx certs dir within the docker container
+      - ./config/nginx/certs:/etc/nginx/ssl/certs
+      - static_volume:/usr/src/ClockWeb/staticfiles
+      - media_volume:/usr/src/ClockWeb/media
+#      - ssl_certs:/usr/src/ClockWeb/config/nginx/certs
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - djangoapp
+    networks:
+      - nginx_network
+#    user: "root"
+
+networks:
+  nginx_network:
+    driver: bridge
+  db_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+#  ssl_certs:

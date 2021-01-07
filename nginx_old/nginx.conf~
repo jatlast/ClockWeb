@@ -1,0 +1,31 @@
+upstream config {
+    server web:8000;
+}
+
+server {
+    listen 80;
+    server_name miclockrepair.com;
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+
+    listen 443;
+    ssl on;
+    server_name  miclockrepair.com;
+    ssl_certificate /etc/ssl/certs/miclockrepair_ssl-bundle.crt;
+    ssl_certificate_key /etc/ssl/certs/miclockrepair.com.key;
+
+    location / {
+        proxy_pass http://config;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+    }
+
+    location /static/ {
+        alias /home/pi/Projects/ClockWeb/staticfiles/;
+    }
+}

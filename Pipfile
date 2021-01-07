@@ -8,10 +8,10 @@ django = "~=3.1.0"
 psycopg2-binary = "*"
 django-crispy-forms = "==1.9.2"
 django-allauth = "==0.43.0"
-environs = {extras = ["django"], version = "*"}
+#environs = {extras = ["django"], version = "*"}
 pillow = "==8.0"
 django-debug-toolbar = "==3.2"
-whitenoise = "==5.2.0"
+#whitenoise = "==5.2.0"
 gunicorn = "==20.0.4"
 django-phonenumber-field = "*"
 django-phone-field = "*"

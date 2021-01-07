@@ -1,3 +1,6 @@
+docker-compose-pi.yml
 docker-compose-prod.yml
+docker-compose-prod-pi.yml
 __pycache__/
 db.sqlite3
+miclockrepair*
