@@ -100,8 +100,9 @@ class Clocktype(models.Model):
         ('None','No Strike'),
         ('Bim-Bam','Bim-Bam'),
         ('Cuckoo','Cuckoo'),
-        ('Note','Hourly Note'),
         ('Chord','Hourly Chord'),
+        ('Note','Hourly Note'),
+        ('Ship',"Ship's Bells"),
     ]
 
     BATTERY_COUNT_CHOICES = [
