@@ -99,6 +99,7 @@ class Clocktype(models.Model):
     STRIKE_TYPE_CHOICES = [
         ('None','No Strike'),
         ('Bim-Bam','Bim-Bam'),
+        ('Cuckoo','Cuckoo'),
         ('Note','Hourly Note'),
         ('Chord','Hourly Chord'),
     ]
