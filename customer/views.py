@@ -32,10 +32,13 @@ class CustomerListView(ListView):
     template_name = 'customer/customers.html'
 
     def get_queryset(self):
-        if self.request.user:
+        if not self.request.user.is_authenticated:
+            return None
+
+        try:
             return Customer.objects.filter(user_fk_id__exact=self.request.user)
-        else:
-            return Customer.objects.all()
+        except:
+            return None
 
 class CustomerDetailView(DetailView):
     model = Customer
@@ -69,38 +72,34 @@ class RepairersNearMeView(ListView):
     template_name = 'customer/nearme.html'
 
     def get_queryset(self):
-        if self.request.user:
+        if not self.request.user.is_authenticated:
+            return None
+        try:
             return Customer.objects.filter(user_fk_id__exact=self.request.user)
-        else:
-            return Customer.objects.all()
+        except:
+            return None
 
     def get_context_data(self, **kwargs):
-#        customer_location = Customer.objects.only('location').get(user_fk_id__exact=self.request.user).location
-#        customer_location = Customer.objects.values_list('location', flat=True).get(user_fk_id__exact=self.request.user)
-#        customer = list(Customer.objects.filter(user_fk_id__exact=self.request.user))
-        customer = Customer.objects.filter(user_fk_id__exact=self.request.user)
-#        clocks = Clock.objects.filter(user_fk_id__exact=self.request.user)
-#         repairer = Repairer.objects.annotate(
-#             distance=Distance(
-#                 'location'
-#                 , customer[0].location
-# #                , customer_location
-#                 ) * 0.000621371
-#             ).order_by('distance')[0:5]
+        if not self.request.user.is_authenticated:
+            return None
+        try:
+            customer = Customer.objects.filter(user_fk_id__exact=self.request.user)
 
-        context = super(RepairersNearMeView, self).get_context_data(**kwargs)
-        context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', customer[0].location)).order_by('distance')[0:5]
+            context = super(RepairersNearMeView, self).get_context_data(**kwargs)
+            context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', customer[0].location)).order_by('distance')[0:5]
 
-        context['estimate_list'] =  Context({"foo": "bar"})
+            context['estimate_list'] =  Context({"foo": "bar"})
 
-        repairer_count = 0
-        for repairer in context['repairer_list']:
-            context['estimate_list']['id'] = repairer.id
-            context['estimate_list']['dist'] = repairer.distance.mi
-            context['estimate_list'].push()
-            repairer_count += 1
+            repairer_count = 0
+            for repairer in context['repairer_list']:
+                context['estimate_list']['id'] = repairer.id
+                context['estimate_list']['dist'] = repairer.distance.mi
+                context['estimate_list'].push()
+                repairer_count += 1
 
-        return context
+            return context
+        except:
+            return None
 
 
 #        events = Event.objects.filter(datetime__gte=now).filter(datetime__lte=next_week).annotate(distance=Distance('venue__location', location)).order_by('distance')[0:5]

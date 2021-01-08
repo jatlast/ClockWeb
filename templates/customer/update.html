@@ -1,15 +1,18 @@
 {% extends '_base.html' %}
 
-{% block title %}Update {{ customer.first_name }} {{ customer.last_name }}{% endblock title %}
+{% block title %}Update Contact Information{% endblock title %}
 
 {% block content %}
-<h1>Update your cutomer informaion</h1>
-<p>Note: Phone Number format is: +!#######</p>
-<form action="" method="post">
-    {% csrf_token %}
-    <table>
-    {{ form.as_table }}
-    </table>
-    <input type="submit" value="Submit">
-</form>
+{% if user.is_authenticated %}
+  {% if form %}
+    <h1>Update your cutomer informaion</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+        {{ form.as_table }}
+        </table>
+        <input type="submit" value="Submit">
+    </form>
+    {% endif %}
+{% endif %}
 {% endblock content %}

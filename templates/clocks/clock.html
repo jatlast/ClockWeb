@@ -1,59 +1,67 @@
 {% extends '_base.html' %}
 
-{% block title %}{{ clock.title }}{% endblock title %}
+{% block title %}Clock Info{% endblock title %}
 
 {% block content %}
-<div class="card" style="width: 18rem;">
-  {% if clock.image_1 %}
-  <img class="card-img-top" src="{{clock.image_1.url}}" alt="{{clock.clock_type}}">
-  {% endif %}
-  <div class="card-body">
-    <h5 class="card-title"><a href="{% url 'clock_update' clock.id %}">{{ clock.nickname }}</a></h5>
-    <p class="card-text">{{ clock.clock_type_fk }} clocks are usually {{ clock.footprint }} mounted and they typically
-      have a
-      train count of {{ clock.train_count }}
-      (i.e., they typically wind in {{ clock.train_count }} places), and a wind interval of
-      {{ clock.wind_interval_days }} days. It might be {{ clock.drive_type }}
-      driven and it probably has {{ clock.chime_count }} chime options and a
-      {{ clock.strike_type }} strike.
-    <h6>Common features:</h6>
-    <ul>
-      {% if clock.has_pendulum %}
-      <li>Has pendulum of some sort</li>
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col">
+    <h4>Add Your Clock</h4><br>
+    <div class="card" style="width: 18rem;">
+      {% if clock.image_1 %}
+      <img class="card-img-top" src="{{clock.image_1.url}}" alt="{{clock.clock_type}}">
       {% endif %}
-      {% if clock.has_self_adjusting_beat %}
-      <li>Has self adjusting beat</li>
-      {% endif %}
-      {% if clock.has_self_adjusting_strike %}
-      <li>Has self adjusting strike</li>
-      {% endif %}
-      {% if clock.has_second_hand %}
-      <li>Has a second hand</li>
-      {% endif %}
-      {% if clock.has_off_at_night %}
-      <li>Chime and strike can be set to "Off at Night"</li>
-      {% endif %}
-      {% if clock.has_calendar %}
-      <li>Has a calendar</li>
-      {% endif %}
-      {% if clock.has_moon_dial %}
-      <li>Has a moon dial</li>
-      {% endif %}
-      {% if clock.has_alarm %}
-      <li>Has an alarm</li>
-      {% endif %}
-      {% if clock.has_activity_other %}
-      <li>May have additional moving figures</li>
-      {% endif %}
-      {% if clock.has_tubes %}
-      <li>May have tubes</li>
-      {% endif %}
-      {% if clock.tube_count > 0 %}
-      <li>May have {{ clock.tube_count }} or more tubes </li>
-      {% endif %}
-    </ul>
-      <a class="btn btn-outline-primary" href="{% url 'clock_estimate' clock.id %}">Get Repair Estimate</a>
-    </p>
+      <div class="card-body">
+        <h5 class="card-title"><a href="{% url 'clock_update' clock.id %}">{{ clock.nickname }}</a></h5>
+        <p class="card-text">{{ clock.clock_type_fk }} clocks are usually {{ clock.footprint }} mounted and they typically
+          have a
+          train count of {{ clock.train_count }}
+          (i.e., they typically wind in {{ clock.train_count }} places), and a wind interval of
+          {{ clock.wind_interval_days }} days. It might be {{ clock.drive_type }}
+          driven and it probably has {{ clock.chime_count }} chime options and a
+          {{ clock.strike_type }} strike.
+        <h6>Common features:</h6>
+        <ul>
+          {% if clock.has_pendulum %}
+          <li>Has pendulum of some sort</li>
+          {% endif %}
+          {% if clock.has_self_adjusting_beat %}
+          <li>Has self adjusting beat</li>
+          {% endif %}
+          {% if clock.has_self_adjusting_strike %}
+          <li>Has self adjusting strike</li>
+          {% endif %}
+          {% if clock.has_second_hand %}
+          <li>Has a second hand</li>
+          {% endif %}
+          {% if clock.has_off_at_night %}
+          <li>Chime and strike can be set to "Off at Night"</li>
+          {% endif %}
+          {% if clock.has_calendar %}
+          <li>Has a calendar</li>
+          {% endif %}
+          {% if clock.has_moon_dial %}
+          <li>Has a moon dial</li>
+          {% endif %}
+          {% if clock.has_alarm %}
+          <li>Has an alarm</li>
+          {% endif %}
+          {% if clock.has_activity_other %}
+          <li>May have additional moving figures</li>
+          {% endif %}
+          {% if clock.has_tubes %}
+          <li>May have tubes</li>
+          {% endif %}
+          {% if clock.tube_count > 0 %}
+          <li>May have {{ clock.tube_count }} or more tubes </li>
+          {% endif %}
+        </ul>
+          <a class="btn btn-outline-primary" href="{% url 'clock_estimate' clock.id %}">Get Repair Estimate</a>
+        </p>
+      </div>
+    </div>
   </div>
 </div>
+{% endif %}
+
 {% endblock content %}

@@ -4,6 +4,7 @@
 {% block title %}{{ clock.title }}{% endblock title %}
 
 {% block content %}
+{% if user.is_authenticated %}
 <div class="row">
     <div class="col-sm">
         <div class="card" style="width: 18rem;">
@@ -157,5 +158,6 @@
           });
       });
 </script>
-  
+{% endif %}
+
 {% endblock content %}

@@ -1,9 +1,12 @@
 {% extends '_base.html' %}
 
-{% block title %}{{ customer.first_name }} {{ customer.last_name }}{% endblock title %}
+{% block title %}Customer{% endblock title %}
 
 {% block content %}
-  <div class="customer-detail">
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col">
+    <h4>Contact Information</h4><br>
     <h2>{{ customer.first_name }} {{ customer.last_name }}</h2>
     <p>{{ customer.address_street }}
         {% if customer.address_other %}
@@ -12,11 +15,10 @@
         <br>{{ customer.city }}, {{ customer.state }} {{ customer.zipcode }}
         <br>{{ customer.phone_number.as_national }}
     </p>
-  </div>
-  {% if not user.email_verified %}
-    <a href="{% url 'account_reset_password' %}">Verify your email...</a>
+    {% if not user.email_verified %}
+    <a href="{% url 'account_email' %}">Verify your email...</a>
   {% endif %}
-<div>
-    <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">View/Add Clocks</a>
   </div>
+</div>
+{% endif %}
 {% endblock content %}
