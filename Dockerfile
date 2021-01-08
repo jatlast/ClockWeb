@@ -30,7 +30,7 @@ RUN chmod +x /docker-entrypoint-initdb.d/postgis.sh && \
 EXPOSE 5432
 EXPOSE 8000
 EXPOSE 587
-EXPOSE 465
+
 
 # Pull base image
 FROM python:3.9

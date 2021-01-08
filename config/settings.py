@@ -199,20 +199,16 @@ ACCOUNT_UNIQUE_EMAIL = True             # New 20201221
 
 AUTH_USER_MODEL = 'accounts.CustomUser' # New 20201220
 
-#DEFAULT_FROM_EMAIL = 'admin@djangobookstore.com'    # New 20201221
-DEFAULT_FROM_EMAIL = 'admin@miclockrepair.com'    # New 20201221
+DEFAULT_FROM_EMAIL = env("EMAIL_HOST_USER_KEY", default="somerU@someDomain.com")
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # New 20201221
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # New 20201221
 EMAIL_HOST = env("EMAIL_HOST_KEY", default="smtpout.secureserver.net")
-EMAIL_HOST_USER = env("EMAIL_HOST_USER_KEY", default="admin@miclockrepair.com")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER_KEY", default="somerU@someDomain.com")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD_KEY", default="somePW")
-#EMAIL_PORT = env("EMAIL_PORT_KEY", default="586")
-#EMAIL_USE_SSL = env("EMAIL_USE_SSL_KEY", default="True")
-#EMAIL_USE_TLS = env("EMAIL_USE_TLS_KEY", default="False")
-EMAIL_PORT = 587
-EMAIL_USE_SSL = False
-EMAIL_USE_TLS = True
+EMAIL_PORT = env("EMAIL_PORT_KEY", default="587")
+#EMAIL_USE_SSL = env("EMAIL_USE_SSL_KEY", default="False")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS_KEY", default="False")
 
 MEDIA_URL = '/media/'                           # New 20201222
 MEDIA_ROOT = str(BASE_DIR.joinpath('media'))    # New 20201222
