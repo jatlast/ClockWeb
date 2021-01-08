@@ -8,7 +8,6 @@ services:
       - .:/usr/src/ClockWeb
       - static_volume:/usr/src/ClockWeb/staticfiles
       - media_volume:/usr/src/ClockWeb/media
-#      - ssl_certs:/usr/src/ClockWeb/config/nginx/certs
     networks:
       - nginx_network
       - db_network
@@ -56,10 +55,7 @@ services:
       test: "exit 0"
 
   nginx:
-#    build: ./nginx
     image: nginx:1.13
-#    image: nginx:latest
-#    image: arm64v8/nginx
     volumes:
     # Expose the local nginx conf.d dir within the docker container
       - ./config/nginx/conf.d:/etc/nginx/conf.d
@@ -69,10 +65,9 @@ services:
       - ./config/nginx/certs:/etc/nginx/ssl/certs
       - static_volume:/usr/src/ClockWeb/staticfiles
       - media_volume:/usr/src/ClockWeb/media
-#      - ssl_certs:/usr/src/ClockWeb/config/nginx/certs
     ports:
-      - 80:80
-      - 443:443
+      - 80:8000
+      - 443:8000
     depends_on:
       - djangoapp
     networks:
@@ -88,4 +83,4 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
-#  ssl_certs:
+
