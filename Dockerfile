@@ -29,6 +29,7 @@ RUN chmod +x /docker-entrypoint-initdb.d/postgis.sh && \
 # Open port 5432 so linked containers can see them
 EXPOSE 5432
 EXPOSE 8000
+EXPOSE 586
 #EXPOSE 443
 
 # Pull base image
