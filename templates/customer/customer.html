@@ -13,7 +13,10 @@
         <br>{{ customer.phone_number.as_national }}
     </p>
   </div>
-  <div>
+  {% if not user.email_verified %}
+    <a href="{% url 'account_reset_password' %}">Verify your email...</a>
+  {% endif %}
+<div>
     <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">View/Add Clocks</a>
   </div>
 {% endblock content %}
