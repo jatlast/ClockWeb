@@ -5,4 +5,12 @@
 
 {% block content %}
   <h1>Homepage</h1>
+  {% if user.is_authenticated %}
+  Are you already a <a href="{% url 'customers' %}">customer</a>?
+  <BR>
+  Have you added any of your <a href="{% url 'clocks' %}">clocks</a>?
+  {% else %}
+    To use this site you must either <a href="{% url 'account_login' %}">Log In</a> to your existing account
+    or <a href="{% url 'account_signup' %}">Create</a> a new account.
+{% endif %}
 {% endblock content %}
