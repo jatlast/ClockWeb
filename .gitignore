@@ -4,3 +4,4 @@ docker-compose-prod-pi.yml
 __pycache__/
 db.sqlite3
 miclockrepair*
+*~
