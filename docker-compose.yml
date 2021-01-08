@@ -36,8 +36,8 @@ services:
       - "DJANGO_ADMIN_URL=admin/"
 
       # Amazon's (AWS) Simple Email Service Settings
-      - "EMAIL_HOST_KEY=miclockrepair-com.mail.protection.outlook.com"
-      - "EMAIL_HOST_USER_KEY=admin@miclockrepair.com"
+      - "EMAIL_HOST_KEY=smtpout.secureserver.net"
+      - "EMAIL_HOST_USER_KEY=admin@email.com"
       - "EMAIL_HOST_PASSWORD_KEY=SomePW"
       - "EMAIL_PORT_KEY=587"
       - "EMAIL_USE_TLS_KEY=True"
