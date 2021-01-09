@@ -1,8 +1,10 @@
 {% load account %}{% user_display user as user_display %}{% load i18n %}
 {% autoescape off %}{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}
-Hello, from {{ site_name }}.
+Hello, from 
 
-You are receiving this message because {{ user_display }} used this email address to create a new {{ site_domain }} account.
+{{ site_name }}.
+
+You are receiving this message because this email address was used to create a new {{ site_domain }} account.
 
 To confirm, go to {{ activate_url }}
 {% endblocktrans %}{% endautoescape %}

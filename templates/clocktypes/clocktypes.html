@@ -11,7 +11,10 @@
     </div>
     <div class="col-3">
       {% if clocktype.image_1 %}
-      <img class="img-thumbnail" src="{{clocktype.image_1.url}}" alt="{{clocktype.clock_type}}">
+      <img class="img-thumbnail" 
+        src="{{clocktype.image_1.url}}" 
+        alt="{{clocktype.clock_type}}" 
+        onclick="window.open('{{clocktype.image_1.url}}', '_blank');"\>
       {% endif %}
       </div>
   </div>
