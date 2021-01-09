@@ -55,11 +55,17 @@
                         <li>May have {{ clock.tube_count }} or more tubes </li>
                     {% endif %}
                 </ul>
-                <a target="_blank" href="https://www.antiqueclockspriceguide.com/clocktyperesults.php?t={{ clock.clock_type }}" class="btn btn-outline-primary">Visit Antique Clock Price Guide</a>
+                {% if customer_list %}
+                <a class="btn btn-outline-primary" href="{% url 'clock_estimate' clock.id %}">Get Repair Estimate</a>
+                {% else %}
+                <hr>
+                <a href="{% url 'customer_create' %}">Address</a> required for estimates.
+                {% endif %}
                 </p>
             </div>
         </div>
     </div>
+    {% if customer_list %}
     <div class="col-sm">
         <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet' />
@@ -158,6 +164,7 @@
           });
       });
 </script>
+{% endif %}
 {% endif %}
 
 {% endblock content %}

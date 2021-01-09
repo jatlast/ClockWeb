@@ -9,15 +9,18 @@
     <!-- ({{ clock.user_fk_id }}) =? ({{ user.id }}) -->
       {% if clock.user_fk_id == user.id %}
       <div class="row align-items-center">
-        <div class="col-6">
-          <a href="{% url 'clock' clock.id %}">{{ clock.clock_type_fk }}</a>
+        <div class="col-3">
+          <a href="{% url 'clock' clock.id %}">{{ clock.nickname }}</a>
         </div>
         <div class="col-3">
           {% if clock.image_1 %}
-          <img class="img-thumbnail" src="{{clock.image_1.url}}" alt="{{clock.clock_type}}">
+          <img class="img-thumbnail" src="{{clock.image_1.url}}" alt="{{clock.nickname}}">
           {% endif %}
           </div>
-      </div>
+          <div class="col">
+            <a target="_blank" href="https://www.antiqueclockspriceguide.com/clocktyperesults.php?t={{ clock.clock_type_fk }}">Visit Antique Clock Price Guide</a>
+          </div>
+        </div>
       <hr>
       {% endif %}
     {% endfor %}
