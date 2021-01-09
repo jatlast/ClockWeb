@@ -82,7 +82,7 @@ INSTALLED_APPS = [
     'sslserver',        # New 20210101
     # for better map displays in HTML
     'floppyforms',      # New 20210101
-#    'djmoney',          # New 20210108
+    'djmoney',          # New 20210108
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4' # New 20201221

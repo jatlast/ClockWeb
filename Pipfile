@@ -17,7 +17,7 @@ phonenumbers = "*"
 django-sslserver = "*"
 django-floppyforms = "*"
 django-environ = "*"
-#django-money = "*"
+django-money = "*"
 
 [dev-packages]
 

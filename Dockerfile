@@ -31,7 +31,6 @@ EXPOSE 5432
 EXPOSE 8000
 EXPOSE 587
 
-
 # Pull base image
 FROM python:3.9
 

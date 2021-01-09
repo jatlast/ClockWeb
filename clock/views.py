@@ -283,7 +283,7 @@ class ClockRepairEstimateView(DetailView):
                         est_debug_text += 'Accepting Jobs (' + str(repairer.still_accepting_jobs) + ') and ' + str(double_round_trip_minutes) + ' <= ' + str(repairer.road_time_minutes_maximum) + ' | hours(' + str(round(est_hours,2)) + ')\n'
 
                     context['estimate_list']['hours'] = est_hours
-                    context['estimate_list']['est_hours'] = math.ceil((est_hours * float(repairer.hourly_rate)))
+                    context['estimate_list']['est_hours'] = est_hours * repairer.hourly_rate
                     context['estimate_list']['debug'] = est_debug_text
                     context['estimate_list'].push()
                     repairer_count += 1

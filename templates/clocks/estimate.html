@@ -85,8 +85,8 @@
             {% for est in estimate_list%}
             {% if est.id == repairer.id %}
                 {% if est.available %}
-                <br><h6>Estimate: ${{ est.est_hours|floatformat:2|intcomma }}</h6>
-                <!-- Estimate: {{ est.hours|floatformat:2 }} hrs * ${{ repairer.hourly_rate }} per/hr = ${{ est.est_hours|floatformat:2|intcomma }} cost. -->
+                <br><h6>Estimate: {{ est.est_hours }}</h6>
+                <!-- Estimate: {{ est.hours|floatformat:2 }} hrs * {{ repairer.hourly_rate }} per/hr = {{ est.est_hours }} cost. -->
                 <!-- Debug: {{ est.debug }} -->
                 <!-- Env: {{ est.env_dump }} -->
                 {% else %}

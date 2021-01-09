@@ -2,7 +2,7 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
-#from djmoney.models.fields import MoneyField
+from djmoney.models.fields import MoneyField
 #from django.db import models
 from django.urls import reverse
 from phonenumber_field.modelfields import PhoneNumberField
@@ -67,8 +67,8 @@ class Repairer(models.Model):
     repairs_most_quartz = models.BooleanField(blank=False, default=False)
 
     # Fields to dynamically determine pricing...
-#    hourly_rate = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=25.00, default_currency='USD')
-    hourly_rate = models.DecimalField(max_digits=5, decimal_places=2, blank=False, default=25.00)
+    hourly_rate = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=25.00, default_currency='USD')
+#    hourly_rate = models.DecimalField(max_digits=5, decimal_places=2, blank=False, default=25.00)
     road_time_minutes_included = models.PositiveSmallIntegerField(blank=False, default=15)
     road_time_minutes_maximum = models.PositiveSmallIntegerField(blank=False, default=120)
 
