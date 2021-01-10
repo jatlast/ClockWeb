@@ -27,7 +27,9 @@
     </div>  
     {% endif %}
   {% else %}
+  <h5>
     To use this site you must either <a href="{% url 'account_login' %}">Log In</a> to your existing account
     or <a href="{% url 'account_signup' %}">Sign Up</a> for a new account.
+  </h5>
 {% endif %}
 {% endblock content %}
