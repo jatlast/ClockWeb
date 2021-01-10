@@ -1,0 +1,18 @@
+{% extends '_base.html' %}
+
+{% block title %}Update Contact Information{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if form %}
+    <h1>Update your informaion</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+        {{ form.as_table }}
+        </table>
+        <input type="submit" value="Submit">
+    </form>
+    {% endif %}
+{% endif %}
+{% endblock content %}

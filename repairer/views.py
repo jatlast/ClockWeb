@@ -67,10 +67,18 @@ class RepairerCreateView(CreateView):
         latitude = form.cleaned_data['latitude']
         form.instance.user_fk = self.request.user
         form.instance.location = Point(longitude, latitude, srid=4326)
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        response.set_cookie('user_type', 'repairer', 3600 * 24 * 365 * 2) # = 63,072,000 seconds = 2 years
+#        return super().form_valid(form)
+        return response
 
 class RepairerUpdateView(UpdateView):
     model = Repairer
     fields = repairer_fields_viewable_by_everyone
     context_object_name = 'repairer_update'
     template_name = 'repairer/update.html'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        response.set_cookie('user_type', 'repairer', 3600 * 24 * 365 * 2) # = 63,072,000 seconds = 2 years
+        return response

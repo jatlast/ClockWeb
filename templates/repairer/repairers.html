@@ -1,0 +1,29 @@
+{% extends '_base.html' %}
+
+{% block title %}Customers{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if repairers.count > 0 %}
+    {% for repairer in repairers %}
+    <!-- ({{ repairer.user_fk_id }}) =? ({{ user.id }}) -->
+      {% if repairer.user_fk_id == user.id %}
+      <h2><a href="{% url 'repairer_update' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h2>
+      <p>{{ repairer.address_street }}
+          {% if repairer.address_other %}
+            {{ repairer.address_other }}
+          {% endif %}
+          <br>{{ repairer.city }}, {{ repairer.state }} {{ repairer.zipcode }}
+          <br>{{ repairer.phone_number.as_national }}
+      </p>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+  <div class="row">
+    <div class="col-sm">
+      If you would like to be listed as a repair person, please <a href="{% url 'repairer_create' %}">add your information...</a>
+    </div>
+  </div>
+  {% endif %}
+{% endif %}
+{% endblock content %}

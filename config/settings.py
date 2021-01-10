@@ -202,8 +202,11 @@ AUTH_USER_MODEL = 'accounts.CustomUser' # New 20201220
 
 DEFAULT_FROM_EMAIL = env("EMAIL_HOST_USER_KEY", default="somerU@someDomain.com")
 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # New 20201221
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # New 20201221
+if env("EMAIL_HOST_USER_KEY", default="somePW") == 'admin@email.com':
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 EMAIL_HOST = env("EMAIL_HOST_KEY", default="smtpout.secureserver.net")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER_KEY", default="someU@someDomain.com")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD_KEY", default="somePW")

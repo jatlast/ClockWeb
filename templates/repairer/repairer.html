@@ -1,0 +1,24 @@
+{% extends '_base.html' %}
+
+{% block title %}Repair Person{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col">
+    <h4>Contact Information</h4><br>
+    <h2><a href="{% url 'repairer_update' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h2>
+    <p>{{ repairer.address_street }}
+        {% if repairer.address_other %}
+        {{ repairer.address_other }}
+        {% endif %}
+        <br>{{ repairer.city }}, {{ repairer.state }} {{ repairer.zipcode }}
+        <br>{{ repairer.phone_number.as_national }}
+    </p>
+    {% if not user.email_verified %}
+    <a href="{% url 'account_email' %}">Verify your email...</a>
+  {% endif %}
+  </div>
+</div>
+{% endif %}
+{% endblock content %}

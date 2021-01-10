@@ -8,7 +8,7 @@
     {% for customer in customers %}
     <!-- ({{ customer.user_fk_id }}) =? ({{ user.id }}) -->
       {% if customer.user_fk_id == user.id %}
-      <h2>{{ customer.first_name }} {{ customer.last_name }}</h2>
+      <h2><a href="{% url 'customer_update' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a></h2>
       <p>{{ customer.address_street }}
           {% if customer.address_other %}
           {{ customer.address_other }}
@@ -17,7 +17,6 @@
           <br>{{ customer.phone_number.as_national }}
       </p>
       <div>
-        <a class="btn btn-outline-primary" href="{% url 'customer_update' customer.id %}">Edit Address</a>
         <a class="btn btn-outline-primary" href="{% url 'repairers_near_me' %}">Find Repair Person</a>
       </div>
       {% endif %}

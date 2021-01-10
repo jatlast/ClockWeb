@@ -5,15 +5,29 @@
 {% block title %}MI - Clock Repair | Home{% endblock title %}
 
 {% block content %}
-  <h1>MI - Clock Repair</h1>
-  <h5>
   {% if user.is_authenticated %}
-  Are you already a <a href="{% url 'customers' %}">customer</a>?
-  <BR>
-  Have you added any of your <a href="{% url 'clocks' %}">clocks</a>?
+    {% if request.COOKIES.user_type == 'customer' %}
+    <div class="col">
+      <div class="row"><h2>Review your customer information</h2></div>  
+      <div class="row"><h4><a href="{% url 'customers' %}">Address</a></h4></div>
+    </div>
+    {% elif request.COOKIES.user_type == 'repairer' %}
+    <div class="col">
+      <div class="row"><h2>Review your repairer information</h2></div>  
+      <div class="row"><h4><a href="{% url 'repairers' %}">Address</a></h4></div>
+    </div>
+    {% else %}
+    <div class="row">
+      <div class="col"><h2>Do you want a clock repaired?</h2></div>
+      <div class="col"><h2>Are you a repair person?</h2></div>
+    </div>
+    <div class="row">
+      <div class="col"><h4><a href="{% url 'customer_create' %}">Becomer A Customer</a></h4></div>
+      <div class="col"><h4><a href="{% url 'repairer_create' %}">Become A Repair Person</a></h4></div>
+    </div>  
+    {% endif %}
   {% else %}
     To use this site you must either <a href="{% url 'account_login' %}">Log In</a> to your existing account
     or <a href="{% url 'account_signup' %}">Sign Up</a> for a new account.
-  </h5>
 {% endif %}
 {% endblock content %}

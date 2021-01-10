@@ -7,6 +7,6 @@ from .views import RepairerListView, RepairerDetailView, RepairerCreateView, Rep
 urlpatterns = [
     path('', RepairerListView.as_view(), name='repairers'),
     path('<uuid:pk>/', RepairerDetailView.as_view(), name='repairer'),
-    path('<uuid:pk>/update/', RepairerUpdateView.as_view(), name='update'),
-    path('create/', RepairerCreateView.as_view(), name='create'),
+    path('<uuid:pk>/update/', RepairerUpdateView.as_view(), name='repairer_update'),
+    path('create/', RepairerCreateView.as_view(), name='repairer_create'),
 ]
