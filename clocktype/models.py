@@ -186,11 +186,11 @@ class Clocktype(models.Model):
     # choices_are_locked - Yes/No | 1/0 (Customer can only change pictures when True)
     choices_are_locked = models.BooleanField(blank=False, default=False)
     # image_# - Five associated pictures
-    image_1 = models.ImageField(upload_to='pics/', blank=True)
-    image_2 = models.ImageField(upload_to='pics/', blank=True)
-    image_3 = models.ImageField(upload_to='pics/', blank=True)
-    image_4 = models.ImageField(upload_to='pics/', blank=True)
-    image_5 = models.ImageField(upload_to='pics/', blank=True)
+    image_1 = models.ImageField(upload_to='clocks/types/', blank=True)
+    image_2 = models.ImageField(upload_to='clocks/types/', blank=True)
+    image_3 = models.ImageField(upload_to='clocks/types/', blank=True)
+    image_4 = models.ImageField(upload_to='clocks/types/', blank=True)
+    image_5 = models.ImageField(upload_to='clocks/types/', blank=True)
 
 
     class Meta:

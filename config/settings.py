@@ -42,7 +42,7 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 #DEBUG = True
 
-ALLOWED_HOSTS = ['miclockrepair.com', 'localhost','127.0.0.1', '10.16.0.114', '10.16.0.110']
+ALLOWED_HOSTS = ['miclockrepair.com', 'localhost','127.0.0.1', '10.16.0.101', '10.16.0.110']
 
 # Application definition
 
@@ -181,6 +181,9 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
+MEDIA_URL = '/media/'                           # New 20201222
+MEDIA_ROOT = str(BASE_DIR.joinpath('media'))    # New 20201222
+
 # django-allauth config             # New 20201221
 LOGIN_REDIRECT_URL = 'home'         # New 20201220
 ACCOUNT_LOGOUT_REDIRECT = 'home'    # New 20201221
@@ -214,9 +217,6 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD_KEY", default="somePW")
 EMAIL_PORT = env("EMAIL_PORT_KEY", default="587")
 #EMAIL_USE_SSL = env("EMAIL_USE_SSL_KEY", default="False")
 EMAIL_USE_TLS = env("EMAIL_USE_TLS_KEY", default="False")
-
-MEDIA_URL = '/media/'                           # New 20201222
-MEDIA_ROOT = str(BASE_DIR.joinpath('media'))    # New 20201222
 
 # django-debug-toolbar
 import socket

@@ -76,11 +76,11 @@ class Repairer(models.Model):
 
     personal_description = models.TextField(blank=False, default='Tell potential customers about yourself...')
     # image_# - Five associated pictures
-    image_1 = models.ImageField(upload_to='pics/', blank=True)
-    image_2 = models.ImageField(upload_to='pics/', blank=True)
-    image_3 = models.ImageField(upload_to='pics/', blank=True)
-    image_4 = models.ImageField(upload_to='pics/', blank=True)
-    image_5 = models.ImageField(upload_to='pics/', blank=True)
+    image_1 = models.ImageField(upload_to='repairers/', blank=True)
+    image_2 = models.ImageField(upload_to='repairers/', blank=True)
+    image_3 = models.ImageField(upload_to='repairers/', blank=True)
+    image_4 = models.ImageField(upload_to='repairers/', blank=True)
+    image_5 = models.ImageField(upload_to='repairers/', blank=True)
 
     # commission_percentage = models.DecimalField(max_digits=3, decimal_places=2, blank=False, default=1.00)
     # full_or_part_time = models.CharField(blank=False, max_length=8, choices=FULL_OR_PART_TIME_CHOICES, default='Full')

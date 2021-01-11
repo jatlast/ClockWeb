@@ -25,7 +25,7 @@
        <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+  <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
   <script>
     var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
       var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
@@ -48,6 +48,7 @@
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="{% url 'customers' %}">Address</a></li>
           <li><a class="dropdown-item" href="{% url 'clocks' %}">Clocks</a></li>
+          <li><a class="dropdown-item" href="{% url 'workorders' %}">Workorders</a></li>
           <li><a class="dropdown-item" href="{% url 'account_email' %}">Email</a></li>
         </ul>
       </li>

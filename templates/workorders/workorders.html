@@ -1,0 +1,39 @@
+{% extends '_base.html' %}
+
+{% block title %}Workorders{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if workorders.count > 0 %}
+    {% for workorder in workorders %}
+    <!-- ({{ workorder.user_fk_id }}) =? ({{ user.id }}) -->
+      {% if workorder.user_fk_id == user.id %}
+      <div class="row align-items-center">
+        <div class="col">
+          <a href="{% url 'workorder' workorder.id %}">{{ workorder.id }}</a>
+        </div>
+        <div class="col">
+            {{ workorder.date_created }}
+          </div>
+          <div class="col">
+            {{ workorder.repair_status }}
+          </div>
+          <div class="col">
+            {{ workorder.dynamic_estimate }}
+          </div>
+        </div>
+      <hr>
+      {% endif %}
+    {% endfor %}
+{% else %}
+  <div class="row">
+    <div class="col-sm">
+      Please <a href="{% url 'clocks' %}">select one of your clocks</a>
+    </div>
+  </div>
+{% endif %}
+{% else %}
+  <a class="p-2 text-dark" href="{% url 'account_login' %}">Log In</a>
+  <a class="btn btn-outline-primary" href="{% url 'account_signup' %}">Sign Up</a>
+{% endif %}
+{% endblock content %}

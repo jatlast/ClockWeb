@@ -95,8 +95,7 @@ class Workorder(models.Model):
 #        return "%s %s" % (self.clock_type, self.footprint)
 
     def get_absolute_url(self):
-        return reverse('workorders', args=[str(self.id)])
-
+        return reverse('workorder', args=[str(self.id)])
 
 class Addons(models.Model):
     ADDON_TYPE_CHOICES = [
@@ -137,8 +136,8 @@ class Addons(models.Model):
     override_part_cost_multiple = models.BooleanField(blank=True, default=False)
 
     # image_# - Five associated pictures
-    image_1 = models.ImageField(upload_to='pics/', blank=True)
-    image_2 = models.ImageField(upload_to='pics/', blank=True)
-    image_3 = models.ImageField(upload_to='pics/', blank=True)
-    image_4 = models.ImageField(upload_to='pics/', blank=True)
-    image_5 = models.ImageField(upload_to='pics/', blank=True)
+    image_1 = models.ImageField(upload_to='workorders/addons/', blank=True)
+    image_2 = models.ImageField(upload_to='workorders/addons/', blank=True)
+    image_3 = models.ImageField(upload_to='workorders/addons/', blank=True)
+    image_4 = models.ImageField(upload_to='workorders/addons/', blank=True)
+    image_5 = models.ImageField(upload_to='workorders/addons/', blank=True)

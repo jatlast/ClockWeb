@@ -81,11 +81,11 @@ class Clock(models.Model):
     # choices_are_locked - Yes/No | 1/0 (Customer can only change pictures when True)
     choices_are_locked = models.BooleanField(blank=False, default=False)
     # image_# - Five associated pictures
-    image_1 = models.ImageField(upload_to='pics/', blank=True)
-    image_2 = models.ImageField(upload_to='pics/', blank=True)
-    image_3 = models.ImageField(upload_to='pics/', blank=True)
-    image_4 = models.ImageField(upload_to='pics/', blank=True)
-    image_5 = models.ImageField(upload_to='pics/', blank=True)
+    image_1 = models.ImageField(upload_to='clocks/', blank=True)
+    image_2 = models.ImageField(upload_to='clocks/', blank=True)
+    image_3 = models.ImageField(upload_to='clocks/', blank=True)
+    image_4 = models.ImageField(upload_to='clocks/', blank=True)
+    image_5 = models.ImageField(upload_to='clocks/', blank=True)
 
 
     class Meta:
@@ -128,8 +128,10 @@ class Clock(models.Model):
 #   SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name = 'clock_clock';
 
 # Reset the image url from 'clock_pics/' to 'pics/'
-# update clocktype_clocktype set image_1 = replace(image_1, 'clock_pics', 'pics') where image_1 like '%_pics/%';
-# update clock_clock set image_1 = replace(image_1, 'clock_pics', 'pics') where image_1 like '%_pics/%';
+#   select image_1 from clocktype_clocktype  where image_1 like '%pics/%';
+#       update clocktype_clocktype set image_1 = replace(image_1, 'pics', 'clocks/types') where image_1 like '%pics/%';
+#   select image_1 from clock_clock  where image_1 like '%pics/%';
+#       update clock_clock set image_1 = replace(image_1, 'pics', 'clocks') where image_1 like '%pics/%';
 
 # Docker Commands...
 #   List volumes:
