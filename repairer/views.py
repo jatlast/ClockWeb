@@ -34,6 +34,12 @@ repairer_fields_viewable_by_everyone = [
         'road_time_minutes_included',
         'road_time_minutes_maximum',
         'multiple_per_part_cost',
+        'personal_description',
+        'image_1',
+        'image_2',
+        'image_3',
+        'image_4',
+        'image_5',
     ]
 
 class RepairerListView(ListView):

@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'clocktype',# New 20201224
     'clock',    # New 20201224
     'repairer', # New 20201231
+    'workorder',# New 20210110
 
     # Third-party
     'crispy_forms',     # New 20201221

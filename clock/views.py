@@ -144,8 +144,8 @@ class ClockRepairEstimateView(DetailView):
 
                 repairer_count = 0
                 for repairer in context['repairer_list']:
-                    context['estimate_list']['id'] = repairer.id
-                    context['estimate_list']['clock_id'] = self.object.clock_type_fk
+                    context['estimate_list']['repairer_id'] = repairer.id
+                    context['estimate_list']['clock_pk'] = self.object.pk
                     # Begin each repairer as "available" to field this estimate.
                     context['estimate_list']['available'] = True
 
@@ -282,8 +282,10 @@ class ClockRepairEstimateView(DetailView):
                         context['estimate_list']['available'] = False
                         est_debug_text += 'Accepting Jobs (' + str(repairer.still_accepting_jobs) + ') and ' + str(double_round_trip_minutes) + ' <= ' + str(repairer.road_time_minutes_maximum) + ' | hours(' + str(round(est_hours,2)) + ')\n'
 
-                    context['estimate_list']['hours'] = est_hours
-                    context['estimate_list']['est_hours'] = est_hours * repairer.hourly_rate
+                    context['estimate_list']['distance_from_repairer'] = repairer.distance.mi
+                    context['estimate_list']['repairer_hourly_rate'] = repairer.hourly_rate
+                    context['estimate_list']['dynamic_estimate_hours'] = est_hours
+                    context['estimate_list']['dynamic_estimate'] = est_hours * repairer.hourly_rate
                     context['estimate_list']['debug'] = est_debug_text
                     context['estimate_list'].push()
                     repairer_count += 1

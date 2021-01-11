@@ -1,0 +1,88 @@
+{% extends '_base.html' %}
+
+{% block title %} Create Workorder {% endblock title %}
+
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col">
+    <h4>Review & Submit Work Order:</h4><br>
+        <form action="" method="post">
+      {% csrf_token %}
+
+      <!-- Begin Hidden Fields -->
+      <!-- manually entered -->
+      <input type="hidden" id="repairer_hourly_rate_0" name="repairer_hourly_rate_0" value={{ form_variables.repairer_hourly_rate_0 }}>
+      <input type="hidden" id="repairer_hourly_rate_1" name="repairer_hourly_rate_1" value="{{ form_variables.repairer_hourly_rate_1 }}">
+      <input type="hidden" id="dynamic_estimate_0" name="dynamic_estimate_0" value={{ form_variables.dynamic_estimate_0 }}>
+      <input type="hidden" id="dynamic_estimate_1" name="dynamic_estimate_1" value="{{ form_variables.dynamic_estimate_1 }}">
+      <!-- using django's as_hitten function -->
+      {{ form.clock_fk.as_hidden }}
+      {{ form.repairer_fk.as_hidden }}
+      {{ form.distance_from_repairer.as_hidden }}
+      {{ form.repair_status.as_hidden }}
+      {{ form.dynamic_estimate_hours.as_hidden }}
+      <!-- End Hidden Fields -->
+
+      {% if form.name.errors %}
+        <ul>
+        {% for error in form.name.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+      {% endif %}
+
+  {% if form.non_field_errors %}
+<ul>
+    {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+  <table border="1">
+    {% for field in form.visible_fields %}
+        {% if field.name == 'repair_type' or field.name == 'repair_description' %}
+        <tr>
+            <th>{{ field.label_tag }}</th>
+            <td>
+            {% if field.errors %}
+                <ul>
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {{ field }}
+            {% if field.help_text %}
+                {{ field.help_text }}
+            {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <th>{{ field.label_tag }}</th>
+            <td>
+            {% if field.errors %}
+                <ul>
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <!-- {{ field }} -->
+            {% if field.help_text %}
+                {{ field.help_text }}
+            {% endif %}
+            </td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+  </table>
+    <input type="submit" value="Submit">
+    </form>  
+</div>
+</div>
+
+{% endif %}
+{% endblock content %}

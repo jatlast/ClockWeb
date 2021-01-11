@@ -83,10 +83,26 @@
             <br>{{ repairer.phone_number.as_national }}
             <br>{{ repairer.first_name }} has {{ repairer.experience_in_years }} years of experience.
             {% for est in estimate_list%}
-            {% if est.id == repairer.id %}
+            {% if est.repairer_id == repairer.id %}
                 {% if est.available %}
-                <br><h6>Estimate: {{ est.est_hours }}</h6>
-                <!-- Estimate: {{ est.hours|floatformat:2 }} hrs * {{ repairer.hourly_rate }} per/hr = {{ est.est_hours }} cost. -->
+                <br><h6>Estimate: {{ est.dynamic_estimate }}</h6>
+                <form action="/workorders/add/" method="post">
+                    {% csrf_token %}
+                    <!-- fields named as used by Django -->
+                    <input type="hidden" id="clock_fk" name="clock_fk" value="{{ est.clock_pk }}">
+                    <input type="hidden" id="repairer_fk" name="repairer_fk" value="{{ est.repairer_id }}">
+                    <input type="hidden" id="repair_type" name="repair_type" value="Clean & Overhaul">
+                    <input type="hidden" id="repair_status" name="repair_status" value="Submitted">
+                    <input type="hidden" id="distance_from_repairer" name="distance_from_repairer" value="{{ est.distance_from_repairer|floatformat:2 }}">
+                    <input type="hidden" id="repairer_hourly_rate_0" name="repairer_hourly_rate_0" value={{ est.repairer_hourly_rate.amount|floatformat:2 }}>
+                    <input type="hidden" id="repairer_hourly_rate_1" name="repairer_hourly_rate_1" value="{{ est.repairer_hourly_rate.currency }}">
+                    <input type="hidden" id="dynamic_estimate_0" name="dynamic_estimate_0" value={{ est.dynamic_estimate.amount|floatformat:2 }}>
+                    <input type="hidden" id="dynamic_estimate_1" name="dynamic_estimate_1" value="{{ est.dynamic_estimate.currency }}">
+                    <input type="hidden" id="dynamic_estimate_hours" name="dynamic_estimate_hours" value="{{ est.dynamic_estimate_hours|floatformat:2 }}">
+                    <!-- django-money fields passed with different names to rebuild the correct hidden fields -->
+                    <input type="submit" value="Create Work Order">
+                </form>
+                <!-- Estimate: {{ est.hours|floatformat:2 }} hrs * {{ repairer.hourly_rate }} per/hr = {{ est.dynamic_estimate }} cost. -->
                 <!-- Debug: {{ est.debug }} -->
                 <!-- Env: {{ est.env_dump }} -->
                 {% else %}
