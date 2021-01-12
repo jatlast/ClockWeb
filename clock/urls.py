@@ -1,9 +1,11 @@
 from django.urls import path
-from .views import ClockListView, ClockDetailView, ClockCreateView, ClockUpdateView, ClockRepairEstimateView
+from .views import ClockListView, ClockDetailView, ClockCreateView, ClockUpdateView, ClockRepairEstimateView, ClocktypesListView
 
 urlpatterns = [
     # List
     path('', ClockListView.as_view(), name='clocks'),
+    path('clocktypes/', ClocktypesListView.as_view(), name='clocktypes'),
+
     # Details
     path('<int:pk>/', ClockDetailView.as_view(), name='clock'),
     # Create

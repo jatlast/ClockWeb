@@ -1,6 +1,6 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView #, DeleteView
 from django.contrib.gis.db.models.functions import Distance
-from .models import Clock
+from .models import Clock, Clocktypes
 from customer.models import Customer
 from repairer.models import Repairer
 from django.template import Context
@@ -11,6 +11,8 @@ clock_fields_viewable_by_everyone = [
         'nickname',
         'clock_type_fk',
         'footprint',
+        'dial_diameter_centimeters',
+        'has_glass_over_face',
         'train_count',
         'wind_interval_days',
         'drive_type',
@@ -27,9 +29,11 @@ clock_fields_viewable_by_everyone = [
         'has_alarm',
         'has_music_box',
         'has_activity_other',
+        'has_light',
+        'battery_count',
         'has_tubes',
         'tube_count',
-        'choices_are_locked',
+#        'choices_are_locked',
         'image_1',
         'image_2',
         'image_3',
@@ -49,6 +53,22 @@ class ClockListView(ListView):
             return Clock.objects.filter(user_fk_id__exact=self.request.user)
         except:
             return None
+
+class ClocktypesListView(ListView):
+    model = Clock
+    context_object_name = 'clocktypes'
+    template_name = 'clocks/clocktypes.html'
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return None
+        else:
+            context = super(ClocktypesListView, self).get_context_data(**kwargs)
+            context['debug'] = Context({"foo": "bar"})
+            context['clocktypes_list'] = Context({"foo": "bar"})
+            context['clocktypes_list'] = Clocktypes.objects.all()
+            return context
+
 
 class ClockDetailView(DetailView):
     model = Clock

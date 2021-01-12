@@ -63,10 +63,10 @@
           {% endif %}
         </ul>
         {% if customer_list %}
-        <a class="btn btn-outline-primary" href="{% url 'clock_estimate' clock.id %}">Get Repair Estimate</a>
+        <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Get Repair Estimate</a>
         {% else %}
         <hr>
-        <a href="{% url 'customer_create' %}">Address</a> required for estimates.
+        <a href="{% url 'customers' %}">Address</a> required for estimates.
         {% endif %}
         </p>
       </div>

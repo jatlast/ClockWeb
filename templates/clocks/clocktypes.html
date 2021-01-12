@@ -1,0 +1,59 @@
+{% extends '_base.html' %}
+
+{% block title %}Clocktypes{% endblock title %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+  {% if clocktypes_list %}
+    {% for clocktype in clocktypes_list %}
+    <form action="{% url 'clock_add' %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- Begin Hidden Fields -->
+      <!-- manually entered -->
+      <input type='hidden' id='clock_type_fk' name='clock_type_fk' value='{{ clocktype.id }}'>
+      <input type='hidden' id='footprint' name='footprint' value='{{ clocktype.footprint }}'>
+      <input type='hidden' id='dial_diameter_centimeters' name='dial_diameter_centimeters' value='{{ clocktype.dial_diameter_centimeters }}'>
+      <input type='hidden' id='has_glass_over_face' name='has_glass_over_face' value='{{ clocktype.has_glass_over_face }}'>
+      <input type='hidden' id='train_count' name='train_count' value='{{ clocktype.train_count }}'>
+      <input type='hidden' id='wind_interval_days' name='wind_interval_days' value='{{ clocktype.wind_interval_days }}'>
+      <input type='hidden' id='drive_type' name='drive_type' value='{{ clocktype.drive_type }}'>
+      <input type='hidden' id='gear_material' name='gear_material' value='{{ clocktype.gear_material }}'>
+      <input type='hidden' id='chime_count' name='chime_count' value='{{ clocktype.chime_count }}'>
+      <input type='hidden' id='strike_type' name='strike_type' value='{{ clocktype.strike_type }}'>
+      <input type='hidden' id='has_pendulum' name='has_pendulum' value='{{ clocktype.has_pendulum }}'>
+      <input type='hidden' id='has_self_adjusting_beat' name='has_self_adjusting_beat' value='{{ clocktype.has_self_adjusting_beat }}'>
+      <input type='hidden' id='has_self_adjusting_strike' name='has_self_adjusting_strike' value='{{ clocktype.has_self_adjusting_strike }}'>
+      <input type='hidden' id='has_second_hand' name='has_second_hand' value='{{ clocktype.has_second_hand }}'>
+      <input type='hidden' id='has_off_at_night' name='has_off_at_night' value='{{ clocktype.has_off_at_night }}'>
+      <input type='hidden' id='has_calendar' name='has_calendar' value='{{ clocktype.has_calendar }}'>
+      <input type='hidden' id='has_moon_dial' name='has_moon_dial' value='{{ clocktype.has_moon_dial }}'>
+      <input type='hidden' id='has_alarm' name='has_alarm' value='{{ clocktype.has_alarm }}'>
+      <input type='hidden' id='has_music_box' name='has_music_box' value='{{ clocktype.has_music_box }}'>
+      <input type='hidden' id='has_activity_other' name='has_activity_other' value='{{ clocktype.has_activity_other }}'>
+      <input type='hidden' id='has_light' name='has_light' value='{{ clocktype.has_light }}'>
+      <input type='hidden' id='battery_count' name='battery_count' value='{{ clocktype.battery_count }}'>
+      <input type='hidden' id='has_tubes' name='has_tubes' value='{{ clocktype.has_tubes }}'>
+      <input type='hidden' id='tube_count' name='tube_count' value='{{ clocktype.tube_count }}'>
+      <!-- using django's as_hitten function -->
+      <div class="row align-items-center">
+        <div class="col">
+          <input type="submit" value="Select this clock type">
+        </div>
+        <div class="col">
+          {{ clocktype.clock_type }}
+        </div>
+        <div class="col">
+          {% if clocktype.image_1 %}
+          <img class="img-thumbnail" 
+            src="{{clocktype.image_1.url}}" 
+            alt="{{clocktype.clock_type}}" 
+            onclick="window.open('{{clocktype.image_1.url}}', '_blank');"\>
+          {% endif %}
+          </div>
+      </div>
+      <hr>
+      </form>
+      {% endfor %}
+    {% endif %}
+{% endif %}
+{% endblock content %}

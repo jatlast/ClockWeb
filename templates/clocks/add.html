@@ -1,21 +1,18 @@
 {% extends '_base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}Add A Clock{% endblock title %}
 
 {% block content %}
 {% if user.is_authenticated %}
-<div class="row">
-  <div class="col">
+  <div class="col-5">
     <h4>Add Your Clock</h4><br>
     <form action="" method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      <table>
-        {{ form.as_table }}
-      </table>
-      <input type="submit" value="Submit">
+      {{ form|crispy }}
+      <br><input type="submit" value="Click here to add this clock">
   </form>
-    </div>
 </div>
-{% endif %}
+  {% endif %}
 
 {% endblock content %}

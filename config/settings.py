@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     'pages',    # New 20201220
 #    'books',   # New 20201221 | Removed 20201228
     'customer', # New 20201223
-    'clocktype',# New 20201224
+#    'clocktype',# New 20201224 | Removed 20210111
     'clock',    # New 20201224
     'repairer', # New 20201231
     'workorder',# New 20210110

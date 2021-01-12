@@ -39,7 +39,7 @@ urlpatterns = [
     path('', include('pages.urls')),
 #    path('books/', include('books.urls')),
     path('customers/', include('customer.urls')),
-    path('clocktypes/', include('clocktype.urls')),
+#    path('clocktypes/', include('clocktype.urls')),
     path('clocks/', include('clock.urls')),
     path('repairers/', include('repairer.urls')),
     path('workorders/', include('workorder.urls')),

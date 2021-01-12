@@ -25,12 +25,12 @@
       {% endif %}
     {% endfor %}
     <div>
-      <a class="btn btn-outline-primary" href="{% url 'clock_add' %}">Add Clock</a>
+      <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Add Clock</a>
     </div>
 {% else %}
   <div class="row">
     <div class="col-sm">
-      Please <a href="{% url 'clock_add' %}">add your clock's information...</a>
+      Please <a href="{% url 'clocktypes' %}">add your clock's information...</a>
     </div>
   </div>
 {% endif %}
