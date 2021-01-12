@@ -27,6 +27,8 @@ class Clocktypes(models.Model):
         ('Column', 'Column'),
         ('Crystal Regulator', 'Crystal Regulator'),
         ('Cuckoo', 'Cuckoo'),
+        ('Cuckoo-Music Box', 'Cuckoo w/ Music Box'),
+        ('Cuckoo-Activity', 'Cuckoo w/ Activity'),
         ('Dial-Quartz', 'Dial-Quartz'),
         ('Dial-Mechanical', 'Dial-Mechanical'),
         ('School House-Quartz', 'School House-Quartz'),

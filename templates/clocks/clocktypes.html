@@ -36,20 +36,39 @@
       <input type='hidden' id='tube_count' name='tube_count' value='{{ clocktype.tube_count }}'>
       <!-- using django's as_hitten function -->
       <div class="row align-items-center">
-        <div class="col">
-          <input type="submit" value="Select this clock type">
-        </div>
-        <div class="col">
-          {{ clocktype.clock_type }}
+        <div class="col-3">
+          <input type="submit" value="{{ clocktype.clock_type }}">
         </div>
         <div class="col">
           {% if clocktype.image_1 %}
-          <img class="img-thumbnail" 
-            src="{{clocktype.image_1.url}}" 
-            alt="{{clocktype.clock_type}}" 
+          <img class="img-thumbnail" src="{{clocktype.image_1.url}}" alt="{{clocktype.clock_type}}" 
             onclick="window.open('{{clocktype.image_1.url}}', '_blank');"\>
           {% endif %}
-          </div>
+        </div>
+        <div class="col">
+          {% if clocktype.image_2 %}
+          <img class="img-thumbnail" src="{{clocktype.image_2.url}}" alt="{{clocktype.clock_type}}" 
+            onclick="window.open('{{clocktype.image_2.url}}', '_blank');"\>
+          {% endif %}
+        </div>
+        <div class="col">
+          {% if clocktype.image_3 %}
+          <img class="img-thumbnail" src="{{clocktype.image_3.url}}" alt="{{clocktype.clock_type}}" 
+            onclick="window.open('{{clocktype.image_3.url}}', '_blank');"\>
+          {% endif %}
+        </div>
+        <div class="col">
+          {% if clocktype.image_4 %}
+          <img class="img-thumbnail" src="{{clocktype.image_4.url}}" alt="{{clocktype.clock_type}}" 
+            onclick="window.open('{{clocktype.image_4.url}}', '_blank');"\>
+          {% endif %}
+        </div>
+        <div class="col">
+          {% if clocktype.image_5 %}
+          <img class="img-thumbnail" src="{{clocktype.image_5.url}}" alt="{{clocktype.clock_type}}" 
+            onclick="window.open('{{clocktype.image_5.url}}', '_blank');"\>
+          {% endif %}
+        </div>
       </div>
       <hr>
       </form>
