@@ -38,6 +38,8 @@ class Clocktypes(models.Model):
         ('Kitchen', 'Kitchen'),
         ('Lantern', 'Lantern'),
         ('Grandfather/Grandmother', 'Grandfather/Grandmother'),
+        ('Grandfather/Grandmother-Chains', 'Grandfather/Grandmother-Chains'),
+        ('Grandfather/Grandmother-Cables', 'Grandfather/Grandmother-Cables'),
         ('Grandfather/Grandmother-Tubular', 'Grandfather/Grandmother-Tubular'),
         ('Lyre', 'Lyre'),
         ('Mission', 'Mission'),
