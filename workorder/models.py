@@ -64,6 +64,7 @@ class Workorder(models.Model):
     repairer_hourly_rate = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=0.00, default_currency='USD')
 
     date_created = models.DateTimeField(default=datetime.now, editable=False)
+    date_last_updated = models.DateTimeField(default=datetime.now, editable=False)
 
     # General Work Order information fields...
     repair_type = models.CharField(blank=False, max_length=32, choices=REPAIR_TYPE_CHOICES)
