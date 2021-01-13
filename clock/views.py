@@ -66,7 +66,7 @@ class ClocktypesListView(ListView):
             context = super(ClocktypesListView, self).get_context_data(**kwargs)
             context['debug'] = Context({"foo": "bar"})
             context['clocktypes_list'] = Context({"foo": "bar"})
-            context['clocktypes_list'] = Clocktypes.objects.all()
+            context['clocktypes_list'] = Clocktypes.objects.all().order_by('clock_type')
             return context
 
 
@@ -134,7 +134,7 @@ class ClockRepairEstimateView(DetailView):
                     'Crystal Regulator' : 3.50,
                     'Cuckoo' : 2.5,
                     'Dial' : 1.00,
-                    'Drop Trunk/School House' : 1.25,
+                    'Drop Trunk/Schoolhouse' : 1.25,
                     'Figural' : 1.00,
                     'Garnitures' : 2.25,
                     'Gothic' : 1.50,
@@ -143,6 +143,7 @@ class ClockRepairEstimateView(DetailView):
                     'Longcase/Grandfather' : 7.25,
                     'Lyre' : 3.50,
                     'Mission' : 1.50,
+                    'Mantel' : 1.50,
                     'Mystery' : 1.25,
                     'Novelty' : 1.00,
                     'Ogee' : 2.50,
@@ -150,7 +151,7 @@ class ClockRepairEstimateView(DetailView):
                     'Portico' : 3.00,
                     'Pillar & Scroll' : 2.00,
                     'Plato' : 2.50,
-                    'Shelf' : 2.00,
+#                    'Shelf' : 2.00,
                     "Ship's" : 4.00,
                     'Skeleton' : 2.00,
                     'Steeple' : 2.00,
