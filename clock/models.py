@@ -3,65 +3,47 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 from datetime import datetime
-#from customer.models import Customer
-#from clocktype.models import Clocktype
 
 class Clocktypes(models.Model):
     CLOCK_TYPE_CHOICES=[
-        ('Advertising-Quartz', 'Advertising-Quartz'),
-        ('Advertising-Electric', 'Advertising-Electric'),
-        ('Advertising-Mechanical', 'Advertising-Mechanical'),
+        ('Advertising', 'Advertising'),
         ('Animated', 'Animated'),
-        ('Anniversary-Quartz', 'Anniversary-Quartz'),
-        ('Anniversary-Mechanical', 'Anniversary-Mechanical'),
+        ('Anniversary', 'Anniversary'),
         ('Atmos', 'Atmos'),
         ('Balloon', 'Balloon'),
         ('Banjo', 'Banjo'),
         ('Beehive', 'Beehive'),
         ('Black Mantel', 'Black Mantel'),
-        ('Blinking Eye-Quartz', 'Blinking Eye-Quartz'),
-        ('Blinking Eye-Mechanical', 'Blinking Eye-Mechanical'),
+        ('Blinking Eye', 'Blinking Eye'),
         ('Calendar', 'Calendar'),
         ('Carriage', 'Carriage'),
         ('China/Porcelain', 'China/Porcelain'),
         ('Column', 'Column'),
         ('Crystal Regulator', 'Crystal Regulator'),
         ('Cuckoo', 'Cuckoo'),
-        ('Cuckoo-Music Box', 'Cuckoo w/ Music Box'),
-        ('Cuckoo-Activity', 'Cuckoo w/ Activity'),
         ('Desk', 'Desk'),
-        ('Dial-Quartz', 'Dial-Quartz'),
-        ('Dial-Mechanical', 'Dial-Mechanical'),
-        ('School House-Quartz', 'School House-Quartz'),
-        ('School House-Electric', 'School House-Electric'),
-        ('School House-Mechanical', 'School House-Mechanical'),
+        ('Dial', 'Dial'),
+        ('Drop Dial/Schoolhouse', 'Drop Dial/Schoolhouse'),
         ('Figural', 'Figural'),
         ('Garnitures', 'Garnitures'),
         ('Gothic', 'Gothic'),
         ('Kitchen', 'Kitchen'),
         ('Lantern', 'Lantern'),
-        ('Grandfather/Grandmother', 'Grandfather/Grandmother'),
-        ('Grandfather/Grandmother-Chains', 'Grandfather/Grandmother-Chains'),
-        ('Grandfather/Grandmother-Cables', 'Grandfather/Grandmother-Cables'),
-        ('Grandfather/Grandmother-Tubular', 'Grandfather/Grandmother-Tubular'),
+        ('Longcase/Grandfather', 'Grandfather/Grandmother'),
         ('Lyre', 'Lyre'),
         ('Mantel', 'Mantel'),
         ('Mission', 'Mission'),
         ('Mystery', 'Mystery'),
+        ('Novelty', 'Novelty'),
         ('Novelty-Quartz', 'Novelty-Quartz'),
         ('Novelty-Electric', 'Novelty-Electric'),
         ('Novelty-Mechanical', 'Novelty-Mechanical'),
         ('Ogee', 'Ogee'),
-        ('Picture-Quartz', 'Picture-Quartz'),
-        ('Picture-Electric', 'Picture-Electric'),
-        ('Picture-Mechanical', 'Picture-Mechanical'),
+        ('Picture', 'Picture'),
         ('Portico', 'Portico'),
         ('Pillar & Scroll', 'Pillar & Scroll'),
         ('Plato', 'Plato'),
-        ('Shelf', 'Shelf'),
-        ('Shelf-Quartz', 'Shelf-Quartz'),
-        ('Shelf-Electric', 'Shelf-Electric'),
-        ('Shelf-Mechanical', 'Shelf-Mechanical'),
+#        ('Shelf', 'Shelf'),
         ("Ship's", "Ship's"),
         ('Skeleton', 'Skeleton'),
         ('Steeple', 'Steeple'),
@@ -71,15 +53,12 @@ class Clocktypes(models.Model):
         ('Vienna Regulator', 'Vienna Regulator'),
         ('Wag on the Wall', 'Wag on the Wall'),
         ('Wall', 'Wall'),
-        ('Wall-Quartz', 'Wall-Quartz'),
-        ('Wall-Electric', 'Wall-Electric'),
-        ('Wall-Mechanical', 'Wall-Mechanical'),
     ]
 
     FOOTPRINT_CHOICES = [
         ('Desktop','Desktop'),
         ('Floor','Floor'),
-        ('Mantle','Mantle'),
+        ('Mantel','Mantel'),
         ('Wall','Wall'),
     ]
 
@@ -144,6 +123,7 @@ class Clocktypes(models.Model):
 
     TUBE_COUNT_CHOICES = [
         (0,'Zero'),
+        (4,'Four Tubes'),
         (5,'Five Tubes'),
         (9,'Nine Tubes'),
     ]
@@ -183,6 +163,8 @@ class Clocktypes(models.Model):
     chime_count = models.PositiveSmallIntegerField(blank=False, choices=CHIME_COUNT_CHOICES, default=3)
     # strike_type - Ships Bell, Bim-Bam, Hourly Note, Hourly Chord
     strike_type = models.CharField(blank=False, max_length=32, choices=STRIKE_TYPE_CHOICES, default='Chord')
+    # has_half_hour_strike - Yes/No | 1/0
+    has_half_hour_strike = models.BooleanField(blank=False, default=False)
     # has_pendulum - Yes/No | 1/0
     has_pendulum = models.BooleanField(blank=False, default=False)
     # has_self_adjusting_beat - Yes/No | 1/0
@@ -371,3 +353,100 @@ class Clock(models.Model):
 #       docker volume ls
 #   Inspect a volume:
 #       docker volume inspect books_postgis-data
+
+
+########## Old Code ###############
+#         ('Advertising', 'Advertising'),
+
+#         ('Advertising-Quartz', 'Advertising-Quartz'),
+#         ('Advertising-Electric', 'Advertising-Electric'),
+#         ('Advertising-Mechanical', 'Advertising-Mechanical'),
+#         ('Animated', 'Animated'),
+#         ('Anniversary', 'Anniversary'),
+        
+#         ('Anniversary-Quartz', 'Anniversary-Quartz'),
+#         ('Anniversary-Mechanical', 'Anniversary-Mechanical'),
+        
+#         ('Atmos', 'Atmos'),
+#         ('Balloon', 'Balloon'),
+#         ('Banjo', 'Banjo'),
+#         ('Beehive', 'Beehive'),
+#         ('Black Mantel', 'Black Mantel'),
+#         ('Blinking Eye', 'Blinking Eye'),
+        
+#         ('Blinking Eye-Quartz', 'Blinking Eye-Quartz'),
+#         ('Blinking Eye-Mechanical', 'Blinking Eye-Mechanical'),
+        
+#         ('Calendar', 'Calendar'),
+#         ('Carriage', 'Carriage'),
+#         ('China/Porcelain', 'China/Porcelain'),
+#         ('Column', 'Column'),
+#         ('Crystal Regulator', 'Crystal Regulator'),
+#         ('Cuckoo', 'Cuckoo'),
+        
+#         ('Cuckoo-Music Box', 'Cuckoo w/ Music Box'),
+#         ('Cuckoo-Activity', 'Cuckoo w/ Activity'),
+        
+#         ('Desk', 'Desk'),
+#         ('Dial', 'Dial'),
+        
+#         ('Dial-Quartz', 'Dial-Quartz'),
+#         ('Dial-Mechanical', 'Dial-Mechanical'),
+#         ('Drop Dial/Schoolhouse', 'Drop Dial/Schoolhouse'),
+        
+#         ('School House-Quartz', 'School House-Quartz'),
+#         ('School House-Electric', 'School House-Electric'),
+#         ('School House-Mechanical', 'School House-Mechanical'),
+        
+#         ('Figural', 'Figural'),
+#         ('Garnitures', 'Garnitures'),
+#         ('Gothic', 'Gothic'),
+#         ('Kitchen', 'Kitchen'),
+#         ('Lantern', 'Lantern'),
+        
+#         ('Longcase/Grandfather', 'Grandfather/Grandmother'),
+#         ('Grandfather/Grandmother', 'Grandfather/Grandmother'),
+#         ('Grandfather/Grandmother-Chains', 'Grandfather/Grandmother-Chains'),
+#         ('Grandfather/Grandmother-Cables', 'Grandfather/Grandmother-Cables'),
+#         ('Grandfather/Grandmother-Tubular', 'Grandfather/Grandmother-Tubular'),
+        
+#         ('Lyre', 'Lyre'),
+#         ('Mantel', 'Mantel'),
+#         ('Mission', 'Mission'),
+#         ('Mystery', 'Mystery'),
+#         ('Novelty', 'Novelty'),
+
+#         ('Novelty-Quartz', 'Novelty-Quartz'),
+#         ('Novelty-Electric', 'Novelty-Electric'),
+#         ('Novelty-Mechanical', 'Novelty-Mechanical'),
+        
+#         ('Ogee', 'Ogee'),
+#         ('Picture', 'Picture'),
+
+#         ('Picture-Quartz', 'Picture-Quartz'),
+#         ('Picture-Electric', 'Picture-Electric'),
+#         ('Picture-Mechanical', 'Picture-Mechanical'),
+
+#         ('Portico', 'Portico'),
+#         ('Pillar & Scroll', 'Pillar & Scroll'),
+#         ('Plato', 'Plato'),
+# #        ('Shelf', 'Shelf'),
+
+#         ('Shelf-Quartz', 'Shelf-Quartz'),
+#         ('Shelf-Electric', 'Shelf-Electric'),
+#         ('Shelf-Mechanical', 'Shelf-Mechanical'),
+
+#         ("Ship's", "Ship's"),
+#         ('Skeleton', 'Skeleton'),
+#         ('Steeple', 'Steeple'),
+#         ('Swinging', 'Swinging'),
+#         ('Tambour', 'Tambour'),
+#         ('Tape', 'Tape'),
+#         ('Vienna Regulator', 'Vienna Regulator'),
+#         ('Wag on the Wall', 'Wag on the Wall'),
+#         ('Wall', 'Wall'),
+
+#         ('Wall-Quartz', 'Wall-Quartz'),
+#         ('Wall-Electric', 'Wall-Electric'),
+#         ('Wall-Mechanical', 'Wall-Mechanical'),
+#     ]
