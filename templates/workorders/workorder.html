@@ -5,7 +5,10 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="{% static 'css/workorder.css' %}">
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col">
+    <link rel="stylesheet" href="{% static 'css/workorder.css' %}">
 
     <div class="invoice-box">
         <table cellpadding="0" cellspacing="0">
@@ -13,14 +16,11 @@
                 <td colspan="2">
                     <table>
                         <tr>
-                            <td class="title">
-                                <img src="https://www.sparksuite.com/images/logo.png" style="width:100%; max-width:300px;">
-                            </td>
-                            
-                            <td>
-                                Invoice #: 123<br>
-                                Created: January 1, 2015<br>
-                                Due: February 1, 2015
+                            <td colspan="2">
+                                <a href="{% url 'clock' clock.id %}">{{ clock.nickname }}</a><br>
+                                {{ workorder.date_created }}<br>
+                                ID: {{ workorder.id }}<br><br>
+                                Status: {{ workorder.repair_status }}
                             </td>
                         </tr>
                     </table>
@@ -32,156 +32,80 @@
                     <table>
                         <tr>
                             <td>
-                                Sparksuite, Inc.<br>
-                                12345 Sunny Road<br>
-                                Sunnyville, CA 12345
+                                <a href="{% url 'repairer_about' workorder.repairer_fk_id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a><br>
+                                {{ repairer.address_street }}
+                                {% if repairer.address_other %}
+                                , {{ repairer.address_other }}
+                                {% endif %}
+                                <br>{{ repairer.city }}, {{ repairer.state }} {{ repairer.zipcode }}
+                                <br>{{ repairer.phone_number.as_national }}
                             </td>
-                            
                             <td>
-                                Acme Corp.<br>
-                                John Doe<br>
-                                john@example.com
+                                <a href="{% url 'customer' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a><br>
+                                {{ customer.address_street }}
+                                    {% if customer.address_other %}
+                                    {{ customer.address_other }}
+                                    {% endif %}
+                                    <br>{{ customer.city }}, {{ customer.state }} {{ customer.zipcode }}
+                                    <br>{{ customer.phone_number.as_national }}
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
-            
+            <!-- Payment lines -->
             <tr class="heading">
-                <td>
-                    Payment Method
-                </td>
-                
-                <td>
-                    Check #
-                </td>
+                <td>Payment Method</td>
+                <td>USD</td>
             </tr>
-            
             <tr class="details">
-                <td>
-                    Check
-                </td>
-                
-                <td>
-                    1000
-                </td>
+                <td></td>
+                <td></td>
             </tr>
-            
+            <!-- Line items headline -->
             <tr class="heading">
-                <td>
-                    Item
-                </td>
-                
-                <td>
-                    Price
-                </td>
+                <td>Item</td>
+                <td>Price</td>
             </tr>
-            
+            <!-- Initial estimate -->
             <tr class="item">
                 <td>
-                    Website design
+                    {{ workorder.repair_type }} - 
+                    {% if repairer.repairer_estimate %}
+                        (Repairer Estimated)
+                    {% else %}
+                        (Dynamically Estimated)
+                    {% endif %}                    
                 </td>
-                
                 <td>
-                    $300.00
+                    {% if repairer.repairer_estimate %}
+                        {{ repairer.repairer_estimate }}
+                    {% else %}
+                        {{ workorder.dynamic_estimate  }}
+                    {% endif %}                    
                 </td>
             </tr>
-            
-            <tr class="item">
-                <td>
-                    Hosting (3 months)
-                </td>
-                
-                <td>
-                    $75.00
-                </td>
-            </tr>
-            
-            <tr class="item last">
+            <!-- Line items -->
+            <!-- Loop over the following with original estimate + addons -->
+
+            <!-- <tr class="item last">
                 <td>
                     Domain name (1 year)
                 </td>
-                
                 <td>
                     $10.00
                 </td>
-            </tr>
+            </tr> -->
             
-            <tr class="total">
+            <!-- Total Row -->
+            <!-- <tr class="total">
                 <td></td>
-                
                 <td>
-                   Total: $385.00
+                Total: $###.##
                 </td>
-            </tr>
+            </tr> -->
         </table>
     </div>
-
-{% if user.is_authenticated %}
-<div class="row">
-  <div class="col">
-    <h4>Add Your Clock</h4><br>
-       dbubug clock_fk_id ({{ debug.clock_fk_id }})<BR>
-       debug repairer_fk_id ({{ debug.repairer_fk_id }})<BR>
-    <div class="card" style="width: 18rem;">
-      {% if clock_list.0.image_1 %}
-      <img class="card-img-top" src="{{clock_list.0.image_1.url}}" alt="{{clock_list.0.clock_list_type}}">
-      {% endif %}
-      <div class="card-body">
-        <h5 class="card-title"><a href="">{{ clock_list.0.nickname }}</a></h5>
-        <p class="card-text">This {{ clock_list.0.clock_type_fk }} clock_list is {{ clock_list.0.footprint }} mounted.
-          {% if clock_list.0.wind_interval_days > 0 %}
-           It has a train count of {{ clock_list.0.train_count }}
-          (i.e., it winds in {{ clock_list.0.train_count }} places), 
-          and it has to be wound every {{ clock_list.0.wind_interval_days }} days.
-          {% endif %}
-         It is {{ clock_list.0.drive_type }} driven.
-        <h6>Features:</h6>
-        <ul>
-          {% if clock_list.0.chime_count > 0 %}
-          <li>Has {{ clock_list.0.chime_count }} chime options</li>
-          {% endif %}
-          {% if clock_list.0.strike_type != 'None' %}
-          <li>Has {{ clock_list.0.strike_type }} strike</li>
-          {% endif %}
-          {% if clock_list.0.has_pendulum %}
-          <li>Has pendulum</li>
-          {% endif %}
-          {% if clock_list.0.has_self_adjusting_beat %}
-          <li>Has self adjusting beat</li>
-          {% endif %}
-          {% if clock_list.0.has_self_adjusting_strike %}
-          <li>Has self adjusting strike</li>
-          {% endif %}
-          {% if clock_list.0.has_second_hand %}
-          <li>Has a second hand</li>
-          {% endif %}
-          {% if clock_list.0.has_off_at_night %}
-          <li>Has "Off at Night" feature</li>
-          {% endif %}
-          {% if clock_list.0.has_calendar %}
-          <li>Has a calendar</li>
-          {% endif %}
-          {% if clock_list.0.has_moon_dial %}
-          <li>Has a moon dial</li>
-          {% endif %}
-          {% if clock_list.0.has_alarm %}
-          <li>Has an alarm</li>
-          {% endif %}
-          {% if clock_list.0.has_activity_other %}
-          <li>Has additional moving figures</li>
-          {% endif %}
-          {% if clock_list.0.has_tubes %}
-          <li>Has tubular chaime & strike</li>
-          {% endif %}
-          {% if clock_list.0.tube_count > 0 %}
-          <li>Has {{ clock_list.0.tube_count }} or more tubes</li>
-          {% endif %}
-        </ul>
-        </p>
-      </div>
-    </div>
-  </div>
 </div>
 {% endif %}
 

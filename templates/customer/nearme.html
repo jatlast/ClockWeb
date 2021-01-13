@@ -22,7 +22,7 @@
       <div id='map' style='width: 400px; height: 300px;'></div>
       <br>
               {% for repairer in repairer_list%}
-            <h4>{{ repairer.distance.mi|floatformat:2 }} miles - {{ repairer.first_name }} {{ repairer.last_name }}</h4>
+            <h4>{{ repairer.distance.mi|floatformat:2 }} miles - <a href="{% url 'repairer_about' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h4>
             <p>
                 {{ repairer.address_street }}
                 {% if repairer.address_other %}

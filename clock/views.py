@@ -3,6 +3,7 @@ from django.contrib.gis.db.models.functions import Distance
 from .models import Clock, Clocktypes
 from customer.models import Customer
 from repairer.models import Repairer
+from workorder.models import Workorder
 from django.template import Context
 from decimal import Decimal
 import math
@@ -80,6 +81,7 @@ class ClockDetailView(DetailView):
             return None
         else:
             context = super(ClockDetailView, self).get_context_data(**kwargs)
+            context['workorders'] = Workorder.objects.exclude(repair_status__exact='Paid in Full').filter(clock_fk_id__exact=self.object.pk).order_by('-date_created')
             try:
                 context['customer_list'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
                 return context

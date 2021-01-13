@@ -17,8 +17,6 @@ repairer_fields_viewable_by_everyone = [
         'latitude',
         'longitude',
 #        'location',
-        'experience_in_years',
-        'still_accepting_jobs',
         'hourly_rate',
         'experience_in_years',
         'still_accepting_jobs',
@@ -60,6 +58,11 @@ class RepairerDetailView(DetailView):
     model = Repairer
     context_object_name = 'repairer'
     template_name = 'repairer/repairer.html'
+
+class RepairerAboutView(DetailView):
+    model = Repairer
+#    context_object_name = 'repairer_about'
+    template_name = 'repairer/about.html'
 
 # Form Views 
 class RepairerCreateView(CreateView):

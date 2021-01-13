@@ -63,7 +63,16 @@
           {% endif %}
         </ul>
         {% if customer_list %}
-        <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Get Repair Estimate</a>
+          {% if workorders %}
+          <h6>Work Orders Outstanding:</h6>
+          <ol>
+            {% for workorder in workorders %}
+            <li><a href="{% url 'workorder' workorder.id %}">{{ workorder.date_created }}</a></li>
+            {% endfor %}
+          </ol>
+          {% else %}
+            <a class="btn btn-outline-primary" href="{% url 'clock_estimate' clock.id %}">Get Repair Estimate</a>
+          {% endif %}
         {% else %}
         <hr>
         <a href="{% url 'customers' %}">Address</a> required for estimates.

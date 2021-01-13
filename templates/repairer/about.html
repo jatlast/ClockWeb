@@ -1,0 +1,99 @@
+{% extends '_base.html' %}
+
+{% block title %}Repair Person{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col">
+    <div class="card" style="width: 18rem;">
+      {% if repairer.image_1 %}
+      <img class="card-img-top" src="{{repairer.image_1.url}}" alt="{{repairer.first_name}} {{repairer.last_name}}">
+      {% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{repairer.first_name}} {{repairer.last_name}}</h5>
+        <p class="card-text">
+          {{ repairer.address_street }}
+          {% if repairer.address_other %}
+          , {{ repairer.address_other }}
+          {% endif %}
+          <br>{{ repairer.city }}, {{ repairer.state }} {{ repairer.zipcode }}
+          <br>{{ repairer.phone_number.as_national }}
+          <h6>About Info:</h6>
+          {{ repairer.personal_description }}<br>
+          <BR><h6>Details:</h6>
+         <ul>
+          
+          {% if repairer.still_accepting_jobs %}
+          <li>Accpting new work orders</li>
+          {% else %}
+          <li>Not accepting new work orders</li>
+          {% endif %}
+
+          <li>Has {{ repairer.experience_in_years }} years of experience</li>
+          <li>Hourly rate of {{ repairer.hourly_rate }}</li>
+          
+          {% if repairer.makes_service_calls %}
+          <li>Does house/service calls</li>
+          {% endif %}
+
+          {% if repairer.service_call_hours_minimum %}
+          <li>Bills {{ repairer.service_call_hours_minimum }} hours minimum for service calls </li>
+          {% endif %}
+
+          {% if repairer.road_time_minutes_included %}
+          <li>Includes {{ repairer.road_time_minutes_included }} minutes of road time</li>
+          {% endif %}
+          
+          {% if repairer.road_time_minutes_maximum %}
+          <li>Round trip max of {{ repairer.road_time_minutes_maximum }} minutes</li>
+          {% endif %}
+          
+          <li>
+            {% if repairer.repairs_most_quartz and repairer.repairs_most_mechanical %}
+            Repairs mechanical & battery operated clocks
+            {% elif repairer.repairs_most_mechanical %}
+            Repairs only mechanical clocks
+            {% else %}
+            Repairs only battery operated clocks
+            {% endif %}
+          </li>
+        </ul>
+        <h6>
+          {% if repairer.repairs_most_quartz and repairer.repairs_most_mechanical %}
+          Repairs mechanical & battery operated:
+          {% elif repairer.repairs_most_mechanical %}
+          Repairs mechanical:
+          {% else %}
+          Repairs battery operated:
+          {% endif %}
+        </h6>
+        
+        <ul>
+           {% if repairer.repairs_grandfathers %}
+          <li>Tallcase/Grandfather Clocks</li>
+          {% endif %}
+          
+          {% if repairer.repairs_tubular_grandfathers %}
+          <li>Tubular Chime clocks</li>
+          {% endif %}
+          
+          {% if repairer.repairs_cuckoos %}
+          <li>Cuckoo clocks</li>
+          {% endif %}
+          
+          {% if repairer.repairs_atmospherics %}
+          <li>Atmos clocks</li>
+          {% endif %}
+          
+          {% if repairer.repairs_anniversarys %}
+          <li>Anniversary clocks</li>
+          {% endif %}
+        </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock content %}

@@ -20,14 +20,16 @@ class Workorder(models.Model):
     REPAIR_STATUS_CHOICES = [
         ('Submitted','Submitted for Approval'),
         ('Approved','Approved by Repairer'),
-        ('Declined','Declined by Repairer'),
         ('Canceled','Canceled by Customer'),
+        ('Declined','Declined by Repairer'),
         ('Scheduled Pickup','Pickup is Scheduled'),
         ('Retrieved','Picked Up by Repairer'),
-        ('Started','Started'),
-        ('Finished','Finished'),
+        ('Started Repair','Started Repair'),
+        ('Finished Repair','Finished Repair'),
+        ('Timing Out','Adjusting Time Accuracy'),
         ('Scheduled Delivery','Delivery is Scheduled'),
         ('Delivered','Delivered by Repairer'),
+        ('Paid in Full','Paid in Full'),
     ]
 
     _CHOICES = [

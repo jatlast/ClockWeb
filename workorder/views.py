@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.views.generic import CreateView , ListView, DetailView #, UpdateView, DeleteView
 from .models import Workorder
 from clock.models import Clock
+from customer.models import Customer
+from repairer.models import Repairer
 from django.views.decorators.csrf import csrf_exempt
 from django.template import Context
 
@@ -66,6 +68,7 @@ class WorkorderCreateView(CreateView):
             context = super(WorkorderCreateView, self).get_context_data(**kwargs)
 
             context['form_variables'] = Context({"foo": "bar"})
+            # Required params for passing the two parts that make up MoneyField variables
             context['form_variables']['repairer_hourly_rate_0'] = self.request.POST.get('repairer_hourly_rate_0', 'Empty')
             context['form_variables']['repairer_hourly_rate_1'] = self.request.POST.get('repairer_hourly_rate_1', 'Empty')
             context['form_variables']['dynamic_estimate_0'] = self.request.POST.get('dynamic_estimate_0', 'Empty')
@@ -90,7 +93,10 @@ class WorkorderDetailView(DetailView):
             context['debug']['clock_fk_id'] = context['workorder'].clock_fk_id
             context['debug']['repairer_fk_id'] = context['workorder'].repairer_fk_id
             try:
-                context['clock_list'] = Clock.objects.filter(id__exact=context['workorder'].clock_fk_id)
+                context['customer'] = Customer.objects.get(user_fk_id=self.request.user)
+                context['clock'] = Clock.objects.get(id=context['workorder'].clock_fk_id)
+                context['repairer'] = Repairer.objects.get(id=context['workorder'].repairer_fk_id)
+                context['repairer']['repairer_estimate'] = context['workorder'].repairer_estimate_hours * context['workorder'].repairer_hourly_rate
                 return context
             except:
                 return context
@@ -108,3 +114,7 @@ class WorkorderDetailView(DetailView):
 #         document.getElementById("span_distance_from_repairer").innerHTML = Number(document.getElementById("id_distance_from_repairer").value).toFixed(2);
 #         document.getElementById("span_dynamic_estimate").innerHTML = document.getElementById("id_dynamic_estimate").value;
 #     </script>
+
+                            # <td class="title">
+                            #     <img src="{% static 'images/logo.png' %}" style="width:50%; max-width:300px;">
+                            # </td>                            
