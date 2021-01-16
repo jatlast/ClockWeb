@@ -1,0 +1,36 @@
+{% extends '_base.html' %}
+
+{% block title %}Clocks{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if clocks.count > 0 %}
+    {% for clock in clocks %}
+    <!-- ({{ clock.user_fk_id }}) =? ({{ user.id }}) -->
+      <div class="row align-items-center">
+        <div class="col-3">
+          <a href="{% url 'customer_clock' clock.id %}">{{ clock.nickname }}</a>
+        </div>
+        <div class="col-3">
+          {% if clock.image_1 %}
+          <img class="img-thumbnail" src="{{clock.image_1.url}}" alt="{{clock.nickname}}">
+          {% endif %}
+          </div>
+        </div>
+      <hr>
+    {% endfor %}
+    <div>
+      <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Add Clock</a>
+    </div>
+{% else %}
+  <div class="row">
+    <div class="col-sm">
+      Please <a href="{% url 'clocktypes' %}">add your clock's information...</a>
+    </div>
+  </div>
+{% endif %}
+{% else %}
+  <a class="p-2 text-dark" href="{% url 'account_login' %}">Log In</a>
+  <a class="btn btn-outline-primary" href="{% url 'account_signup' %}">Sign Up</a>
+{% endif %}
+{% endblock content %}

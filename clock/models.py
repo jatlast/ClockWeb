@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 from datetime import datetime
+from customer.models import Customer
 
 class Clocktypes(models.Model):
     CLOCK_TYPE_CHOICES=[
@@ -145,6 +146,8 @@ class Clocktypes(models.Model):
     #   When displaying use: https://www.antiqueclockspriceguide.com/clocktyperesults.php?t=clocktype.clock_type
     #              Based on: https://www.antiqueclockspriceguide.com/clocktyperesults.php?t=advertising
     clock_type = models.CharField(blank=False, max_length=32, choices=CLOCK_TYPE_CHOICES, default='Longcase/Grandfather')
+    # description
+    description = models.CharField(blank=False, max_length=64, default='Describe this clock type')
     # footprint - Wall, Mantel, Floor
     footprint = models.CharField(blank=False, max_length=16, choices=FOOTPRINT_CHOICES, default='Floor')
     # dial_diameter_centimeters - NULL or integer
@@ -223,21 +226,25 @@ class Clock(models.Model):
 #    id = models.AutoField(primary_key=True, default=1000)
 
     # user_fk - ID from login credentials
-    user_fk = models.ForeignKey(
-        get_user_model()
-        , on_delete = models.CASCADE
-#        , editable = False
-        , default=1
-    )
+#     user_fk = models.ForeignKey(
+#         get_user_model()
+#         , on_delete = models.CASCADE
+# #        , editable = False
+#         , default=1
+#     )
 
-    # nickname - Wall, Mantel, Floor
-    nickname = models.CharField(blank=False, max_length=32, default='Nickname', help_text='Please choose a Nickname to identify this clock')
+    # customer_fk - Foreigh Key pointing to the Customer that is adding this Workorder
+    customer_fk = models.ForeignKey(Customer, on_delete=models.CASCADE, default='4fc6c448-532b-4949-b4be-faa39a0d90e1')
+
     # customer - Each Customer can have many clocks but each Clock has only one Customer
 #    new_uuid = str(uuid.uuid4())
 #    customer_fk = models.ForeignKey(Customer, on_delete=models.CASCADE, default=new_uuid)
     # clocktype - Refers to Clocktype for pre-population but the Customer can change the values
     #   Thus, if the customer changes the values of the Clock it no longer "is" equal to its original Clocktype
-    clock_type_fk = models.ForeignKey(Clocktypes, on_delete=models.DO_NOTHING, default=1)
+    clock_type_fk = models.ForeignKey(Clocktypes, on_delete=models.CASCADE, default=1)
+
+    # nickname
+    nickname = models.CharField(blank=False, max_length=64, default='Nickname', help_text='Please choose a Nickname to identify this clock')
     # date_created - autopopulated
     date_created = models.DateTimeField(default=datetime.now, editable=False)
     # clock_type - Advertising, Atmos, Banjo, Kitchen, etc
@@ -262,6 +269,8 @@ class Clock(models.Model):
     chime_count = models.PositiveSmallIntegerField(blank=False, choices=Clocktypes.CHIME_COUNT_CHOICES, default=3, help_text='(Note: Chimes usually ring every quarter) | Chime count indicates how many different chime options your clock has. Some have none, others only Westminster, and some Grandfather clocks have, say: Westminster, Whittenauer, and Saint Michael; battery/quartz clocks can have 3-4+ chime optons')
     # strike_type - Ships Bell, Bim-Bam, Hourly Note, Hourly Chord
     strike_type = models.CharField(blank=False, max_length=32, choices=Clocktypes.STRIKE_TYPE_CHOICES, default='Chord', help_text='(Note: Strike is hourly) | If the clock hammer strikes a coil/bell/rod then it is a "Note," if two or more rods it is a "Chord"')
+    # has_half_hour_strike - Yes/No | 1/0
+    has_half_hour_strike = models.BooleanField(blank=False, default=False, help_text='Select if this clock strikes on both the hour and the half your')
     # has_pendulum - Yes/No | 1/0
     has_pendulum = models.BooleanField(blank=False, default=False, help_text='Select if your clock has a Pendulum')
     # has_self_adjusting_beat - Yes/No | 1/0
@@ -309,11 +318,10 @@ class Clock(models.Model):
     #     ]
 
     def __str__(self):
-#        return self.clock_type_fk
-        return "%s %s" % (self.clock_type_fk, self.footprint)
+        return "%s" % (self.clock_type_fk)
 
-    def get_absolute_url(self):
-        return reverse('clock', args=[str(self.id)])
+    # def get_absolute_url(self):
+    #     return reverse('clock', args=[str(self.id)])
 
 
 

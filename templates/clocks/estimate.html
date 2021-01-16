@@ -12,7 +12,7 @@
             <img class="card-img-top" src="{{clock.image_1.url}}" alt="{{clock.clock_type}}">
             {% endif %}
             <div class="card-body">
-              <h5 class="card-title"><a href="{% url 'clock_update' clock.id %}">{{ clock.nickname }}</a></h5>
+              <h5 class="card-title"><a href="{% url 'customer_clock_update' clock.id %}">{{ clock.nickname }}</a></h5>
               <p class="card-text">{{ clock.clock_type_fk }} clocks are usually {{ clock.footprint }} mounted and they typically have a 
                 train count of {{ clock.train_count }} 
                 (i.e., they typically wind in {{ clock.train_count }} places), and a wind interval of 

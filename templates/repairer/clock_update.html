@@ -1,0 +1,25 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Update Clock Details | Repairer{% endblock title %}
+
+{% block content %}
+<form action="" class='form' method="POST" enctype="multipart/form-data">
+    <div class='col-md-6'>
+        <table border="1">
+            {{ form.as_table }}
+        </table>
+    </div>
+    <input class='btn btn-primary' type='submit'>
+    <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />
+</form>
+{% endblock content %}
+
+<div class='row'>
+    {% for field in form %}
+        <div class='col-md-2'>
+          {{ field|as_crispy_field }}
+        </div>
+    {% endfor %}
+    {% csrf_token %}
+</div>

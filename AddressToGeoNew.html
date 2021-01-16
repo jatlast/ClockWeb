@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-assembly/v0.23.2/assembly.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css"
+      type="text/css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #geocoder-container > div {
+        min-width: 50%;
+        margin-left: 25%;
+      }
+      .string {
+        color: #314ccd;
+      }
+      .number {
+        color: #b43b71;
+      }
+      .boolean {
+        color: #5a3fc0;
+      }
+      .null {
+        color: #ba7334;
+      }
+      .key {
+        color: #ba3b3f;
+      }
+    </style>
+  </head>
+  <body>
+  <div>
+  <form action="" class='form' method="post">
+        <div class='col-md-4'>
+          <table>
+<tr id='tr_address' style="visibility: hidden"><th><label for='id_address'>Address:</label></th><td><input type='text' name='address' value='' maxlength='64' required id='id_address' disabled></td></tr>
+<tr id='tr_address_other' style="visibility: hidden"><th><label for='id_address_other'>Apartment / Unit / Suite:</label></th><td><input type='text' name='address_other' value='' maxlength='64'  id='id_address_other'></td></tr>
+<tr id='tr_locality' style="visibility: hidden"><th><label for='id_locality'>Disctrict / Arrondissement:</label></th><td><input type='text' name='locality' value='' maxlength='64'  id='id_locality' disabled></td></tr>
+<tr id='tr_place' style="visibility: hidden"><th><label for='id_place'>City / Village / Municipality:</label></th><td><input type='text' name='place' value='' maxlength='64' required id='id_place' disabled></td></tr>
+<tr id='tr_district' style="visibility: hidden"><th><label for='id_district'>Prefecture:</label></th><td><input type='text' name='district' value='' maxlength='64'  id='id_district' disabled></td></tr>
+<tr id='tr_region' style="visibility: hidden"><th><label for='id_region'>State / Province:</label></th><td><input type='text' name='region' value='' maxlength='64' required id='id_region' disabled></td></tr>
+<tr id='tr_postcode' style="visibility: hidden"><th><label for='id_postcode'>Zipcode / Postal Code:</label></th><td><input type='text' name='postcode' value='' maxlength='12' required id='id_postcode' disabled></td></tr>
+<tr id='tr_country' style="visibility: hidden"><th><label for='id_country'>Country:</label></th><td><input type='text' name='country' value='' maxlength='64' required id='id_country' disabled></td></tr>
+
+
+<tr><th><label for="id_latitude">Latitude:</label></th><td><input type="number" name="latitude" value="" step="any" required id="id_latitude" disabled></td></tr>
+<tr><th><label for="id_longitude">Longitude:</label></th><td><input type="number" name="longitude" value="" step="any" required id="id_longitude" disabled></td></tr>
+
+<tr><th><label for="id_relevance">Relevance:</label></th><td><input type="number" name="relevance" value="" step="any" required id="id_relevance" disabled></td></tr>
+
+<tr><th><label for='id_accuracy'>Accuracy:</label></th><td><input type='text' name='accuracy' value='' maxlength='16' required id='id_accuracy' disabled></td></tr>
+
+          </table>
+        </div>
+          <input class='btn btn-primary' type='submit'>
+        <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />    
+    </form>
+  </div>
+    <div class="flex-parent viewport-full relative scroll-hidden">
+      <div class="flex-child w-full w240-mm absolute static-mm left bottom">
+        <div class="flex-parent flex-parent--column viewport-third h-full-mm hmax-full bg-white scroll-auto">
+          <div class="px12 py12 bg-white">
+            <div class="txt-bold txt-m">Geocoding response object</div>
+            <div class="txt-s">View the raw JSON response from your query.</div>
+          </div>
+          <div class="flex-child flex-child--grow px12 py12 scroll-auto">
+            <pre id="json-response" class="txt-xs px12">Search for a place. Your results will be displayed here!</pre>
+          </div>
+        </div>
+      </div>
+      <div id="map" style='width: 500px; height: 500px;'></div>
+    </div>
+
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoiamF0bGFzdCIsImEiOiJja2pmdXV2Mm0yOXR6MnluMGtzeng2NXp2In0.-GbX1CJH3huzw-u6B3A8DQ';
+      var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-83.644041, 42.956999],
+        zoom: 13
+      });
+
+      var geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl
+      });
+
+      map.addControl(geocoder, 'top-left');
+
+      map.on('load', function () {
+        // Listen for the `geocoder.input` event that is triggered when a user
+        // makes a selection
+        geocoder.on('result', function (ev) {
+		var styleSpec = ev.result;
+		var styleSpecBox = document.getElementById('json-response');
+		var styleSpecText = JSON.stringify(styleSpec, null, 2);
+		var syntaxStyleSpecText = syntaxHighlight(styleSpecText);
+		styleSpecBox.innerHTML = syntaxStyleSpecText;
+
+		var myObj = JSON.parse(styleSpecText);
+
+		var address = document.getElementById('id_address');			// Address
+		var address_other = document.getElementById('id_address_other');// Apartment / Unit / Suite
+		var locality = document.getElementById('id_locality');			// Disctrict / Arrondissements
+		var place = document.getElementById('id_place');				// City / Village / Municipality
+		var district = document.getElementById('id_district');			// Chinese Prefectures
+		var region = document.getElementById('id_region');				// State / Province
+		var postcode = document.getElementById('id_postcode');			// Zipcode / Postal Code
+		var country = document.getElementById('id_country');			// Country
+		
+		var latitude = document.getElementById('id_latitude');			// Latitude
+		var longitude = document.getElementById('id_longitude');		// Longitude
+
+		var relevance = document.getElementById('id_relevance');		// Relevance
+		relevance.value = myObj.relevance;
+
+		var accuracy = document.getElementById('id_accuracy');			// Accuracy
+		accuracy.value = myObj.properties.accuracy;
+
+		var myStringArray = myObj.context;
+		var arrayLength = myStringArray.length;
+		for (var i = 0; i < arrayLength; i++) {
+			
+			console.log(myStringArray[i].id);
+
+			if (myStringArray[i].id.includes('postcode'))
+			{
+				postcode.value = myStringArray[i].text;
+				document.getElementById('tr_postcode').style.visibility = "visible";
+			}
+			else if (myStringArray[i].id.includes('locality'))
+			{
+				locality.value = myStringArray[i].text;
+				document.getElementById('tr_locality').style.visibility = "visible";
+			}
+			else if (myStringArray[i].id.includes('place'))
+			{
+				place.value = myStringArray[i].text;
+				document.getElementById('tr_place').style.visibility = "visible";
+			}
+			else if (myStringArray[i].id.includes('district'))
+			{
+				district.value = myStringArray[i].text;
+				document.getElementById('tr_district').style.visibility = "visible";
+			}
+			else if (myStringArray[i].id.includes('region'))
+			{
+				region.value = myStringArray[i].text;
+				document.getElementById('tr_region').style.visibility = "visible";
+			}
+			else if (myStringArray[i].id.includes('country'))
+			{
+				country.value = myStringArray[i].text;
+				document.getElementById('tr_country').style.visibility = "visible";
+			}
+			else
+			{
+				console.log(myStringArray[i].id + ' Not Recognized');
+			}
+		}
+
+		var street_address = '';
+		if (myObj.address)
+		{
+			street_address = myObj.address;
+		}
+		if (myObj.text)
+		{
+			street_address = street_address + ' ' + myObj.text;
+		}
+		if (street_address.length > 3)
+		{
+			address.value = street_address;
+			document.getElementById('tr_address').style.visibility = "visible";
+			document.getElementById('tr_address_other').style.visibility = "visible";
+			document.getElementById('id_address').disabled = false;
+		}
+
+		latitude.value = myObj.geometry.coordinates[1];
+		longitude.value = myObj.geometry.coordinates[0];
+        });
+      });
+
+      function syntaxHighlight(json) {
+        json = json
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        return json.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = 'key';
+              } else {
+                cls = 'string';
+              }
+            } else if (/true|false/.test(match)) {
+              cls = 'boolean';
+            } else if (/null/.test(match)) {
+              cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+          }
+        );
+      }
+    </script>
+  </body>
+</html>

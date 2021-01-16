@@ -8,7 +8,7 @@ class ClocktypesAdmin(admin.ModelAdmin):
     list_display = ("clock_type", "footprint", "train_count",)
 
 class ClockAdmin(admin.ModelAdmin):
-    list_display = ("user_fk", "user_fk_id", "clock_type_fk", "footprint", "train_count",)
+    list_display = ("customer_fk", "clock_type_fk", "footprint", "train_count",)
 
 admin.site.register(Clocktypes, ClocktypesAdmin)
 admin.site.register(Clock, ClockAdmin)

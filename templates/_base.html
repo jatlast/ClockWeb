@@ -2,8 +2,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
   <style>
     html {
@@ -22,10 +32,8 @@
       background-color: #f5f5f5;
     }    
   </style>
-       <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
+
+<link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
   <script>
     var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
       var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
@@ -47,8 +55,8 @@
         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">My Information</a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="{% url 'customers' %}">Address</a></li>
-          <li><a class="dropdown-item" href="{% url 'clocks' %}">Clocks</a></li>
-          <li><a class="dropdown-item" href="{% url 'workorders' %}">Workorders</a></li>
+          <li><a class="dropdown-item" href="{% url 'customer_clocks' %}">Clocks</a></li>
+          <li><a class="dropdown-item" href="{% url 'customer_workorders' %}">Workorders</a></li>
           <li><a class="dropdown-item" href="{% url 'account_email' %}">Email</a></li>
         </ul>
       </li>
@@ -57,6 +65,7 @@
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">My Information</a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{% url 'repairers' %}">Address</a></li>
+            <li><a class="dropdown-item" href="{% url 'repairer_workorders' %}">Workorders</a></li>
             <li><a class="dropdown-item" href="{% url 'account_email' %}">Email</a></li>
           </ul>
         </li>

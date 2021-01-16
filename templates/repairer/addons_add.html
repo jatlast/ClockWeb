@@ -1,0 +1,32 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Add Addon | Repairer{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<form action="" class='form' method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class='col-md-6'>
+        <table border="1">
+            {{ form.as_table }}
+        </table>
+    <br><br>
+    <input class='btn btn-primary' type='submit'>
+  <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />    
+  </div>
+</form>
+{% endif %}
+
+{% endblock content %}
+
+{% if workorder %}
+<input type='hidden' id='repair_status_previous' name='repair_status_previous' value='{{ workorder.repair_status }}'>
+<input type='hidden' id='added_by' name='added_by' value='Repairer'>
+{% else %}
+No Workorder<br>
+{% endif %}
+
+{% if debug.exception %}
+Debug Except ({{ debug.exception }})
+{% endif %}

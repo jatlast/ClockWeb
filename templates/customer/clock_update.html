@@ -1,0 +1,18 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Customer | Update Clock Details{% endblock title %}
+
+{% block content %}
+<form action="" class='form' method="POST" enctype="multipart/form-data">
+    <div class='row'>
+        <div class='col-md-6'>
+            <table border="1">
+                {{ form.as_table }}
+            </table>
+        </div>
+    </div>
+    <input class='btn btn-primary' type='submit'>
+    <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />
+</form>
+{% endblock content %}

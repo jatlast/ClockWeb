@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-assembly/v0.23.2/assembly.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css"
+      type="text/css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #geocoder-container > div {
+        min-width: 50%;
+        margin-left: 25%;
+      }
+      .string {
+        color: #314ccd;
+      }
+      .number {
+        color: #b43b71;
+      }
+      .boolean {
+        color: #5a3fc0;
+      }
+      .null {
+        color: #ba7334;
+      }
+      .key {
+        color: #ba3b3f;
+      }
+    </style>
+  </head>
+  <body>
+  <div>
+  <form action="" class='form' method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="BvjDlxwt3F9RywIswrjoObvLIOLPc2L1E4Wi1JGf7dRG0h7D2J5mJHBJeaJdLhAr">
+        <div class='col-md-4'>
+          <table>
+<tr><th><label for='id_address'>Address:</label></th><td><input type='text' name='address' value='Address' maxlength='64' required id='id_Address' disabled></td></tr>
+<tr><th><label for="id_address_street">Address street:</label></th><td><input type="text" name="address_street" value="10081 Walnut Shores Dr" maxlength="32" required id="id_address_street"></td></tr>
+<tr><th><label for="id_address_other">Address other:</label></th><td><input type="text" name="address_other" maxlength="16" id="id_address_other"></td></tr>
+<tr><th><label for="id_city">City:</label></th><td><input type="text" name="city" value="Fenton" maxlength="32" required id="id_city"></td></tr>
+<tr><th><label for="id_state">State:</label></th><td><input type="text" name="state" value="Fenton" maxlength="32" required id="id_state"></td></tr>
+<tr><th><label for="id_zipcode">Zipcode:</label></th><td><input type="text" name="zipcode" value="48430" maxlength="32" required id="id_zipcode"></td></tr>
+<tr><th><label for="id_country">Country:</label></th><td><input type="text" name="countrt" value="New Zealand" maxlength="32" required id="id_country"></td></tr>
+<tr><th><label for="id_latitude">Latitude:</label></th><td><input type="number" name="latitude" value="42.75405" step="any" required id="id_latitude" disabled></td></tr>
+<tr><th><label for="id_longitude">Longitude:</label></th><td><input type="number" name="longitude" value="-83.75285" step="any" required id="id_longitude"></td></tr>
+          </table>
+        </div>
+          <input class='btn btn-primary' type='submit'>
+        <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />    
+    </form>
+  </div>
+    <div class="flex-parent viewport-full relative scroll-hidden">
+      <div class="flex-child w-full w240-mm absolute static-mm left bottom">
+        <div class="flex-parent flex-parent--column viewport-third h-full-mm hmax-full bg-white scroll-auto">
+          <div class="px12 py12 bg-white">
+            <div class="txt-bold txt-m">Geocoding response object</div>
+            <div class="txt-s">View the raw JSON response from your query.</div>
+          </div>
+          <div class="flex-child flex-child--grow px12 py12 scroll-auto">
+            <pre id="json-response" class="txt-xs px12">Search for a place. Your results will be displayed here!</pre>
+          </div>
+        </div>
+      </div>
+      <div id="map" class="flex-child flex-child--grow bg-darken10 viewport-twothirds viewport-full-mm"></div>
+    </div>
+
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoiamF0bGFzdCIsImEiOiJja2pmdXV2Mm0yOXR6MnluMGtzeng2NXp2In0.-GbX1CJH3huzw-u6B3A8DQ';
+      var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-77.0091, 38.8899],
+        zoom: 13
+      });
+
+      var geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl
+      });
+
+      map.addControl(geocoder, 'top-left');
+
+      map.on('load', function () {
+        // Listen for the `geocoder.input` event that is triggered when a user
+        // makes a selection
+        geocoder.on('result', function (ev) {
+          var styleSpec = ev.result;
+          var styleSpecBox = document.getElementById('json-response');
+          var styleSpecText = JSON.stringify(styleSpec, null, 2);
+          var syntaxStyleSpecText = syntaxHighlight(styleSpecText);
+          styleSpecBox.innerHTML = syntaxStyleSpecText;
+
+		  var myObj = JSON.parse(styleSpecText);
+
+		  var address = document.getElementById('id_address'); // Address
+
+          var street = document.getElementById('id_address_street');
+          var city = document.getElementById('id_city');
+          var state = document.getElementById('id_state');
+          var zipcode = document.getElementById('id_zipcode');
+          var country = document.getElementById('id_country');
+		  var lat = document.getElementById('id_latitude');
+          var lon = document.getElementById('id_longitude');
+
+		  address.value = myObj.address + ' ' + myObj.text;
+
+		  street.value = myObj.address + ' ' + myObj.text;
+		  city.value = myObj.context[1].text;
+		  state.value = myObj.context[2].text;
+		  zipcode.value = myObj.context[0].text;
+		  country.value = myObj.context[3].text;
+          lat.value = myObj.geometry.coordinates[1];
+          lon.value = myObj.geometry.coordinates[0];
+        });
+      });
+
+      function syntaxHighlight(json) {
+        json = json
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        return json.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = 'key';
+              } else {
+                cls = 'string';
+              }
+            } else if (/true|false/.test(match)) {
+              cls = 'boolean';
+            } else if (/null/.test(match)) {
+              cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+          }
+        );
+      }
+    </script>
+  </body>
+</html>

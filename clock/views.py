@@ -6,7 +6,9 @@ from repairer.models import Repairer
 from workorder.models import Workorder
 from django.template import Context
 from decimal import Decimal
+from django.urls import reverse
 import math
+import traceback
 
 clock_fields_viewable_by_everyone = [
         'nickname',
@@ -20,6 +22,7 @@ clock_fields_viewable_by_everyone = [
         'gear_material',
         'chime_count',
         'strike_type',
+        'has_half_hour_strike',
         'has_pendulum',
         'has_self_adjusting_beat',
         'has_self_adjusting_strike',
@@ -42,18 +45,17 @@ clock_fields_viewable_by_everyone = [
         'image_5',
     ]
 
-class ClockListView(ListView):
+class ClockListCustomerView(ListView):
     # model = Clock
     context_object_name = 'clocks'
-    template_name = 'clocks/clocks.html'
+    template_name = 'customer/clocks.html'
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return None
-        try:
-            return Clock.objects.filter(user_fk_id__exact=self.request.user)
-        except:
-            return None
+        else:
+            customer_fk = Customer.objects.only('id').get(user_fk_id=self.request.user).id
+            return Clock.objects.filter(customer_fk_id__exact=customer_fk)
 
 class ClocktypesListView(ListView):
     model = Clock
@@ -71,16 +73,34 @@ class ClocktypesListView(ListView):
             return context
 
 
-class ClockDetailView(DetailView):
+class ClockDetailCustomerView(DetailView):
     model = Clock
     context_object_name = 'clock'
-    template_name = 'clocks/clock.html'
+    template_name = 'customer/clock.html'
 
     def get_context_data(self, **kwargs):
         if not self.request.user.is_authenticated:
             return None
         else:
-            context = super(ClockDetailView, self).get_context_data(**kwargs)
+            context = super(ClockDetailCustomerView, self).get_context_data(**kwargs)
+            context['workorders'] = Workorder.objects.exclude(repair_status__exact='Paid in Full').filter(clock_fk_id__exact=self.object.pk).order_by('-date_created')
+            try:
+                context['customer_list'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
+                return context
+            except:
+                return context
+ 
+
+class ClockDetailRepairerView(DetailView):
+    model = Clock
+    context_object_name = 'clock'
+    template_name = 'repairer/clock.html'
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return None
+        else:
+            context = super(ClockDetailRepairerView, self).get_context_data(**kwargs)
             context['workorders'] = Workorder.objects.exclude(repair_status__exact='Paid in Full').filter(clock_fk_id__exact=self.object.pk).order_by('-date_created')
             try:
                 context['customer_list'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
@@ -96,13 +116,37 @@ class ClockCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.user_fk = self.request.user
+        customer_fk = Customer.objects.only('id').get(user_fk_id=self.request.user).id
+        form.instance.customer_fk_id = customer_fk
         return super().form_valid(form)
+#        return super(ClockCreateView, self).form_valid(form)
 
-class ClockUpdateView(UpdateView):
+    def get_success_url(self):
+        return reverse("customer_clock", args=(self.object.id,))
+
+
+class ClockUpdateCustomerView(UpdateView):
     model = Clock
     fields = clock_fields_viewable_by_everyone
     context_object_name = 'clock_update'
-    template_name = 'clocks/update.html'
+    template_name = 'customer/clock_update.html'
+
+    def get_success_url(self):
+        pk = self.kwargs["pk"]
+        return reverse("customer_clock", kwargs={"pk": pk})
+# A redirect button...
+#    <input class="btn btn-secondary" type="button" value="Cancel" onclick="window.location.replace('{% url 'customer_clocks' %}')" />
+
+
+class ClockUpdateRepairerView(UpdateView):
+    model = Clock
+    fields = clock_fields_viewable_by_everyone
+    context_object_name = 'clock_update'
+    template_name = 'Repairer/clock_update.html'
+
+    def get_success_url(self):
+        pk = self.kwargs["pk"]
+        return reverse("repairer_clock", kwargs={"pk": pk})
 
 class ClockRepairEstimateView(DetailView):
     model = Clock

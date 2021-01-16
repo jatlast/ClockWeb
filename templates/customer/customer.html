@@ -18,7 +18,10 @@
     </p>
     {% if not user.email_verified %}
     <a href="{% url 'account_email' %}">Verify your email...</a>
-  {% endif %}
+    {% endif %}
+    <div>
+      <a class="btn btn-outline-primary" href="{% url 'repairers_near_me' %}">Find Repair Person</a>
+    </div>
   </div>
 </div>
 {% endif %}

@@ -8,7 +8,7 @@
 <div class="row">
   <div class="col">
     <h4>Review & Submit Work Order:</h4><br>
-        <form action="" method="post">
+        <form class='form' action="" method="post">
       {% csrf_token %}
 
       <!-- Begin Hidden Fields -->
@@ -79,8 +79,9 @@
         {% endif %}
     {% endfor %}
   </table>
-    <input type="submit" value="Submit">
-    </form>  
+  <input class='btn btn-primary' type='submit'>
+  <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />    
+  </form>  
 </div>
 </div>
 
