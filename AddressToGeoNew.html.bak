@@ -196,6 +196,7 @@
 			address.value = street_address;
 			document.getElementById('tr_address').style.visibility = "visible";
 			document.getElementById('tr_address_other').style.visibility = "visible";
+			document.getElementById('id_address').disabled = false;
 		}
 
 		latitude.value = myObj.geometry.coordinates[1];
@@ -230,3 +231,4 @@
     </script>
   </body>
 </html>
+

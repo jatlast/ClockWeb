@@ -12,15 +12,7 @@ from django.template import Context
 customer_fields_viewable_by_everyone = [
         'first_name',
         'last_name',
-        'phone_number',
-        'address_street',
-        'address_other',
-        'city',
-        'state',
-        'zipcode',
-        'latitude',
-        'longitude',
-#        'location',
+        'phone',
 ]
 
 class CustomerListView(ListView):

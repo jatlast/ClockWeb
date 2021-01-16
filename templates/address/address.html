@@ -1,0 +1,41 @@
+{% extends '_base.html' %}
+
+{% block title %}Address{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col">
+    <h2><a href="{% url 'address_update' address.id %}"> {{ address.nickname }}</a></h2>
+    {{ address.contact_name }} {{ address.contact_phone.as_national }}<br>
+    <address>
+      {{ address.address }}
+        {% if address.address_other %}
+        , {{ address.address_other }}
+        {% endif %}
+        <br>{{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}
+        <br>{{ address.country }}
+    </address>
+  </div>
+</div>
+<div class="row">
+    <div class="col">
+        <a class="btn btn-danger" href="{% url 'address_delete' address.id %}">Delete Address</a>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col">
+        {% if not user.email_verified %}
+        <a class="btn btn-outline-primary" href="{% url 'account_email' %}">Verify Email</a>
+        {% endif %}
+        <a class="btn btn-outline-primary" href="{% url 'repairers_nearby' address.id %}">Find Repair Person</a>
+    </div>
+</div>
+  {% endif %}
+{% endblock content %}
+
+
+'locality_disctrict',
+'district_prefectures',
+'country',

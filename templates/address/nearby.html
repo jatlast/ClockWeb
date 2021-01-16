@@ -1,0 +1,121 @@
+{% extends '_base.html' %}
+
+{% block title %}Repair People Near Me{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if address %}
+    <!-- ({{ address.user_fk_id }}) =? ({{ user.id }}) -->
+      {% if address.user_fk_id == user.id %}
+      <h2><a href="{% url 'address_update' address.id %}"> {{ address.nickname }}</a></h2>
+      <address>
+        {{ address.address }}
+          {% if address.address_other %}
+          , {{ address.address_other }}
+          {% endif %}
+          <br>{{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}
+      </address>
+          <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet' />
+        
+        <div id='map' style='width: 400px; height: 300px;'></div>
+        <br>
+              {% if repairer_list %}
+                {% for repairer in repairer_list reversed %}
+                {% if repairer.distance %}
+                  <h4>{{ repairer.distance.mi|floatformat:2 }} miles - <a href="{% url 'repairer_about' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h4>
+                  <p>
+                      {{ repairer.address }}
+                      {% if repairer.address_other %}
+                          , {{ repairer.address_other }}
+                      {% endif %}
+                      <br>{{ repairer.place_city }}, {{ repairer.region_state }} {{ repairer.postcode }}
+                      <br>{{ repairer.phoner.as_national }}
+                      <br>Years of experience: {{ repairer.experience_in_years }}
+                  </p>
+                  <hr>
+                  {% endif %}
+                  {% endfor %}
+              {% else %}
+              No Repairers
+              {% endif %}
+                <script>
+              mapboxgl.accessToken = 'pk.eyJ1IjoiamF0bGFzdCIsImEiOiJja2pmdXV2Mm0yOXR6MnluMGtzeng2NXp2In0.-GbX1CJH3huzw-u6B3A8DQ';
+              var longitude = {{ address.location.x }}
+              var latitude = {{ address.location.y }}
+        
+              var places = {
+                  // Add the customer's information
+                        'type': 'FeatureCollection',
+                        'features': [
+                            {
+                                'type': 'Feature',
+                                    'properties': {
+                                    'description': '{{ address.nickname }}',
+                                    'icon': 'circle'
+                                    },
+                                    'geometry': {
+                                        'type': 'Point',
+                                        'coordinates': [longitude, latitude]
+                                        }
+                            },
+                  // Add the repairers' information
+                  {% for repairer in repairer_list%}
+                        {
+                            'type': 'Feature',
+                                'properties': {
+                                'description': '{{ repairer.first_name }} {{ repairer.last_name }}',
+                                'icon': 'triangle'
+                                },
+                                'geometry': {
+                                    'type': 'Point',
+                                    'coordinates': [{{repairer.location.x}}, {{repairer.location.y}}]
+                                    }
+                                },
+                        {% endfor %}
+                    ]
+                };
+        
+            var map = new mapboxgl.Map({
+                    container: 'map',
+                    style: 'mapbox://styles/mapbox/streets-v10',
+                    center: [longitude, latitude],
+                    zoom: 10
+                });
+            
+            map.on('load', function () {
+                // Add a GeoJSON source containing place coordinates and information.
+                map.addSource('places', {
+                    'type': 'geojson',
+                    'data': places
+                    });
+                
+                map.addLayer({
+                        'id': 'poi-labels',
+                        'type': 'symbol',
+                        'source': 'places',
+                        'layout': {
+                        'text-field': ['get', 'description'],
+                        'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                        'text-radial-offset': 0.5,
+                        'text-justify': 'auto',
+                        'icon-image': ['concat', ['get', 'icon'], '-15']
+                        }
+                    });
+                });
+            </script>
+      {% endif %}
+    {% else %}
+      No Addresses
+      {% if debug.exception %}
+        Debug Except ({{ debug.exception }})
+      {% else %}
+        Debug Nickname ({{ debug.nickname }})
+      {% endif %}
+    {% endif %}
+{% else %}
+  <a class="p-2 text-dark" href="{% url 'account_login' %}">Log In</a>
+  <a class="btn btn-outline-primary" href="{% url 'account_signup' %}">Sign Up</a>
+{% endif %}
+
+{% endblock content %}

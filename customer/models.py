@@ -68,29 +68,27 @@ class Customer(models.Model):
         , default = uuid.uuid4
         , editable = False
     )
+
     # user_fk - ID from login credentials
 #    new_uuid = str(uuid.uuid4()) # Should never be used after everything is working correctly.
     user_fk = models.ForeignKey(
         get_user_model()
         , on_delete = models.CASCADE
-#        , editable = False
-#        , default=new_uuid
         , default=1
     )
     date_created = models.DateTimeField(default=datetime.now, editable=False)
     first_name = models.CharField(blank=False, max_length=16)
     last_name = models.CharField(blank=False, max_length=16)
-#    phone_number = PhoneField(blank=False)
-    phone_number = PhoneNumberField(blank=False)
-    address_street = models.CharField(blank=False, max_length=32)
-    address_other = models.CharField(blank=True, max_length=16)
-    city = models.CharField(blank=False, max_length=32)
-    state = models.CharField(blank=False, max_length=2, choices=US_STATE_CHOICES)
-    zipcode = models.CharField(blank=False, max_length=32)
+    phone = PhoneNumberField(blank=False)
+    # address_street = models.CharField(blank=False, max_length=32)
+    # address_other = models.CharField(blank=True, max_length=16)
+    # city = models.CharField(blank=False, max_length=32)
+    # state = models.CharField(blank=False, max_length=2, choices=US_STATE_CHOICES)
+    # zipcode = models.CharField(blank=False, max_length=32)
 
-    latitude = models.FloatField(default=42.95)
-    longitude = models.FloatField(default=-83.64)
-    location = models.PointField(blank=False, default=Point(0.0, 0.0))
+    # latitude = models.FloatField(default=42.95)
+    # longitude = models.FloatField(default=-83.64)
+    # location = models.PointField(blank=False, default=Point(0.0, 0.0))
 
     # class Meta:
     #     indexes = [

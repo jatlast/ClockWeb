@@ -43,6 +43,7 @@ urlpatterns = [
     path('clocks/', include('clock.urls')),
     path('repairers/', include('repairer.urls')),
     path('workorders/', include('workorder.urls')),
+    path('address/', include('address.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Use the debug toolbar

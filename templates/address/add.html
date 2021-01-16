@@ -1,0 +1,193 @@
+{% extends '_base.html' %}
+
+{% block title %}Add Address{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col">
+    <h3>Enter your address into the "Search" box on the map to find your location.</h3>
+    <br>
+    <div id="map" style='width: 500px; height: 500px;'></div>
+    <br>
+    <form action="" class='form' method="post">
+      {% csrf_token %}
+      <table>
+        {% for field in form.visible_fields %}
+        {% if field.name == 'nickname' or field.name == 'contact_name' or field.name == 'contact_phone' %}
+        <tr>
+            <th>{{ field.label_tag }}</th>
+            <td>
+            {% if field.errors %}
+                <ul>
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {{ field }}
+            {% if field.help_text %}
+                {{ field.help_text }}
+            {% endif %}
+            </td>
+        </tr>
+        {% elif 1 == 1 %}
+        <tr>
+            <th>{{ field.label_tag }}</th>
+            <td>
+            {% if field.errors %}
+                <ul>
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+              {{ field }}
+            {% if field.help_text %}
+                {{ field.help_text }}
+            {% endif %}
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </table>
+      <br>
+      <input class="btn btn-primary" type="submit" value="Submit">
+      <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />
+    </form>
+
+    <link href="https://api.mapbox.com/mapbox-assembly/v0.23.2/assembly.min.css" rel="stylesheet" />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.2.0/mapbox-gl-geocoder.css" type="text/css" />
+
+  <script language="javascript" type="text/javascript">
+
+      mapboxgl.accessToken = 'pk.eyJ1IjoiamF0bGFzdCIsImEiOiJja2pmdXV2Mm0yOXR6MnluMGtzeng2NXp2In0.-GbX1CJH3huzw-u6B3A8DQ';
+      var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-83.644041, 42.956999],
+        zoom: 13
+      });
+
+      var geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl
+      });
+
+      map.addControl(geocoder, 'top-left');
+
+      map.on('load', function () {
+        // Listen for the `geocoder.input` event that is triggered when a user
+        // makes a selection
+        geocoder.on('result', function (ev) {
+          var styleSpec = ev.result;
+          var styleSpecText = JSON.stringify(styleSpec, null, 2);
+          var geoObj = JSON.parse(styleSpecText);
+
+          var address = document.getElementById('id_address');			// Address
+          var address_other = document.getElementById('id_address_other');// Apartment / Unit / Suite
+          var locality = document.getElementById('id_locality_disctrict');			// Disctrict / Arrondissements
+          var place = document.getElementById('id_place_city');				// City / Village / Municipality
+          var district = document.getElementById('id_district_prefectures');			// Chinese Prefectures
+          var region = document.getElementById('id_region_state');				// State / Province
+          var postcode = document.getElementById('id_postcode');			// Zipcode / Postal Code
+          var country = document.getElementById('id_country');			// Country
+          
+          var latitude = document.getElementById('id_latitude');			// Latitude
+          var longitude = document.getElementById('id_longitude');		// Longitude
+
+          var relevance = document.getElementById('id_relevance');		// Relevance
+          relevance.value = geoObj.relevance;
+
+          var accuracy = document.getElementById('id_accuracy');			// Accuracy
+          accuracy.value = geoObj.properties.accuracy;
+
+          var myStringArray = geoObj.context;
+          var arrayLength = myStringArray.length;
+          for (var i = 0; i < arrayLength; i++) {
+            
+            console.log(myStringArray[i].id);
+
+            if (myStringArray[i].id.includes('postcode'))
+            {
+              postcode.value = myStringArray[i].text;
+//              document.getElementById('tr_postcode').style.visibility = "visible";
+            }
+            else if (myStringArray[i].id.includes('locality'))
+            {
+              locality.value = myStringArray[i].text;
+//              document.getElementById('tr_locality_disctrict').style.visibility = "visible";
+            }
+            else if (myStringArray[i].id.includes('place'))
+            {
+              place.value = myStringArray[i].text;
+//              document.getElementById('tr_place_city').style.visibility = "visible";
+            }
+            else if (myStringArray[i].id.includes('district'))
+            {
+              district.value = myStringArray[i].text;
+//              document.getElementById('tr_district_prefectures').style.visibility = "visible";
+            }
+            else if (myStringArray[i].id.includes('region'))
+            {
+              region.value = myStringArray[i].text;
+//              document.getElementById('tr_region_state').style.visibility = "visible";
+            }
+            else if (myStringArray[i].id.includes('country'))
+            {
+              country.value = myStringArray[i].text;
+//              document.getElementById('tr_country').style.visibility = "visible";
+            }
+            else
+            {
+              console.log(myStringArray[i].id + ' Not Recognized');
+            }
+          }
+
+          var street_address = '';
+          if (geoObj.address)
+          {
+            street_address = geoObj.address;
+          }
+          if (geoObj.text)
+          {
+            street_address = street_address + ' ' + geoObj.text;
+          }
+          if (street_address.length > 3)
+          {
+            address.value = street_address;
+//            document.getElementById('tr_address').style.visibility = "visible";
+//            document.getElementById('tr_address_other').style.visibility = "visible";
+            document.getElementById('id_address').disabled = false;
+          }
+
+          latitude.value = geoObj.geometry.coordinates[1];
+          longitude.value = geoObj.geometry.coordinates[0];
+        });
+      });
+    </script>
+  </div>
+</div>
+{% endif %}
+{% endblock content %}
+
+10081 Walnut Shores Dr, Fenton, MI 48430
+(810) 516-3013
+
+<tr id='tr_address' style="visibility: hidden"><th><label for='id_address'>Address:</label></th><td><input type='text' name='address' value='' maxlength='64' id='id_address' disabled></td></tr>
+<tr id='tr_address_other' style="visibility: hidden"><th><label for='id_address_other'>Apartment / Unit / Suite:</label></th><td><input type='text' name='address_other' value='' maxlength='64'  id='id_address_other'></td></tr>
+<tr id='tr_locality_disctrict' style="visibility: hidden"><th><label for='id_locality_disctrict'>Disctrict / Arrondissement:</label></th><td><input type='text' name='locality_disctrict' value='' maxlength='64'  id='id_locality_disctrict' disabled></td></tr>
+<tr id='tr_place_city' style="visibility: hidden"><th><label for='id_place_city'>City / Village / Municipality:</label></th><td><input type='text' name='place_city' value='' maxlength='64' required id='id_place_city' disabled></td></tr>
+<tr id='tr_district_prefectures' style="visibility: hidden"><th><label for='id_district_prefectures'>Prefecture:</label></th><td><input type='text' name='district_prefectures' value='' maxlength='64'  id='id_district_prefectures' disabled></td></tr>
+<tr id='tr_region_state' style="visibility: hidden"><th><label for='id_region_state'>State / Province:</label></th><td><input type='text' name='region_state' value='' maxlength='64' id='id_region_state' disabled></td></tr>
+<tr id='tr_postcode' style="visibility: hidden"><th><label for='id_postcode'>Zipcode / Postal Code:</label></th><td><input type='text' name='postcode' value='' maxlength='12' id='id_postcode' disabled></td></tr>
+<tr id='tr_country' style="visibility: hidden"><th><label for='id_country'>Country:</label></th><td><input type='text' name='country' value='' maxlength='64' required id='id_country' disabled></td></tr>
+
+
+<tr><th><label for="id_latitude">Latitude:</label></th><td><input type="number" name="latitude" value="" step="any" id="id_latitude" disabled></td></tr>
+<tr><th><label for="id_longitude">Longitude:</label></th><td><input type="number" name="longitude" value="" step="any" id="id_longitude" disabled></td></tr>
+<tr><th><label for="id_relevance">Relevance:</label></th><td><input type="number" name="relevance" value="" step="any" id="id_relevance" disabled></td></tr>
+<tr><th><label for='id_accuracy'>Accuracy:</label></th><td><input type='text' name='accuracy' value='' maxlength='16' id='id_accuracy' disabled></td></tr>

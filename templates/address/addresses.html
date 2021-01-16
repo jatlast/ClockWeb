@@ -1,0 +1,35 @@
+{% extends '_base.html' %}
+
+{% block title %}Customers{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if addresses.count > 0 %}
+    {% for address in addresses %}
+    <!-- ({{ address.user_fk_id }}) =? ({{ user.id }}) -->
+      {% if address.user_fk_id == user.id %}
+      <h2><a href="{% url 'address_update' address.id %}"> {{ address.nickname }}</a></h2>
+      {{ address.contact_name }} {{ address.contact_phone.as_national }}<br>
+      <address>
+        {{ address.address }}
+          {% if address.address_other %}
+          , {{ address.address_other }}
+          {% endif %}
+          <br>{{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}
+          <br>{{ address.country }}
+      </address>
+        <div>
+            <a class="btn btn-outline-primary" href="{% url 'address_add' %}">Add Address</a>
+            <a class="btn btn-outline-primary" href="{% url 'repairers_nearby' address.id %}">Find Repair People</a>
+      </div>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+  <div class="row">
+    <div class="col-sm">
+      If you would like to get a clock repaired, please <a href="{% url 'address_add' %}">add your address...</a>
+    </div>
+  </div>
+{% endif %}
+{% endif %}
+{% endblock content %}
