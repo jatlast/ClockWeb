@@ -1,8 +1,8 @@
 import uuid
 from django.contrib.auth import get_user_model
-from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
-#from django.db import models
+# from django.contrib.gis.db import models
+# from django.contrib.gis.geos import Point
+from django.db import models
 from django.urls import reverse
 #from phone_field import PhoneField
 from phonenumber_field.modelfields import PhoneNumberField
@@ -76,9 +76,13 @@ class Customer(models.Model):
         , on_delete = models.CASCADE
         , default=1
     )
+    
     date_created = models.DateTimeField(default=datetime.now, editable=False)
-    first_name = models.CharField(blank=False, max_length=16)
-    last_name = models.CharField(blank=False, max_length=16)
+    first_name = models.CharField(blank=False, max_length=32)
+    last_name = models.CharField(blank=False, max_length=32)
+
+    company_name = models.CharField(blank=True, max_length=128)
+
     phone = PhoneNumberField(blank=False)
     # address_street = models.CharField(blank=False, max_length=32)
     # address_other = models.CharField(blank=True, max_length=16)

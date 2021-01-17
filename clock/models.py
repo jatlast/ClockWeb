@@ -225,14 +225,6 @@ class Clock(models.Model):
     # id = autopopulated by django
 #    id = models.AutoField(primary_key=True, default=1000)
 
-    # user_fk - ID from login credentials
-#     user_fk = models.ForeignKey(
-#         get_user_model()
-#         , on_delete = models.CASCADE
-# #        , editable = False
-#         , default=1
-#     )
-
     # customer_fk - Foreigh Key pointing to the Customer that is adding this Workorder
     customer_fk = models.ForeignKey(Customer, on_delete=models.CASCADE, default='4fc6c448-532b-4949-b4be-faa39a0d90e1')
 
