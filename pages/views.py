@@ -1,8 +1,11 @@
 from django.views.generic import TemplateView
-from clock.models import Clock
+from person.models import Person
+from address.models import Address
 from customer.models import Customer
 from repairer.models import Repairer
+#from clock.models import Clock
 from django.template import Context
+import traceback
 
 class HomePageView(TemplateView):
     context_object_name = 'home'
@@ -11,17 +14,22 @@ class HomePageView(TemplateView):
     def get_context_data(self, **kwargs):
         if not self.request.user.is_authenticated:
             return None
-        else:
+        try:
             context = super(HomePageView, self).get_context_data(**kwargs)
             context['debug'] = Context({"foo": "bar"})
 
-            context['customers'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
-            context['repairers'] = Repairer.objects.filter(user_fk_id__exact=self.request.user)
+            context['person'] = Person.objects.get(user_fk_id__exact=self.request.user)
 
-            if context['customers'].count() > 0:
-                context['clocks'] = Clock.objects.filter(customer_fk__exact=context['customers'][0].id)
-            # context['debug']['clock_fk_id'] = context['workorder'].clock_fk_id
-            # context['debug']['repairer_fk_id'] = context['workorder'].repairer_fk_id
+            if context['person'].account_type == 'Customer':
+                context['customer'] = Customer.objects.get(person_fk_id__exact=context['person'].id)
+#                context['clocks'] = Clock.objects.filter(customer_fk__exact=context['customer'].id)
+            elif context['person'].account_type == 'Repairer':
+                context['repairer'] = Repairer.objects.get(person_fk_id__exact=context['person'].id)
+
+            return context
+        except Exception as e:
+            trace_back = traceback.format_exc()
+            context['debug']['exception'] = str(e) + " " + str(trace_back)
             return context
 
 class AboutPageView(TemplateView):

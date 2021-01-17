@@ -44,15 +44,6 @@ class CustomerCreateView(CreateView):
     context_object_name = 'customer_create'
     template_name = 'customer/create.html'
 
-    def form_valid(self, form):
-        longitude = form.cleaned_data['longitude']
-        latitude = form.cleaned_data['latitude']
-        form.instance.user_fk = self.request.user
-        form.instance.location = Point(longitude, latitude, srid=4326)
-        response = super().form_valid(form)
-        response.set_cookie('user_type', 'customer', 3600 * 24 * 365 * 2) # = 63,072,000 seconds = 2 years
-        return response
-
 class CustomerUpdateView(UpdateView):
     model = Customer
     fields = customer_fields_viewable_by_everyone

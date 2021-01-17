@@ -1,0 +1,20 @@
+{% extends '_base.html' %}
+
+{% block title %}Update Information{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if form %}
+    <form action="" class='form' method="post">
+        {% csrf_token %}
+        <div class='col-md-4'>
+          <table>
+              {{ form.as_table }}
+          </table>
+        </div>
+          <input class='btn btn-primary' type='submit'>
+        <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />    
+    </form>
+    {% endif %}
+{% endif %}
+{% endblock content %}

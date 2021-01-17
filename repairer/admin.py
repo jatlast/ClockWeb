@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Repairer
 
 class RepairerAdmin(admin.ModelAdmin):
-    list_display = ('user_fk', 'user_fk_id', 'first_name', 'last_name')
+    list_display = ('person_fk', 'person_fk_id', 'hourly_rate', 'date_created')
     date_hierarchy = 'date_created'
 
     # def form_valid(self, form):

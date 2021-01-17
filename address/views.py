@@ -7,10 +7,9 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.template import Context
 from .models import Address
 from repairer.models import Repairer
+from person.models import Person
 #from django.contrib.auth import get_user_model
-
 import traceback
-
 
 address_fields_viewable_by_everyone = [
         # 'id',
@@ -50,8 +49,8 @@ class AddressCreateView(CreateView):
     def form_valid(self, form):
         longitude = form.cleaned_data['longitude']
         latitude = form.cleaned_data['latitude']
-        form.instance.user_fk = self.request.user
         form.instance.location = Point(longitude, latitude, srid=4326)
+        form.instance.person_fk_id = Person.objects.only('id').get(user_fk_id=self.request.user).id
         response = super().form_valid(form)
         return response
 
@@ -80,7 +79,8 @@ class AddressListView(ListView):
         if not self.request.user.is_authenticated:
             return None
         try:
-            return Address.objects.filter(user_fk_id__exact=self.request.user)
+            person_fk_id = Person.objects.only('id').get(user_fk_id=self.request.user).id
+            return Address.objects.filter(person_fk_id__exact=person_fk_id)
         except:
             return None
 

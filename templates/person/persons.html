@@ -1,0 +1,32 @@
+{% extends '_base.html' %}
+
+{% block title %}Persons{% endblock title %}
+
+'first_name',
+'last_name',
+'phone',
+'account_type',
+
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if persons.count > 0 %}
+    {% for person in persons %}
+    <!-- ({{ person.user_fk_id }}) =? ({{ user.id }}) -->
+      {% if person.user_fk_id == user.id %}
+      <h2><a href="{% url 'person_update' person.id %}">{{ person.first_name }} {{ person.last_name }}</a></h2>
+      <p>
+        {{ person.account_type }}<br>
+        {{ person.phone.as_national }}<br>
+    </p>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+  <div class="row">
+    <div class="col-sm">
+      <a href="{% url 'person_create' %}">Select your account type</a>
+    </div>
+  </div>
+    {% endif %}
+{% endif %}
+{% endblock content %}

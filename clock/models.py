@@ -145,27 +145,27 @@ class Clocktypes(models.Model):
     # clock_type - Advertising, Atmos, Banjo, Kitchen, etc
     #   When displaying use: https://www.antiqueclockspriceguide.com/clocktyperesults.php?t=clocktype.clock_type
     #              Based on: https://www.antiqueclockspriceguide.com/clocktyperesults.php?t=advertising
-    clock_type = models.CharField(blank=False, max_length=32, choices=CLOCK_TYPE_CHOICES, default='Longcase/Grandfather')
+    clock_type = models.CharField(blank=False, max_length=32, choices=CLOCK_TYPE_CHOICES, default='Mantel')
     # description
     description = models.CharField(blank=False, max_length=64, default='Describe this clock type')
     # footprint - Wall, Mantel, Floor
-    footprint = models.CharField(blank=False, max_length=16, choices=FOOTPRINT_CHOICES, default='Floor')
+    footprint = models.CharField(blank=False, max_length=16, choices=FOOTPRINT_CHOICES, default='Mantel')
     # dial_diameter_centimeters - NULL or integer
     dial_diameter_centimeters = models.PositiveSmallIntegerField(blank=True, default=0)
     # has_glass_over_face - Yes/No | 1/0
     has_glass_over_face = models.BooleanField(blank=False, default=False)
     # train_count - NULL,1,2,3,4
-    train_count = models.PositiveSmallIntegerField(blank=True, choices=TRAIN_COUNT_CHOICES, default=3)
+    train_count = models.PositiveSmallIntegerField(blank=True, choices=TRAIN_COUNT_CHOICES, default=1)
     # wind_interval_days - NULL, 1, 8, 15, 31
     wind_interval_days = models.PositiveSmallIntegerField(blank=True, choices=WIND_INTERVAL_CHOICES, default=8)
     # drive_type - Mainspring, Chain, Cable, String, Atmospheric, Electric, Battery?
-    drive_type = models.CharField(blank=False, max_length=16, choices=DRIVE_TYPE_CHOICES, default='Cable')
+    drive_type = models.CharField(blank=False, max_length=16, choices=DRIVE_TYPE_CHOICES, default='Mainspring')
     # gear_material - Brass, Wood, Plastic, etc
     gear_material = models.CharField(blank=False, max_length=16, choices=GEAR_MATERIAL_CHOICES, default='Metal')
     # chime_count - 0, 1, 2, 3, 4, ?
-    chime_count = models.PositiveSmallIntegerField(blank=False, choices=CHIME_COUNT_CHOICES, default=3)
+    chime_count = models.PositiveSmallIntegerField(blank=False, choices=CHIME_COUNT_CHOICES, default=0)
     # strike_type - Ships Bell, Bim-Bam, Hourly Note, Hourly Chord
-    strike_type = models.CharField(blank=False, max_length=32, choices=STRIKE_TYPE_CHOICES, default='Chord')
+    strike_type = models.CharField(blank=False, max_length=32, choices=STRIKE_TYPE_CHOICES, default='None')
     # has_half_hour_strike - Yes/No | 1/0
     has_half_hour_strike = models.BooleanField(blank=False, default=False)
     # has_pendulum - Yes/No | 1/0
@@ -223,22 +223,11 @@ class Clocktypes(models.Model):
 
 class Clock(models.Model):
     # id = autopopulated by django
-#    id = models.AutoField(primary_key=True, default=1000)
-
-    # user_fk - ID from login credentials
-#     user_fk = models.ForeignKey(
-#         get_user_model()
-#         , on_delete = models.CASCADE
-# #        , editable = False
-#         , default=1
-#     )
 
     # customer_fk - Foreigh Key pointing to the Customer that is adding this Workorder
+    #   Each Customer can have many clocks but each Clock has only one Customer
     customer_fk = models.ForeignKey(Customer, on_delete=models.CASCADE, default='4fc6c448-532b-4949-b4be-faa39a0d90e1')
 
-    # customer - Each Customer can have many clocks but each Clock has only one Customer
-#    new_uuid = str(uuid.uuid4())
-#    customer_fk = models.ForeignKey(Customer, on_delete=models.CASCADE, default=new_uuid)
     # clocktype - Refers to Clocktype for pre-population but the Customer can change the values
     #   Thus, if the customer changes the values of the Clock it no longer "is" equal to its original Clocktype
     clock_type_fk = models.ForeignKey(Clocktypes, on_delete=models.CASCADE, default=1)

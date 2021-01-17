@@ -7,6 +7,8 @@ from djmoney.models.fields import MoneyField
 from repairer.models import Repairer
 from clock.models import Clock
 from customer.models import Customer
+from address.models import Address
+from person.models import Person
 
 class Workorder(models.Model):
     REPAIR_TYPE_CHOICES = [
@@ -57,13 +59,17 @@ class Workorder(models.Model):
 #     )
 
     # customer_fk - Foreigh Key pointing to the Customer that is adding this Workorder
-    customer_fk = models.ForeignKey(Customer, on_delete=models.CASCADE, default='4fc6c448-532b-4949-b4be-faa39a0d90e1')
+    customer_fk = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
     # clock_fk - Foreigh Key pointing to the Clock to be serviced
     clock_fk = models.ForeignKey(Clock, on_delete=models.CASCADE)#, default=0)
 
     # repairer_fk - Freign Key pointing to the Repairer who is being asked to do the work
     repairer_fk = models.ForeignKey(Repairer, on_delete=models.CASCADE)#, default=0)
+
+    # address_deliver - Foreigh Key pointing to the Address app
+    address_deliver = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True, help_text='Select the address where the repair person will deliver your clock')
+
     # repairer_hourly_rate - attached to workorder in case the repairer changes hourly_rate
     repairer_hourly_rate = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=0.00, default_currency='USD')
 
@@ -73,7 +79,7 @@ class Workorder(models.Model):
     # General Work Order information fields...
     repair_type = models.CharField(blank=False, max_length=32, choices=REPAIR_TYPE_CHOICES)
     repair_status = models.CharField(blank=False, max_length=32, choices=REPAIR_STATUS_CHOICES, default='Submitted')
-    repair_description = models.TextField(blank=False)
+    repair_description = models.TextField(blank=False, help_text='Describe what is wrong with your clock and what you hope the repair person can do to help')
 
     distance_from_repairer = models.DecimalField(max_digits=5, decimal_places=2, blank=False, default=0.00)
     # dynamic_estimate - keep original estimate the Customer probably saw before submitting Workorder
@@ -144,7 +150,9 @@ class Addons(models.Model):
     workorder_fk = models.ForeignKey(Workorder, on_delete=models.CASCADE)#, default=0)
 
     date_created = models.DateTimeField(default=datetime.now, editable=False)
-    added_by = models.CharField(blank=False, max_length=8, choices=ADDED_BY_CHOICES, default='Repairer')
+
+    # person_fk - Foreigh Key pointing to the Person app
+    person_fk = models.ForeignKey(Person, on_delete=models.CASCADE,)
 
     addon_type = models.CharField(blank=False, max_length=32, choices=ADDON_TYPE_CHOICES)
 
@@ -155,7 +163,7 @@ class Addons(models.Model):
 
     added_hours = models.DecimalField(max_digits=3, decimal_places=2, blank=False, default=0.00)
     added_part_cost = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=0.00, default_currency='USD')
-    override_part_cost_multiple = models.BooleanField(blank=True, default=False)
+    part_cost_multiple = models.BooleanField(blank=True, default=False)
 
     # image_# - Five associated pictures
     image_1 = models.ImageField(upload_to='workorders/addons/', blank=True)

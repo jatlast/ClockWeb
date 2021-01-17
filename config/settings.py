@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'repairer', # New 20201231
     'workorder',# New 20210110
     'address',  # New 20210115
+    'person',   # New 20210116
 
     # Third-party
     'crispy_forms',     # New 20201221

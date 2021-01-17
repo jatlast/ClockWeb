@@ -1,0 +1,20 @@
+{% extends '_base.html' %}
+
+{% block title %}Person{% endblock title %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col">
+    <h2><a href="{% url 'person_update' person.id %}">{{ person.first_name }} {{ person.last_name }}</a></h2>
+    <p>
+        {{ person.account_type }}<br>
+        {{ person.phone.as_national }}<br>
+    </p>
+    {% if not user.email_verified %}
+    <a href="{% url 'account_email' %}">Verify your email...</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+{% endblock content %}

@@ -1,6 +1,6 @@
 {% extends '_base.html' %}
 
-{% block title %}Clock Info{% endblock title %}
+{% block title %}Customer Clock Info{% endblock title %}
 
 {% block content %}
 {% if user.is_authenticated %}
@@ -62,24 +62,28 @@
           <li>Has {{ clock.tube_count }} or more tubes</li>
           {% endif %}
         </ul>
-        {% if customer_list %}
+        {% if addresses %}
           {% if workorders %}
           <h6>Work Orders Outstanding:</h6>
           <ol>
             {% for workorder in workorders %}
-            <li><a href="{% url 'workorder' workorder.id %}">{{ workorder.date_created }}</a></li>
+            <li><a href="{% url 'workorder' workorder.id %}">{{ workorder.date_last_updated }}</a></li>
             {% endfor %}
           </ol>
           {% else %}
-            <a class="btn btn-outline-primary" href="{% url 'clock_estimate' clock.id %}">Get Repair Estimate</a>
+            {% for address in addresses %}
+              {{ address.nickname }}
+              <a class="btn btn-outline-primary" href="{% url 'clock_estimate' clock.id %}">Get Repair Estimate</a>
+            {% endfor %}
           {% endif %}
         {% else %}
         <hr>
-        <a href="{% url 'customers' %}">Address</a> required for estimates.
+        <a href="{% url 'address_add' %}">Address</a> required for estimates.
         {% endif %}
         </p>
       </div>
     </div>
+    <input class="btn btn-secondary" type="button" value="Back" onclick="history.back()" />
   </div>
 </div>
 {% endif %}

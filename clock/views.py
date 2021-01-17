@@ -4,6 +4,8 @@ from .models import Clock, Clocktypes
 from customer.models import Customer
 from repairer.models import Repairer
 from workorder.models import Workorder
+from person.models import Person
+from address.models import Address
 from django.template import Context
 from decimal import Decimal
 from django.urls import reverse
@@ -54,7 +56,8 @@ class ClockListCustomerView(ListView):
         if not self.request.user.is_authenticated:
             return None
         else:
-            customer_fk = Customer.objects.only('id').get(user_fk_id=self.request.user).id
+            person_fk_id = Person.objects.only('id').get(user_fk_id=self.request.user).id
+            customer_fk = Customer.objects.only('id').get(person_fk_id__exact=person_fk_id).id
             return Clock.objects.filter(customer_fk_id__exact=customer_fk)
 
 class ClocktypesListView(ListView):
@@ -71,6 +74,25 @@ class ClocktypesListView(ListView):
             context['clocktypes_list'] = Context({"foo": "bar"})
             context['clocktypes_list'] = Clocktypes.objects.all().order_by('clock_type')
             return context
+
+class ClockDetailView(DetailView):
+    model = Clock
+    context_object_name = 'clock'
+    template_name = 'clocks/clock.html'
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return None
+        else:
+            context = super(ClockDetailView, self).get_context_data(**kwargs)
+            context['workorders'] = Workorder.objects.exclude(repair_status__exact='Paid in Full').filter(clock_fk_id__exact=self.object.pk).order_by('-date_created')
+            try:
+                person_fk_id = Person.objects.only('id').get(user_fk_id=self.request.user).id
+#                customer_fk = Customer.objects.only('id').get(person_fk_id__exact=person_fk_id).id
+                context['addresses'] = Address.objects.filter(person_fk_id__exact=person_fk_id)
+                return context
+            except:
+                return context
 
 
 class ClockDetailCustomerView(DetailView):
@@ -116,13 +138,24 @@ class ClockCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.user_fk = self.request.user
-        customer_fk = Customer.objects.only('id').get(user_fk_id=self.request.user).id
+        person_fk_id = Person.objects.only('id').get(user_fk_id=self.request.user).id
+        customer_fk = Customer.objects.only('id').get(person_fk_id__exact=person_fk_id).id
         form.instance.customer_fk_id = customer_fk
         return super().form_valid(form)
 #        return super(ClockCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse("customer_clock", args=(self.object.id,))
+        return reverse("clock", args=(self.object.id,))
+
+class ClockUpdateView(UpdateView):
+    model = Clock
+    fields = clock_fields_viewable_by_everyone
+    context_object_name = 'clock_update'
+    template_name = 'clocks/update.html'
+
+    # def get_success_url(self):
+    #     pk = self.kwargs["pk"]
+    #     return reverse("repairer_clock", kwargs={"pk": pk})
 
 
 class ClockUpdateCustomerView(UpdateView):
