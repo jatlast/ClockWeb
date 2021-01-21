@@ -68,8 +68,6 @@
             <li><a href="{% url 'workorder' workorder.id %}">{{ workorder.date_created }}</a></li>
             {% endfor %}
           </ol>
-          {% else %}
-              <a class="btn btn-outline-primary" href="{% url 'workorder_add' %}">Get Repair Estimate</a>
           {% endif %}
         </p>
       </div>
@@ -80,6 +78,7 @@
     <div class="row">
       <div class="col">
         {% if not workorders %}
+        {% if customer_addresses %}
       {% if request.COOKIES.user_type == 'customer' %}
         <form class='form' action="{% url 'clock_estimate' clock.id %}" method="GET">
           {% csrf_token %}
@@ -98,6 +97,9 @@
           </div>
         </form>
         {% endif %}
+        {% else %}
+          <a class="btn btn-outline-primary" href="{% url 'address_add' %}">Add Address</a> to receive estimates.
+        {% endif %}
     {% endif %}
   </div>
   </div>
@@ -106,4 +108,3 @@
 {% endif %}
 
 {% endblock content %}
-

@@ -105,10 +105,12 @@
       </div>
     </div>
     <input class="btn btn-secondary" type="button" value="Back" onclick="history.back()" />    
-    {% if not user.email_verified and request.COOKIES.user_type == 'repairer' %}
+    {% if not user.email_verified %}
       <a href="{% url 'account_email' %}">Verify your email...</a>
     {% endif %}
   </div>
 </div>
 {% endif %}
 {% endblock content %}
+
+{% if not user.email_verified and request.COOKIES.user_type == 'repairer' %}

@@ -20,6 +20,7 @@ address_fields_viewable_by_everyone = [
         # 'date_created',
         'nickname',
         # 'address_type',
+        'user_type_int',
         'contact_name',
         'contact_phone',
         'address',

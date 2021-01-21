@@ -136,7 +136,7 @@ class ClockRepairEstimateView(DetailView):
         context['customer'] = Customer.objects.get(user_fk_id__exact=self.request.user)
         # context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', context['customer_list'][0].location)).order_by('distance')[0:5]
 
-        context['address_list'] = Address.objects.exclude(user_fk_id__exact=self.request.user).annotate(distance=Distance('location', context['address'].location)).order_by('distance')[0:5]
+        context['address_list'] = Address.objects.exclude(user_type_int__exact=0).annotate(distance=Distance('location', context['address'].location)).order_by('distance')[0:5]
         context['repairer_list'] =  Context({"foo": "bar"})
         context['estimate_list'] =  Context({"foo": "bar"})
 

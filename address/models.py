@@ -8,6 +8,12 @@ from phonenumber_field.modelfields import PhoneNumberField
 from datetime import datetime
 
 class Address(models.Model):
+
+    USER_TYPE_INT_CHOICES = [
+        (0,'Customer'),
+        (1,'Clock Repairer'),
+    ]
+
     # ADDRESS_TYPE_CHOICES = [
     #     ('Primary','Primary'),
     #     ('Billing','Billing'),
@@ -26,6 +32,9 @@ class Address(models.Model):
     )
 
     date_created = models.DateTimeField(default=datetime.now, editable=False)
+
+    # user_type_int - 0,1
+    user_type_int = models.PositiveSmallIntegerField(blank=True, choices=USER_TYPE_INT_CHOICES, default=0)
 
     # nickname
     nickname = models.CharField(blank=False, max_length=64)

@@ -27,6 +27,12 @@
   <div class="col">
     <form action="" class='form' method="post">
       {% csrf_token %}
+
+      {% if request.COOKIES.user_type == 'customer' %}
+        <input type="hidden" id="id_user_type_int" name="user_type_int" value=0>
+      {% elif request.COOKIES.user_type == 'repairer' %}
+          <input type="hidden" id="id_user_type_int" name="user_type_int" value=1>
+      {% endif %}
       <table>
         <!-- Non-Address Fields -->
         <tr>
