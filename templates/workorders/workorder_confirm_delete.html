@@ -1,10 +1,10 @@
 {% extends '_base.html' %}
 
-{% block title %} Delete Address {% endblock title %}
+{% block title %} Delete Workorder {% endblock title %}
 
 {% block content %}
 <form method="post">{% csrf_token %} 
-    <p>Are you sure you want to delete "{{ object.nickname }}"?</p> 
+    <p>Are you sure you want to delete "{{ object.id }}"?</p> 
     <input type="submit" value="Confirm"> 
 </form> 
 {% endblock content %}

@@ -11,14 +11,24 @@
       <img class="card-img-top" src="{{repairer.image_1.url}}" alt="{{repairer.first_name}} {{repairer.last_name}}">
       {% endif %}
       <div class="card-body">
-        <h5 class="card-title">{{repairer.first_name}} {{repairer.last_name}}</h5>
+        <h5 class="card-title">
+          {{repairer.first_name}} {{repairer.last_name}}
+          <br>
+          {{ repairer.phone.as_national }}
+        </h5>
         <p class="card-text">
-          {{ repairer.address_street }}
-          {% if repairer.address_other %}
-          , {{ repairer.address_other }}
-          {% endif %}
-          <br>{{ repairer.city }}, {{ repairer.state }} {{ repairer.zipcode }}
-          <br>{{ repairer.phone_number.as_national }}
+          {% if address %}
+            {{ address.address }}
+            {% if address.address_other %}
+            , {{ address.address_other }}
+            {% endif %}
+            <br>{{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}
+            <br>{{ address.contact_phone.as_national }}
+            {% else %}
+              {% if debug.exception %}
+              <!-- Debug Except ({{ debug.exception }}) -->
+              {% endif %}      
+            {% endif %}
           <h6>About Info:</h6>
           {{ repairer.personal_description }}<br>
           <BR><h6>Details:</h6>

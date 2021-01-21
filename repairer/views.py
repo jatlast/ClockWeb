@@ -1,9 +1,15 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from django.contrib.gis.geos import Point
+# from django.contrib.gis.geos import Point
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Repairer
+from address.models import Address
+from django.template import Context
+import traceback
+# Decorators to force users to be logged in to access the different Views.
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 repairer_fields_viewable_by_everyone = [
         'first_name',
@@ -17,6 +23,8 @@ repairer_fields_viewable_by_everyone = [
         'service_call_hours_minimum',
         'repairs_grandfathers',
         'repairs_tubular_grandfathers',
+        'packs_grandfathers_for_shipping',
+        'moves_grandfathers',
         'repairs_cuckoos',
         'repairs_atmospherics',
         'repairs_anniversarys',
@@ -24,7 +32,6 @@ repairer_fields_viewable_by_everyone = [
         'repairs_most_quartz',
         'road_time_minutes_included',
         'road_time_minutes_maximum',
-        'multiple_per_part_cost',
         'personal_description',
         'image_1',
         'image_2',
@@ -33,31 +40,38 @@ repairer_fields_viewable_by_everyone = [
         'image_5',
     ]
 
+@method_decorator(login_required, name='dispatch')
 class RepairerListView(ListView):
-#    model = Repairer
-#    queryset = Repairer.objects.filter(user_fk_id__exact=request.user)
-#    queryset = Repairer.objects.filter(user_fk_id__exact=7)
-#    queryset = Repairer.objects.filter(last_name__exact='Three')
+    model = Repairer
     context_object_name = 'repairers'
     template_name = 'repairer/repairers.html'
 
-    def get_queryset(self):
-        if self.request.user:
-            return Repairer.objects.filter(user_fk_id__exact=self.request.user)
-        else:
-            return Repairer.objects.all()
-
+@method_decorator(login_required, name='dispatch')
 class RepairerDetailView(DetailView):
     model = Repairer
     context_object_name = 'repairer'
     template_name = 'repairer/repairer.html'
 
-class RepairerAboutView(DetailView):
-    model = Repairer
-#    context_object_name = 'repairer_about'
-    template_name = 'repairer/about.html'
+    def get_context_data(self, **kwargs):
+        context = super(RepairerDetailView, self).get_context_data(**kwargs)
+        context['debug'] = Context({"foo": "bar"})
 
-# Form Views 
+        context['added_context'] = Context({"foo": "bar"})
+        context['added_context']['user_type'] = self.request.COOKIES.get('user_type')
+
+        try:
+            # pk = self.kwargs["pk"]
+            repairer__id = self.object.id
+            repairer__user_fk_id = Repairer.objects.only('user_fk_id').get(id=repairer__id).user_fk_id
+            context['address'] = Address.objects.get(user_fk_id__exact=repairer__user_fk_id)
+            return context
+        except Exception as e:
+            trace_back = traceback.format_exc()
+            context['debug']['exception'] = str(e) + " " + str(trace_back)
+            return context
+
+
+@method_decorator(login_required, name='dispatch')
 class RepairerCreateView(CreateView):
     model = Repairer
     fields = repairer_fields_viewable_by_everyone
@@ -65,15 +79,13 @@ class RepairerCreateView(CreateView):
     template_name = 'repairer/create.html'
 
     def form_valid(self, form):
-        longitude = form.cleaned_data['longitude']
-        latitude = form.cleaned_data['latitude']
         form.instance.user_fk = self.request.user
-        form.instance.location = Point(longitude, latitude, srid=4326)
         response = super().form_valid(form)
         response.set_cookie('user_type', 'repairer', 3600 * 24 * 365 * 2) # = 63,072,000 seconds = 2 years
 #        return super().form_valid(form)
         return response
 
+@method_decorator(login_required, name='dispatch')
 class RepairerUpdateView(UpdateView):
     model = Repairer
     fields = repairer_fields_viewable_by_everyone
@@ -84,3 +96,29 @@ class RepairerUpdateView(UpdateView):
         response = super().form_valid(form)
         response.set_cookie('user_type', 'repairer', 3600 * 24 * 365 * 2) # = 63,072,000 seconds = 2 years
         return response
+
+
+# Old Code
+
+# class RepairerAboutView(DetailView):
+#     model = Repairer
+# #    context_object_name = 'repairer_about'
+#     template_name = 'repairer/about.html'
+
+#     def get_context_data(self, **kwargs):
+#         if not self.request.user.is_authenticated:
+#             return None
+#         context = super(RepairerAboutView, self).get_context_data(**kwargs)
+#         context['debug'] = Context({"foo": "bar"})
+
+#         try:
+#             # pk = self.kwargs["pk"]
+#             repairer__id = self.object.id
+#             repairer__user_fk_id = Repairer.objects.only('user_fk_id').get(id=repairer__id).user_fk_id
+#             context['address'] = Address.objects.get(user_fk_id__exact=repairer__user_fk_id)
+#             return context
+#         except Exception as e:
+#             trace_back = traceback.format_exc()
+#             context['debug']['exception'] = str(e) + " " + str(trace_back)
+#             return context
+

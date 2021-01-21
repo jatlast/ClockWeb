@@ -1,30 +1,17 @@
 {% extends '_base.html' %}
 
-{% block title %} Create Workorder {% endblock title %}
+{% block title %} Create Addon {% endblock title %}
 
 {% block content %}
 {% if user.is_authenticated %}
 <div class="row">
   <div class="col-md-4">
-    <h4>Review & Submit Work Order:</h4><br>
       <form class='form' action="" method="POST">
       {% csrf_token %}
-
       <!-- Begin Hidden Fields -->
       <!-- manually entered -->
       <!-- using django's as_hitten function -->
-      {{ form.clock_fk.as_hidden }}
-      {{ form.repairer_fk.as_hidden }}
-      {{ form.customer_fk.as_hidden }}
-      {{ form.address_clock_fk.as_hidden }}
-      {{ form.repair_type.as_hidden }}
-      {{ form.distance_from_repairer.as_hidden }}
-      {{ form.repair_status.as_hidden }}
-      {{ form.dynamic_estimate.as_hidden }}
-      {{ form.dynamic_estimate_hours.as_hidden }}
-      {{ form.repairer_hourly_rate.as_hidden }}
-      {{ form.repairer_hourly_rate_currency.as_hidden }}
-      {{ form.total_cost.as_hidden }}
+      {{ form.workorder_fk.as_hidden }}
       <!-- End Hidden Fields -->
 
         {% if form.name.errors %}
@@ -32,6 +19,7 @@
         {% for error in form.name.errors %}
             <li>{{ error }}</li>
         {% endfor %}
+        </ul>
         {% endif %}
 
         {% if form.non_field_errors %}
@@ -44,9 +32,13 @@
 
   <table border="1">
     {% for field in form.visible_fields %}
-        {% if field.name == 'repair_description' %}
+        <!-- field.name = ({{ field.name }}) -->
+        {% for field_name in form_fields.viewable %}
+        <!-- field_name = ({{ field_name }}) -->
+
+        {% if field.name == field_name %}
         <tr>
-            <th>{{ field.label_tag }}</th>
+            <th nowrap>{{ field.label_tag }}</th>
             <td>
             {% if field.errors %}
                 <ul>
@@ -79,8 +71,9 @@
             </td>
         </tr>
         {% endif %}
+        {% endfor %}
     {% endfor %}
-  </table>
+    </table>
   <input class='btn btn-primary' type='submit'>
   <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />    
   </form>
@@ -88,8 +81,3 @@
 </div>
 {% endif %}
 {% endblock content %}
-
-<input type="hidden" id="repairer_hourly_rate_0" name="repairer_hourly_rate_0" value={{ form_fields.repairer_hourly_rate_0 }}>
-<input type="hidden" id="repairer_hourly_rate_1" name="repairer_hourly_rate_1" value="{{ form_fields.repairer_hourly_rate_1 }}">
-<input type="hidden" id="dynamic_estimate_0" name="dynamic_estimate_0" value={{ form_fields.dynamic_estimate_0 }}>
-<input type="hidden" id="dynamic_estimate_1" name="dynamic_estimate_1" value="{{ form_fields.dynamic_estimate_1 }}">

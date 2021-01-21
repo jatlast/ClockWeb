@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 #from django.contrib.gis.db import models
 from django.db import models
-from djmoney.models.fields import MoneyField
+# from djmoney.models.fields import MoneyField
 from repairer.models import Repairer
 from clock.models import Clock
 from customer.models import Customer
@@ -60,39 +60,44 @@ class Workorder(models.Model):
     repairer_fk = models.ForeignKey(Repairer, on_delete=models.CASCADE)#, default=0)
 
     # address_deliver - Foreigh Key pointing to the Address app
-    address_deliver = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True, help_text='Select the address where the repair person will deliver your clock')
+    address_clock_fk = models.ForeignKey(Address, related_name='address_clock', on_delete=models.CASCADE, blank=False, null=False, help_text='Address where the clock resides')
+    address_deliver_fk = models.ForeignKey(Address, related_name='address_deliver', on_delete=models.CASCADE, blank=True, null=True, help_text='Address where the clock is to be deilivered (Note: May be the same as the pick up address')
 
     # repairer_hourly_rate - attached to workorder in case the repairer changes hourly_rate
-    repairer_hourly_rate = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=0.00, default_currency='USD')
+    repairer_hourly_rate = models.DecimalField(max_digits=5, decimal_places=2, blank=False, default=0.00)
+    repairer_hourly_rate_currency = models.CharField(max_length=3, blank=False, default='USD')
+    # repairer_hourly_rate = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=0.00, default_currency='USD')
 
     date_created = models.DateTimeField(default=datetime.now, editable=False)
     date_last_updated = models.DateTimeField(default=datetime.now, editable=False)
 
     # General Work Order information fields...
-    repair_type = models.CharField(blank=False, max_length=32, choices=REPAIR_TYPE_CHOICES)
+    repair_type = models.CharField(blank=False, max_length=32, choices=REPAIR_TYPE_CHOICES, help_text="Note: 'Clean & Overhaul' refers to the complete restoration of the clock's mechanical mechanism")
     repair_status = models.CharField(blank=False, max_length=32, choices=REPAIR_STATUS_CHOICES, default='Submitted')
     repair_description = models.TextField(blank=False, help_text='Describe what is wrong with your clock and what you hope the repair person can do to help')
 
     distance_from_repairer = models.DecimalField(max_digits=5, decimal_places=2, blank=False, default=0.00)
     # dynamic_estimate - keep original estimate the Customer probably saw before submitting Workorder
-    dynamic_estimate = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=0.00, default_currency='USD')
+    dynamic_estimate = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.00)
+#    dynamic_estimate = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=0.00, default_currency='USD')
 #    repairer_estimate = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=0.00, default_currency='USD')
 
     # Express estimates in hours instead of currency just as is done when dynamically estimating
     #   The current thought is hours are more universal than any currencies.
     dynamic_estimate_hours = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.00)
-    repairer_estimate_hours = models.DecimalField(max_digits=4, decimal_places=2, blank=True, default=0.00)
+    # repairer_estimate_hours = models.DecimalField(max_digits=4, decimal_places=2, blank=True, default=0.00)
 
     # Allow the Repairer to accept or decline the work order request.
-    repairer_accepted = models.BooleanField(blank=True, default=False)
-    repairer_declined = models.BooleanField(blank=True, default=False)
+    # repairer_accepted = models.BooleanField(blank=True, default=False)
+    # repairer_declined = models.BooleanField(blank=True, default=False)
 
-    start_date = models.DateTimeField(blank=True, null=True)
-    finish_date = models.DateTimeField(blank=True, null=True)
-    date_paid = models.DateTimeField(blank=True, null=True)
+    # start_date = models.DateTimeField(blank=True, null=True)
+    # finish_date = models.DateTimeField(blank=True, null=True)
+    # date_paid = models.DateTimeField(blank=True, null=True)
 
     # total_cost - estimate + additions so the Workorder contains the final total
-    total_cost = MoneyField(max_digits=6, decimal_places=2, blank=True, null=False, default=0.00, default_currency='USD')
+    total_cost = models.DecimalField(max_digits=6, decimal_places=2, blank=True, default=0.00)
+#    total_cost = MoneyField(max_digits=6, decimal_places=2, blank=True, null=False, default=0.00, default_currency='USD')
 
     def __str__(self):
 #        return self.id
@@ -115,18 +120,10 @@ class Addons(models.Model):
         ('',''),
     ]
 
-    ADDED_BY_CHOICES = [
-        ('Customer','Customer'),
-        ('Repairer','Repairer'),
-    ]
-
-    _CHOICES = [
-        ('',''),
-        ('',''),
-        ('',''),
-        ('',''),
-        ('',''),
-    ]
+    # ADDED_BY_CHOICES = [
+    #     ('Customer','Customer'),
+    #     ('Repairer','Repairer'),
+    # ]
 
     # id = autopopulated by django
 
@@ -142,7 +139,7 @@ class Addons(models.Model):
     )
 
     date_created = models.DateTimeField(default=datetime.now, editable=False)
-    added_by = models.CharField(blank=False, max_length=8, choices=ADDED_BY_CHOICES, default='Repairer')
+#    added_by = models.CharField(blank=False, max_length=8, choices=ADDED_BY_CHOICES, default='Repairer')
 
     addon_type = models.CharField(blank=False, max_length=32, choices=ADDON_TYPE_CHOICES)
 
@@ -151,9 +148,11 @@ class Addons(models.Model):
 
     addon_description = models.TextField(blank=False)
 
-    added_hours = models.DecimalField(max_digits=3, decimal_places=2, blank=False, default=0.00)
-    added_part_cost = MoneyField(max_digits=6, decimal_places=2, blank=False, null=False, default=0.00, default_currency='USD')
-    override_part_cost_multiple = models.BooleanField(blank=True, default=False)
+    added_hours = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, default=0.00)
+    # added_part_cost = MoneyField(max_digits=6, decimal_places=2, blank=True, null=True, default=0.00, default_currency='USD')
+    added_part_cost = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, default=0.00)
+    part_cost_multiple = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, default=0.00)
+    added_customer_cost = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, default=0.00)
 
     # image_# - Five associated pictures
     image_1 = models.ImageField(upload_to='workorders/addons/', blank=True)

@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
-{% load humanize %}
+{% load djmoney %}
 
-{% block title %}{{ clock.title }}{% endblock title %}
+{% block title %} Dynamic Estimates {% endblock title %}
 
 {% block content %}
 {% if user.is_authenticated %}
@@ -12,7 +12,7 @@
             <img class="card-img-top" src="{{clock.image_1.url}}" alt="{{clock.clock_type}}">
             {% endif %}
             <div class="card-body">
-              <h5 class="card-title"><a href="{% url 'customer_clock_update' clock.id %}">{{ clock.nickname }}</a></h5>
+              <h5 class="card-title"><a href="{% url 'clock_update' clock.id %}">{{ clock.nickname }}</a></h5>
               <p class="card-text">{{ clock.clock_type_fk }} clocks are usually {{ clock.footprint }} mounted and they typically have a 
                 train count of {{ clock.train_count }} 
                 (i.e., they typically wind in {{ clock.train_count }} places), and a wind interval of 
@@ -55,102 +55,107 @@
                         <li>May have {{ clock.tube_count }} or more tubes </li>
                     {% endif %}
                 </ul>
-                {% if customer_list %}
-                <a class="btn btn-outline-primary" href="{% url 'clock_estimate' clock.id %}">Get Repair Estimate</a>
-                {% else %}
-                <hr>
-                <a href="{% url 'customer_create' %}">Address</a> required for estimates.
-                {% endif %}
                 </p>
             </div>
         </div>
     </div>
-    {% if customer_list %}
+    {% if customer %}
     <div class="col-sm">
         <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet' />
 
         <div id='map' style='width: 500px; height: 500px;'></div>
         <br>
-        {% for repairer in repairer_list%}
-        <h4>{{ repairer.distance.mi|floatformat:2 }} miles - <a href="{% url 'repairer_about' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h4>
-        <p>
-            {{ repairer.address_street }}
-            {% if repairer.address_other %}
-            , {{ repairer.address_other }}
-            {% endif %}
-            <br>{{ repairer.city }}, {{ repairer.state }} {{ repairer.zipcode }}
-            <br>{{ repairer.phone_number.as_national }}
-            <br>{{ repairer.first_name }} has {{ repairer.experience_in_years }} years of experience.
-            {% for est in estimate_list%}
-            {% if est.repairer_id == repairer.id %}
-                {% if est.available %}
-                <br><h6>Estimate: {{ est.dynamic_estimate }}</h6>
-                <form action="/workorders/add/" method="post">
-                    {% csrf_token %}
-                    <!-- fields named as used by Django -->
-                    <input type="hidden" id="clock_fk" name="clock_fk" value="{{ est.clock_pk }}">
-                    <input type="hidden" id="repairer_fk" name="repairer_fk" value="{{ est.repairer_id }}">
-                    <input type="hidden" id="repair_type" name="repair_type" value="Clean & Overhaul">
-                    <input type="hidden" id="repair_status" name="repair_status" value="Submitted">
-                    <input type="hidden" id="distance_from_repairer" name="distance_from_repairer" value="{{ est.distance_from_repairer|floatformat:2 }}">
-                    <input type="hidden" id="repairer_hourly_rate_0" name="repairer_hourly_rate_0" value={{ est.repairer_hourly_rate.amount|floatformat:2 }}>
-                    <input type="hidden" id="repairer_hourly_rate_1" name="repairer_hourly_rate_1" value="{{ est.repairer_hourly_rate.currency }}">
-                    <input type="hidden" id="dynamic_estimate_0" name="dynamic_estimate_0" value={{ est.dynamic_estimate.amount|floatformat:2 }}>
-                    <input type="hidden" id="dynamic_estimate_1" name="dynamic_estimate_1" value="{{ est.dynamic_estimate.currency }}">
-                    <input type="hidden" id="dynamic_estimate_hours" name="dynamic_estimate_hours" value="{{ est.dynamic_estimate_hours|floatformat:2 }}">
-                    <!-- django-money fields passed with different names to rebuild the correct hidden fields -->
-                    <input type="submit" value="Create Work Order">
-                </form>
-                <!-- Estimate: {{ est.hours|floatformat:2 }} hrs * {{ repairer.hourly_rate }} per/hr = {{ est.dynamic_estimate }} cost. -->
-                <!-- Debug: {{ est.debug }} -->
-                <!-- Env: {{ est.env_dump }} -->
-                {% else %}
-                    <br><h6>{{ repairer.first_name }} does not work on this type of clock</h6>
+        {% if repairer_list %}
+            {% for repairer in repairer_list reversed %}
+                {% if repairer.distance %}
+                <h4>{{ repairer.distance.mi|floatformat:2 }} miles - <a href="{% url 'repairer' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h4>
+                <p>
+                    {{ repairer.address }}
+                    {% if repairer.address_other %}
+                        , {{ repairer.address_other }}
+                    {% endif %}
+                    <br>{{ repairer.place_city }}, {{ repairer.region_state }} {{ repairer.postcode }}
+                    <br>{{ repairer.phoner.as_national }}
+                    <br>Years of experience: {{ repairer.experience_in_years }}
+                    {% for est in estimate_list%}
+                    {% if est.repairer_id == repairer.id %}
+                        {% if est.available %}
+                        <br><h6>Estimate: {% money_localize est.dynamic_estimate repairer.hourly_rate.currency %}</h6>
+                        <form action="/workorders/add/" method="post">
+                            {% csrf_token %}
+                            <!-- fields named as used by Django -->
+                            <input type="hidden" id="clock_fk" name="clock_fk" value="{{ est.clock_pk }}">
+                            <input type="hidden" id="repairer_fk" name="repairer_fk" value="{{ est.repairer_id }}">
+                            <input type="hidden" id="customer_fk" name="customer_fk" value="{{ customer.id }}">
+                            <input type="hidden" id="repair_type" name="repair_type" value="{{ form_fields.repair_type }}">
+                            <input type="hidden" id="address_clock_fk" name="address_clock_fk" value="{{ address.id }}">
+                            <input type="hidden" id="repair_status" name="repair_status" value="Submitted">
+                            <input type="hidden" id="distance_from_repairer" name="distance_from_repairer" value="{{ est.distance_from_repairer|floatformat:2 }}">
+                            <input type="hidden" id="repairer_hourly_rate" name="repairer_hourly_rate" value={{ est.repairer_hourly_rate }}>
+                            <input type="hidden" id="repairer_hourly_rate_currency" name="repairer_hourly_rate_currency" value='{{ repairer.hourly_rate.currency }}'>
+                            <input type="hidden" id="dynamic_estimate" name="dynamic_estimate" value={{ est.dynamic_estimate }}>
+                            <input type="hidden" id="dynamic_estimate_hours" name="dynamic_estimate_hours" value="{{ est.dynamic_estimate_hours|floatformat:2 }}">
+                            <input type="hidden" id="total_cost" name="total_cost" value={{ est.dynamic_estimate }}>
+                            <!-- django-money fields passed with different names to rebuild the correct hidden fields -->
+                            <input type="submit" value="Create Work Order">
+                        </form>
+                        <!-- Estimate: {{ est.hours|floatformat:2 }} hrs * {{ repairer.hourly_rate }} per/hr = {{ est.dynamic_estimate }} cost. -->
+                        <!-- Debug All: {{ debug.text }} -->
+                        <!-- Debug Est: {{ est.debug }} -->
+                        <!-- Env: {{ est.env_dump }} -->
+                        {% else %}
+                            <br><h6>{{ repairer.first_name }} does not work on this type of clock</h6>
+                        {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                </p>
+                <hr>
                 {% endif %}
-            {% endif %}
             {% endfor %}
-        </p>
-        <hr>
-        {% endfor %}        
+        {% else %}
+            No Repairers
+        {% endif %}
     </div>
 </div>
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiamF0bGFzdCIsImEiOiJja2pmdXV2Mm0yOXR6MnluMGtzeng2NXp2In0.-GbX1CJH3huzw-u6B3A8DQ';
-    var longitude = {{ customer_list.0.location.x }}
-    var latitude = {{ customer_list.0.location.y }}
+    var longitude = {{ address.location.x }}
+    var latitude = {{ address.location.y }}
   
     var places = {
-        // Add the customer's information
-              'type': 'FeatureCollection',
-              'features': [
-                  {
-                      'type': 'Feature',
-                          'properties': {
-                          'description': '{{ customer_list.0.first_name }} {{ customer_list.0.last_name }}',
-                          'icon': 'circle'
-                          },
-                          'geometry': {
-                              'type': 'Point',
-                              'coordinates': [longitude, latitude]
-                              }
-                  },
-        // Add the repairers' information
-        {% for repairer in repairer_list%}
-              {
-                  'type': 'Feature',
-                      'properties': {
-                      'description': '{{ repairer.first_name }} {{ repairer.last_name }}',
-                      'icon': 'triangle'
-                      },
-                      'geometry': {
-                          'type': 'Point',
-                          'coordinates': [{{repairer.location.x}}, {{repairer.location.y}}]
-                          }
-                      },
-              {% endfor %}
-          ]
-      };
+                    // Add the customer's information
+                        'type': 'FeatureCollection',
+                        'features': [
+                            {
+                                'type': 'Feature',
+                                    'properties': {
+                                    'description': '{{ customer.first_name }} {{ customer.last_name }}',
+                                    'icon': 'circle'
+                                    },
+                                    'geometry': {
+                                        'type': 'Point',
+                                        'coordinates': [longitude, latitude]
+                                        }
+                            },
+                    // Add the repairers' information
+                        {% for repairer in repairer_list%}
+                            {% if repairer.latitude and repairer.longitude %}
+                            {
+                                'type': 'Feature',
+                                    'properties': {
+                                    'description': '{{ repairer.first_name }} {{ repairer.last_name }}',
+                                    'icon': 'triangle'
+                                    },
+                                    'geometry': {
+                                        'type': 'Point',
+                                        'coordinates': [{{repairer.longitude}}, {{repairer.latitude}}]
+                                        }
+                            },
+                            {% endif %}
+                        {% endfor %}
+                        ]
+                    };
   
   var map = new mapboxgl.Map({
           container: 'map',
@@ -184,3 +189,8 @@
 {% endif %}
 
 {% endblock content %}
+
+<input type="hidden" id="repairer_hourly_rate_0" name="repairer_hourly_rate_0" value={{ est.repairer_hourly_rate.amount|floatformat:2 }}>
+<input type="hidden" id="repairer_hourly_rate_1" name="repairer_hourly_rate_1" value="{{ est.repairer_hourly_rate.currency }}">
+<input type="hidden" id="dynamic_estimate_0" name="dynamic_estimate_0" value={{ est.dynamic_estimate.amount|floatformat:2 }}>
+<input type="hidden" id="dynamic_estimate_1" name="dynamic_estimate_1" value="{{ est.dynamic_estimate.currency }}">

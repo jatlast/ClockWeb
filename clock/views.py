@@ -4,11 +4,15 @@ from .models import Clock, Clocktypes
 from customer.models import Customer
 from repairer.models import Repairer
 from workorder.models import Workorder
+from address.models import Address
 from django.template import Context
 from decimal import Decimal
 from django.urls import reverse
 import math
 import traceback
+# Decorators to force users to be logged in to access the different Views.
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 clock_fields_viewable_by_everyone = [
         'nickname',
@@ -37,7 +41,7 @@ clock_fields_viewable_by_everyone = [
         'battery_count',
         'has_tubes',
         'tube_count',
-#        'choices_are_locked',
+        'choices_are_locked',
         'image_1',
         'image_2',
         'image_3',
@@ -45,69 +49,47 @@ clock_fields_viewable_by_everyone = [
         'image_5',
     ]
 
-class ClockListCustomerView(ListView):
+@method_decorator(login_required, name='dispatch')
+class ClockListView(ListView):
     # model = Clock
     context_object_name = 'clocks'
-    template_name = 'customer/clocks.html'
+    template_name = 'clocks/clocks.html'
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return None
-        else:
-            customer_fk = Customer.objects.only('id').get(user_fk_id=self.request.user).id
-            return Clock.objects.filter(customer_fk_id__exact=customer_fk)
+        customer__id = Customer.objects.only('id').get(user_fk_id=self.request.user).id
+        return Clock.objects.filter(customer_fk_id__exact=customer__id)
 
+@method_decorator(login_required, name='dispatch')
 class ClocktypesListView(ListView):
     model = Clock
     context_object_name = 'clocktypes'
     template_name = 'clocks/clocktypes.html'
 
     def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return None
-        else:
-            context = super(ClocktypesListView, self).get_context_data(**kwargs)
-            context['debug'] = Context({"foo": "bar"})
-            context['clocktypes_list'] = Context({"foo": "bar"})
-            context['clocktypes_list'] = Clocktypes.objects.all().order_by('clock_type')
-            return context
+        context = super(ClocktypesListView, self).get_context_data(**kwargs)
+        context['debug'] = Context({"foo": "bar"})
+        context['clocktypes_list'] = Context({"foo": "bar"})
+        context['clocktypes_list'] = Clocktypes.objects.all().order_by('clock_type')
+        return context
 
-
-class ClockDetailCustomerView(DetailView):
+@method_decorator(login_required, name='dispatch')
+class ClockDetailView(DetailView):
     model = Clock
     context_object_name = 'clock'
-    template_name = 'customer/clock.html'
+    template_name = 'clocks/clock.html'
 
     def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return None
-        else:
-            context = super(ClockDetailCustomerView, self).get_context_data(**kwargs)
-            context['workorders'] = Workorder.objects.exclude(repair_status__exact='Paid in Full').filter(clock_fk_id__exact=self.object.pk).order_by('-date_created')
-            try:
-                context['customer_list'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
-                return context
-            except:
-                return context
- 
+        context = super(ClockDetailView, self).get_context_data(**kwargs)
+        context['workorders'] = Workorder.objects.exclude(repair_status__exact='Paid in Full').filter(clock_fk_id__exact=self.object.pk).order_by('-date_created')
 
-class ClockDetailRepairerView(DetailView):
-    model = Clock
-    context_object_name = 'clock'
-    template_name = 'repairer/clock.html'
+        user_type_cookie = self.request.COOKIES.get('user_type')
+        if user_type_cookie == 'customer':
+            context['customer_addresses'] = Address.objects.filter(user_fk_id=self.request.user)
 
-    def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return None
-        else:
-            context = super(ClockDetailRepairerView, self).get_context_data(**kwargs)
-            context['workorders'] = Workorder.objects.exclude(repair_status__exact='Paid in Full').filter(clock_fk_id__exact=self.object.pk).order_by('-date_created')
-            try:
-                context['customer_list'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
-                return context
-            except:
-                return context
- 
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
 class ClockCreateView(CreateView):
     model = Clock
     fields = clock_fields_viewable_by_everyone
@@ -122,243 +104,318 @@ class ClockCreateView(CreateView):
 #        return super(ClockCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse("customer_clock", args=(self.object.id,))
+        return reverse("clock", args=(self.object.id,))
 
-
-class ClockUpdateCustomerView(UpdateView):
+@method_decorator(login_required, name='dispatch')
+class ClockUpdateView(UpdateView):
     model = Clock
     fields = clock_fields_viewable_by_everyone
     context_object_name = 'clock_update'
-    template_name = 'customer/clock_update.html'
+    template_name = 'clocks/update.html'
 
     def get_success_url(self):
         pk = self.kwargs["pk"]
-        return reverse("customer_clock", kwargs={"pk": pk})
-# A redirect button...
-#    <input class="btn btn-secondary" type="button" value="Cancel" onclick="window.location.replace('{% url 'customer_clocks' %}')" />
+        return reverse("clock", kwargs={"pk": pk})
 
-
-class ClockUpdateRepairerView(UpdateView):
-    model = Clock
-    fields = clock_fields_viewable_by_everyone
-    context_object_name = 'clock_update'
-    template_name = 'Repairer/clock_update.html'
-
-    def get_success_url(self):
-        pk = self.kwargs["pk"]
-        return reverse("repairer_clock", kwargs={"pk": pk})
-
+@method_decorator(login_required, name='dispatch')
 class ClockRepairEstimateView(DetailView):
     model = Clock
     context_object_name = 'clock'
     template_name = 'clocks/estimate.html'
 
     def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return None
-        else:
-            context = super(ClockRepairEstimateView, self).get_context_data(**kwargs)
-            try:
-                context['customer_list'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
-                context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', context['customer_list'][0].location)).order_by('distance')[0:5]
+        context = super(ClockRepairEstimateView, self).get_context_data(**kwargs)
 
-                context['estimate_list'] =  Context({"foo": "bar"})
-                clock_type_minimum_hours = {
-                    'Advertising' : 2.25,
-                    'Animated' : 2.00,
-                    'Anniversary' : 2.50,
-                    'Atmos' : 5.00,
-                    'Balloon' : 1.50,
-                    'Banjo' : 2.00,
-                    'Beehive' : 2.00,
-                    'Black Mantel' : 2.50,
-                    'Blinking Eye' : 1.25,
-                    'Calendar' : 2.25,
-                    'Carriage' : 1.25,
-                    'China/Porcelain' : 3.00,
-                    'Column' : 2.25,
-                    'Crystal Regulator' : 3.50,
-                    'Cuckoo' : 2.5,
-                    'Dial' : 1.00,
-                    'Drop Trunk/Schoolhouse' : 1.25,
-                    'Figural' : 1.00,
-                    'Garnitures' : 2.25,
-                    'Gothic' : 1.50,
-                    'Kitchen' : 2.25,
-                    'Lantern' : 2.00,
-                    'Longcase/Grandfather' : 7.25,
-                    'Lyre' : 3.50,
-                    'Mission' : 1.50,
-                    'Mantel' : 1.50,
-                    'Mystery' : 1.25,
-                    'Novelty' : 1.00,
-                    'Ogee' : 2.50,
-                    'Picture' : 2.00,
-                    'Portico' : 3.00,
-                    'Pillar & Scroll' : 2.00,
-                    'Plato' : 2.50,
+        context['form_fields'] = Context({"foo": "bar"})
+        context['debug'] = Context({"foo": "bar"})
+
+        context['form_fields']['repair_type'] = self.request.GET.get('repair_type', 'Empty')
+        context['form_fields']['address_clock_fk'] = self.request.GET.get('address_clock_fk', 'Empty')
+        context['address'] = Address.objects.get(id=context['form_fields']['address_clock_fk'])
+
+        context['customer'] = Customer.objects.get(user_fk_id__exact=self.request.user)
+        # context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', context['customer_list'][0].location)).order_by('distance')[0:5]
+
+        context['address_list'] = Address.objects.exclude(user_fk_id__exact=self.request.user).annotate(distance=Distance('location', context['address'].location)).order_by('distance')[0:5]
+        context['repairer_list'] =  Context({"foo": "bar"})
+        context['estimate_list'] =  Context({"foo": "bar"})
+
+        clock_type_minimum_hours = {
+            'Advertising' : 2.25,
+            'Animated' : 2.00,
+            'Anniversary' : 2.50,
+            'Atmos' : 5.00,
+            'Balloon' : 1.50,
+            'Banjo' : 2.00,
+            'Beehive' : 2.00,
+            'Black Mantel' : 2.50,
+            'Blinking Eye' : 1.25,
+            'Calendar' : 2.25,
+            'Carriage' : 1.25,
+            'China/Porcelain' : 3.00,
+            'Column' : 2.25,
+            'Crystal Regulator' : 3.50,
+            'Cuckoo' : 2.5,
+            'Dial' : 1.00,
+            'Drop Trunk/Schoolhouse' : 1.25,
+            'Figural' : 1.00,
+            'Garnitures' : 2.25,
+            'Gothic' : 1.50,
+            'Kitchen' : 2.25,
+            'Lantern' : 2.00,
+            'Longcase/Grandfather' : 7.25,
+            'Lyre' : 3.50,
+            'Mission' : 1.50,
+            'Mantel' : 1.50,
+            'Mystery' : 1.25,
+            'Novelty' : 1.00,
+            'Ogee' : 2.50,
+            'Picture' : 2.00,
+            'Portico' : 3.00,
+            'Pillar & Scroll' : 2.00,
+            'Plato' : 2.50,
 #                    'Shelf' : 2.00,
-                    "Ship's" : 4.00,
-                    'Skeleton' : 2.00,
-                    'Steeple' : 2.00,
-                    'Swinging' : 1.50,
-                    'Tambour' : 2.00,
-                    'Tape' : 3.00,
-                    'Vienna Regulator' : 4.50,
-                    'Wag on the Wall' : 2.00,
-                    'Wall' : 2.00,
-                }
+            "Ship's" : 4.00,
+            'Skeleton' : 2.00,
+            'Steeple' : 2.00,
+            'Swinging' : 1.50,
+            'Tambour' : 2.00,
+            'Tape' : 3.00,
+            'Vienna Regulator' : 4.50,
+            'Wag on the Wall' : 2.00,
+            'Wall' : 2.00,
+        }
 
-                repairer_count = 0
-                for repairer in context['repairer_list']:
-                    context['estimate_list']['repairer_id'] = repairer.id
-                    context['estimate_list']['clock_pk'] = self.object.pk
-                    # Begin each repairer as "available" to field this estimate.
-                    context['estimate_list']['available'] = True
+        repairer_count = 0
+#        for repairer in context['repairer_list']:
+        for address in context['address_list']:
+            context['debug']['text'] = 'Address.address.user_fk_id = (' + str(address.user_fk_id) + ')\n'
+            repairer = Repairer.objects.get(user_fk_id=address.user_fk_id)
+            context['repairer_list']['repairer_count'] = repairer_count
+            context['repairer_list']['id'] = repairer.id
+            context['repairer_list']['distance'] = address.distance
+            context['repairer_list']['address'] = address.address
+            context['repairer_list']['address_other'] = address.address_other
+            context['repairer_list']['place_city'] = address.place_city
+            context['repairer_list']['region_state'] = address.region_state
+            context['repairer_list']['postcode'] = address.postcode
+            context['repairer_list']['latitude'] = address.latitude
+            context['repairer_list']['longitude'] = address.longitude
+            context['repairer_list']['contact_phone'] = address.contact_phone
+            context['repairer_list']['experience_in_years'] = repairer.experience_in_years
+            context['repairer_list']['first_name'] = repairer.first_name
+            context['repairer_list']['last_name'] = repairer.last_name
+            context['repairer_list']['hourly_rate'] = repairer.hourly_rate
+            context['repairer_list'].push()
+            repairer_count += 1
 
-                    # Begin clock repair estimation logic...
-                    #   convert distance to road time in minutes: miles / mph * 60
-                    mph = 45 # assuming 45 mph because distance is "as the crow flies" so as not to use direction software
-                    minutes = 60 # obvious
-                    miles_to_minutes_multiple = mph / minutes
-                    # Repairs reuire both a pick-up and a delivery, hence double round trip
-                    double_round_trip_minutes = (repairer.distance.mi * miles_to_minutes_multiple * 4)
-                    # The included round trip is singular so it neecs to be doubled to reflect both the pick-up and the delivery
-                    double_repairer_round_trip_max = repairer.road_time_minutes_maximum * 2
-                    # Two round trips
-                    double_repairer_round_trip_included = repairer.road_time_minutes_included * 2
-                    extra_features = 0 # keep track of GF extra features
-        #            hourly = repairer.hourly_rate
-                    est_hours = 0.00
-                    est_debug_text = '\n'
+            context['estimate_list']['repairer_id'] = repairer.id
+            context['estimate_list']['clock_pk'] = self.object.pk
+            # Begin each repairer as "available" to field this estimate.
+            context['estimate_list']['available'] = True
 
-                    # Dynamically determine clock minimum hours by clock_type
-                    for key, value in clock_type_minimum_hours.items():
-                        if key == str(self.object.clock_type_fk):
-                            est_hours += value
-                            est_debug_text += 'clock_type: ' + key + '|' + str(value) + '\n'
-                            break
+            # Begin clock repair estimation logic...
+            #   convert distance to road time in minutes: miles / mph * 60
+            mph = 45 # assuming 45 mph because distance is "as the crow flies" so as not to use direction software
+            minutes = 60 # obvious
+            miles_to_minutes_multiple = mph / minutes
+            # Repairs reuire both a pick-up and a delivery, hence double round trip
+            double_round_trip_minutes = (address.distance.mi * miles_to_minutes_multiple * 4)
+            # The included round trip is singular so it neecs to be doubled to reflect both the pick-up and the delivery
+            double_repairer_round_trip_max = repairer.road_time_minutes_maximum * 2
+            # Two round trips
+            double_repairer_round_trip_included = repairer.road_time_minutes_included * 2
+            extra_features = 0 # keep track of GF extra features
+#            hourly = repairer.hourly_rate
+            est_hours = 0.00
+            est_debug_text = '\n'
 
-                    # check if repairer is accepting jobs and is within the maximum drive time.
-                    if repairer.still_accepting_jobs and double_round_trip_minutes <= double_repairer_round_trip_max:
-                        est_debug_text += 'Accepting Jobs\n'
+            # Dynamically determine clock minimum hours by clock_type
+            for key, value in clock_type_minimum_hours.items():
+                if key == str(self.object.clock_type_fk):
+                    est_hours += value
+                    est_debug_text += 'clock_type: ' + key + '|' + str(value) + '\n'
+                    break
 
-                # 'still_accepting_jobs',
-                # 'makes_service_calls',
-                # 'service_call_hours_minimum',
-                # 'repairs_grandfathers',
-                # 'repairs_tubular_grandfathers',
-                # 'repairs_cuckoos',
-                # 'repairs_atmospherics',
-                # 'repairs_anniversarys',
-                # 'repairs_most_mechanical',
-                # 'repairs_most_quartz',
+            # check if repairer is accepting jobs and is within the maximum drive time.
+            if repairer.still_accepting_jobs and double_round_trip_minutes <= double_repairer_round_trip_max:
+                est_debug_text += 'Accepting Jobs\n'
+
+        # 'still_accepting_jobs',
+        # 'makes_service_calls',
+        # 'service_call_hours_minimum',
+        # 'repairs_grandfathers',
+        # 'repairs_tubular_grandfathers',
+        # 'repairs_cuckoos',
+        # 'repairs_atmospherics',
+        # 'repairs_anniversarys',
+        # 'repairs_most_mechanical',
+        # 'repairs_most_quartz',
 
 
-                        # Determine if repairer works on this clock_type...
-                        if str(self.object.clock_type_fk) == 'Longcase/Grandfather':
-                            context['estimate_list']['available'] = repairer.repairs_grandfathers
-                        elif str(self.object.clock_type_fk) == 'Cuckoo':
-                            context['estimate_list']['available'] = repairer.repairs_cuckoos
-                        elif str(self.object.clock_type_fk) == 'Atmospheric':
-                            context['estimate_list']['available'] = repairer.repairs_atmospherics
-                        elif str(self.object.clock_type_fk) == 'Anniversary':
-                            context['estimate_list']['available'] = repairer.repairs_anniversarys
-                        elif self.object.drive_type == 'Quartz':
-                            context['estimate_list']['available'] = repairer.repairs_most_quartz
-                            extra_features -= 2
-                        else:
-                            context['estimate_list']['available'] = repairer.repairs_most_mechanical
+                # Determine if repairer works on this clock_type...
+                if str(self.object.clock_type_fk) == 'Longcase/Grandfather':
+                    context['estimate_list']['available'] = repairer.repairs_grandfathers
+                elif str(self.object.clock_type_fk) == 'Cuckoo':
+                    context['estimate_list']['available'] = repairer.repairs_cuckoos
+                elif str(self.object.clock_type_fk) == 'Atmospheric':
+                    context['estimate_list']['available'] = repairer.repairs_atmospherics
+                elif str(self.object.clock_type_fk) == 'Anniversary':
+                    context['estimate_list']['available'] = repairer.repairs_anniversarys
+                elif self.object.drive_type == 'Quartz':
+                    context['estimate_list']['available'] = repairer.repairs_most_quartz
+                    extra_features -= 2
+                else:
+                    context['estimate_list']['available'] = repairer.repairs_most_mechanical
 
-                        est_debug_text += 'Available ' + str(context['estimate_list']['available']) + '\n'
+                est_debug_text += 'Available ' + str(context['estimate_list']['available']) + '\n'
 
-                        # Exit loop if repairer is not available...
-                        # if context['estimate_list']['available'] != True:
-                        #     break
+                # Exit loop if repairer is not available...
+                # if context['estimate_list']['available'] != True:
+                #     break
 
-                        # Check for extra drive time...
-                        if double_repairer_round_trip_included < double_round_trip_minutes:
-                            est_hours += (double_round_trip_minutes - double_repairer_round_trip_included) / 60
-                        else:
-                            est_debug_text += 'No extra road time: ' + str(double_repairer_round_trip_included) + ' < ' + str(double_round_trip_minutes) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+                # Check for extra drive time...
+                if double_repairer_round_trip_included < double_round_trip_minutes:
+                    est_hours += (double_round_trip_minutes - double_repairer_round_trip_included) / 60
+                else:
+                    est_debug_text += 'No extra road time: ' + str(double_repairer_round_trip_included) + ' < ' + str(double_round_trip_minutes) + ' | hours(' + str(round(est_hours,2)) + ')\n'
 
-                        # Check for extra features...
-                        # Wooden gears
-                        if self.object.gear_material == 'Wood':
-                            context['estimate_list']['available'] = repairer.repairs_most_mechanical
-                            extra_features += 2
-                        else:
-                            est_debug_text += self.object.gear_material + ' != Wood | hours(' + str(round(est_hours,2)) + ')\n'
-                        # Not self-adjusting strike
-                        if self.object.has_self_adjusting_strike == False:
-                            extra_features += 1
-                        else:
-                            est_debug_text += 'Has self adjusting strike: ' + str(self.object.has_self_adjusting_strike) + ' != False | hours(' + str(round(est_hours,2)) + ')\n'
-                        # Has off-at-night
-                        if self.object.has_off_at_night:
-                            extra_features += 0.5
-                        else:
-                            est_debug_text += 'Has off-at-night: ' + str(self.object.has_off_at_night) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
-                        # Has calendar
-                        if self.object.has_calendar:
-                            extra_features += 0.5
-                        else:
-                            est_debug_text += 'Has calendar: ' + str(self.object.has_calendar) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
-                        # Has moon dial
-                        if self.object.has_moon_dial:
-                            extra_features += 0.25
-                        else:
-                            est_debug_text += 'Has moon dial: ' + str(self.object.has_moon_dial) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
-                        # Has alarm
-                        if self.object.has_alarm:
-                            extra_features += 1
-                        else:
-                            est_debug_text += 'Has alarm: ' + str(self.object.has_alarm) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
-                        # Has music box
-                        if self.object.has_music_box:
-                            extra_features += 1.5
-                        else:
-                            est_debug_text += 'Has music box: ' + str(self.object.has_music_box) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
-                        # Has activity other
-                        if self.object.has_activity_other:
-                            extra_features += 1
-                        else:
-                            est_debug_text += 'Has activity other: ' + str(self.object.has_activity_other) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
-                        # Five tubes included in the price
-                        if self.object.tube_count >= 5:
-                            extra_features += 0.50
-                        else:
-                            est_debug_text += 'tube_count: ' + str(self.object.tube_count) + ' < 6\n'
+                # Check for extra features...
+                # Wooden gears
+                if self.object.gear_material == 'Wood':
+                    context['estimate_list']['available'] = repairer.repairs_most_mechanical
+                    extra_features += 2
+                else:
+                    est_debug_text += self.object.gear_material + ' != Wood | hours(' + str(round(est_hours,2)) + ')\n'
+                # Not self-adjusting strike
+                if self.object.has_self_adjusting_strike == False:
+                    extra_features += 1
+                else:
+                    est_debug_text += 'Has self adjusting strike: ' + str(self.object.has_self_adjusting_strike) + ' != False | hours(' + str(round(est_hours,2)) + ')\n'
+                # Has off-at-night
+                if self.object.has_off_at_night:
+                    extra_features += 0.5
+                else:
+                    est_debug_text += 'Has off-at-night: ' + str(self.object.has_off_at_night) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+                # Has calendar
+                if self.object.has_calendar:
+                    extra_features += 0.5
+                else:
+                    est_debug_text += 'Has calendar: ' + str(self.object.has_calendar) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+                # Has moon dial
+                if self.object.has_moon_dial:
+                    extra_features += 0.25
+                else:
+                    est_debug_text += 'Has moon dial: ' + str(self.object.has_moon_dial) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+                # Has alarm
+                if self.object.has_alarm:
+                    extra_features += 1
+                else:
+                    est_debug_text += 'Has alarm: ' + str(self.object.has_alarm) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+                # Has music box
+                if self.object.has_music_box:
+                    extra_features += 1.5
+                else:
+                    est_debug_text += 'Has music box: ' + str(self.object.has_music_box) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+                # Has activity other
+                if self.object.has_activity_other:
+                    extra_features += 1
+                else:
+                    est_debug_text += 'Has activity other: ' + str(self.object.has_activity_other) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+                # Five tubes included in the price
+                if self.object.tube_count >= 5:
+                    extra_features += 0.50
+                else:
+                    est_debug_text += 'tube_count: ' + str(self.object.tube_count) + ' < 6\n'
 
-                        # Check for Cable or String...
-                        if self.object.drive_type == 'Cable' or self.object.drive_type == 'String':
-                            est_hours += 1.5
-                        else:
-                            est_debug_text += self.object.drive_type + ' != Cable or' + self.object.drive_type + ' != String | hours(' + str(round(est_hours,2)) + ')\n'
-                        # Check if Tubular...
-                        if self.object.has_tubes:
-                            context['estimate_list']['available'] = repairer.repairs_tubular_grandfathers
-                            est_hours += 5
-                        else:
-                            est_debug_text += 'Has tubes: ' + str(self.object.has_tubes) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+                # Check for Cable or String...
+                if self.object.drive_type == 'Cable' or self.object.drive_type == 'String':
+                    est_hours += 1.5
+                else:
+                    est_debug_text += self.object.drive_type + ' != Cable or' + self.object.drive_type + ' != String | hours(' + str(round(est_hours,2)) + ')\n'
+                # Check if Tubular...
+                if self.object.has_tubes:
+                    context['estimate_list']['available'] = repairer.repairs_tubular_grandfathers
+                    est_hours += 5
+                else:
+                    est_debug_text += 'Has tubes: ' + str(self.object.has_tubes) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
 
-                        est_debug_text += 'extras: ' + str(extra_features) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+                est_debug_text += 'extras: ' + str(extra_features) + ' | hours(' + str(round(est_hours,2)) + ')\n'
 
-                        est_hours += (extra_features * 0.50)
-                    else:
-                        context['estimate_list']['available'] = False
-                        est_debug_text += 'Accepting Jobs (' + str(repairer.still_accepting_jobs) + ') and ' + str(double_round_trip_minutes) + ' <= ' + str(repairer.road_time_minutes_maximum) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+                est_hours += (extra_features * 0.50)
+            else:
+                context['estimate_list']['available'] = False
+                est_debug_text += 'Accepting Jobs (' + str(repairer.still_accepting_jobs) + ') and ' + str(double_round_trip_minutes) + ' <= ' + str(repairer.road_time_minutes_maximum) + ' | hours(' + str(round(est_hours,2)) + ')\n'
 
-                    context['estimate_list']['distance_from_repairer'] = repairer.distance.mi
-                    context['estimate_list']['repairer_hourly_rate'] = repairer.hourly_rate
-                    context['estimate_list']['dynamic_estimate_hours'] = est_hours
-                    context['estimate_list']['dynamic_estimate'] = est_hours * repairer.hourly_rate
-                    context['estimate_list']['debug'] = est_debug_text
-                    context['estimate_list'].push()
-                    repairer_count += 1
+            context['estimate_list']['distance_from_repairer'] = address.distance.mi
+            hourly_rate_amount = repairer.hourly_rate.amount
+            context['estimate_list']['repairer_hourly_rate'] = hourly_rate_amount
+            context['estimate_list']['dynamic_estimate_hours'] = est_hours
+            context['estimate_list']['dynamic_estimate'] = math.ceil(est_hours * float(hourly_rate_amount))
+            context['estimate_list']['debug'] = est_debug_text
+            context['estimate_list'].push()
+            repairer_count += 1
 
-                return context
-            except:
-                return context
+        return context
 
+
+# Old Code
+
+# class ClockDetailCustomerView(DetailView):
+#     model = Clock
+#     context_object_name = 'clock'
+#     template_name = 'customer/clock.html'
+
+#     def get_context_data(self, **kwargs):
+#         if not self.request.user.is_authenticated:
+#             return None
+#         else:
+#             context = super(ClockDetailCustomerView, self).get_context_data(**kwargs)
+#             context['workorders'] = Workorder.objects.exclude(repair_status__exact='Paid in Full').filter(clock_fk_id__exact=self.object.pk).order_by('-date_created')
+#             try:
+#                 context['customer_list'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
+#                 return context
+#             except:
+#                 return context
+ 
+
+# class ClockDetailRepairerView(DetailView):
+#     model = Clock
+#     context_object_name = 'clock'
+#     template_name = 'repairer/clock.html'
+
+#     def get_context_data(self, **kwargs):
+#         if not self.request.user.is_authenticated:
+#             return None
+#         else:
+#             context = super(ClockDetailRepairerView, self).get_context_data(**kwargs)
+#             context['workorders'] = Workorder.objects.exclude(repair_status__exact='Paid in Full').filter(clock_fk_id__exact=self.object.pk).order_by('-date_created')
+#             try:
+#                 context['customer_list'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
+#                 return context
+#             except:
+#                 return context
+
+# class ClockUpdateCustomerView(UpdateView):
+#     model = Clock
+#     fields = clock_fields_viewable_by_everyone
+#     context_object_name = 'clock_update'
+#     template_name = 'customer/clock_update.html'
+
+#     def get_success_url(self):
+#         pk = self.kwargs["pk"]
+#         return reverse("customer_clock", kwargs={"pk": pk})
+# # A redirect button...
+# #    <input class="btn btn-secondary" type="button" value="Cancel" onclick="window.location.replace('{% url 'customer_clocks' %}')" />
+
+
+# class ClockUpdateRepairerView(UpdateView):
+#     model = Clock
+#     fields = clock_fields_viewable_by_everyone
+#     context_object_name = 'clock_update'
+#     template_name = 'Repairer/clock_update.html'
+
+#     def get_success_url(self):
+#         pk = self.kwargs["pk"]
+#         return reverse("repairer_clock", kwargs={"pk": pk})
 

@@ -7,10 +7,12 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.template import Context
 from .models import Address
 from repairer.models import Repairer
+from customer.models import Customer
 #from django.contrib.auth import get_user_model
-
 import traceback
-
+# Decorators to force users to be logged in to access the different Views.
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 address_fields_viewable_by_everyone = [
         # 'id',
@@ -41,6 +43,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 @method_decorator(csrf_exempt, name='dispatch')
 #########################
+#@method_decorator(login_required, name='dispatch')
 class AddressCreateView(CreateView):
     model = Address
     fields = address_fields_viewable_by_everyone
@@ -55,47 +58,52 @@ class AddressCreateView(CreateView):
         response = super().form_valid(form)
         return response
 
+@method_decorator(login_required, name='dispatch')
 class AddressDetailView(DetailView):
     model = Address
     context_object_name = 'address'
     template_name = 'address/address.html'
 
+@method_decorator(login_required, name='dispatch')
 class AddressUpdateView(UpdateView):
     model = Address
     fields = address_fields_viewable_by_everyone
     context_object_name = 'address_update'
     template_name = 'address/update.html'
 
-    # def form_valid(self, form):
-    #     response = super().form_valid(form)
-    #     response.set_cookie('user_type', 'address', 3600 * 24 * 365 * 2) # = 63,072,000 seconds = 2 years
-    #     return response
-
+@method_decorator(login_required, name='dispatch')
 class AddressListView(ListView):
-#    model = Address
+    model = Address
     context_object_name = 'addresses'
     template_name = 'address/addresses.html'
 
-    def get_queryset(self):
+    def get_context_data(self, **kwargs):
         if not self.request.user.is_authenticated:
             return None
-        try:
-            return Address.objects.filter(user_fk_id__exact=self.request.user)
-        except:
-            return None
+        else:
+            context = super(AddressListView, self).get_context_data(**kwargs)
+            context['debug'] = Context({"foo": "bar"})
+            try:
+                context['customers'] = Customer.objects.filter(user_fk_id=self.request.user)
+                # context['repairers'] = Repairer.objects.filter(user_fk_id=self.request.user)
+                return context
+            except Exception as e:
+                trace_back = traceback.format_exc()
+                context['debug']['exception'] = str(e) + " " + str(trace_back)
+                return context
 
+@method_decorator(login_required, name='dispatch')
 class AddressDeleteView(DeleteView):
     model = Address
     success_url = '/address/'
 
+@method_decorator(login_required, name='dispatch')
 class RepairersNearbyView(DetailView):
     model = Address
     context_object_name = 'address'
     template_name = 'address/nearby.html'
 
     def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return None
         context = super(RepairersNearbyView, self).get_context_data(**kwargs)
         context['debug'] = Context({"foo": "bar"})
         context['debug']['nickname'] = context['address'].location
@@ -116,6 +124,8 @@ class RepairersNearbyView(DetailView):
                 context['repairer_list']['place_city'] = address.place_city
                 context['repairer_list']['region_state'] = address.region_state
                 context['repairer_list']['postcode'] = address.postcode
+                context['repairer_list']['latitude'] = address.latitude
+                context['repairer_list']['longitude'] = address.longitude
                 context['repairer_list']['contact_phone'] = address.contact_phone
                 context['repairer_list']['experience_in_years'] = repairer.experience_in_years
                 context['repairer_list']['first_name'] = repairer.first_name

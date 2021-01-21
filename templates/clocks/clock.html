@@ -1,18 +1,17 @@
 {% extends '_base.html' %}
 
-{% block title %}Customer Clock Info{% endblock title %}
+{% block title %}Clock Info{% endblock title %}
 
 {% block content %}
 {% if user.is_authenticated %}
 <div class="row">
   <div class="col">
-    <h4>Add Your Clock</h4><br>
     <div class="card" style="width: 18rem;">
       {% if clock.image_1 %}
       <img class="card-img-top" src="{{clock.image_1.url}}" alt="{{clock.clock_type}}">
       {% endif %}
       <div class="card-body">
-        <h5 class="card-title"><a href="{% url 'customer_clock_update' clock.id %}">{{ clock.nickname }}</a></h5>
+        <h5 class="card-title"><a href="{% url 'clock_update' clock.id %}">{{ clock.nickname }}</a></h5>
         <p class="card-text">This {{ clock.clock_type_fk }} clock is {{ clock.footprint }} mounted.
           {% if clock.wind_interval_days > 0 %}
            It has a train count of {{ clock.train_count }}
@@ -62,27 +61,49 @@
           <li>Has {{ clock.tube_count }} or more tubes</li>
           {% endif %}
         </ul>
-        {% if customer_list %}
           {% if workorders %}
-          <h6>Work Orders Outstanding:</h6>
+          <h6>Work Orders:</h6>
           <ol>
             {% for workorder in workorders %}
-            <li><a href="{% url 'customer_workorder' workorder.id %}">{{ workorder.date_last_updated }}</a></li>
+            <li><a href="{% url 'workorder' workorder.id %}">{{ workorder.date_created }}</a></li>
             {% endfor %}
           </ol>
           {% else %}
-            <a class="btn btn-outline-primary" href="{% url 'clock_estimate' clock.id %}">Get Repair Estimate</a>
+              <a class="btn btn-outline-primary" href="{% url 'workorder_add' %}">Get Repair Estimate</a>
           {% endif %}
-        {% else %}
-        <hr>
-        <a href="{% url 'customers' %}">Address</a> required for estimates.
-        {% endif %}
         </p>
       </div>
     </div>
     <input class="btn btn-secondary" type="button" value="Back" onclick="history.back()" />
   </div>
-</div>
+  <div class="col">
+    <div class="row">
+      <div class="col">
+        {% if not workorders %}
+      {% if request.COOKIES.user_type == 'customer' %}
+        <form class='form' action="{% url 'clock_estimate' clock.id %}" method="GET">
+          {% csrf_token %}
+          <input type="hidden" id="id_clock_id" name="clock_id" value={{ clock.id }}>
+          <input type="hidden" id="id_repair_type" name="repair_type" value="Clean & Overhaul">
+          <div class="row">
+            <select name="address_clock_fk" required id="id_address_clock_fk">
+              {% for address in customer_addresses %}
+              <option value="{{ address.id }}">{{ address.nickname }}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <hr>
+          <div class="row">
+            <input class='btn btn-primary' type='submit' value="Get Repair Estimate">
+          </div>
+        </form>
+        {% endif %}
+    {% endif %}
+  </div>
+  </div>
+  </div>
+  </div>
 {% endif %}
 
 {% endblock content %}
+

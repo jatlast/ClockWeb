@@ -48,7 +48,7 @@ class Address(models.Model):
     district_prefectures = models.CharField(blank=True, max_length=64, help_text='Prefectures')
 
     region_state = models.CharField(blank=True, max_length=64, help_text='State / Province')
-    postcode = models.CharField(blank=True, max_length=12, help_text='Zipcode / Postal Code')
+    postcode = models.CharField(blank=True, max_length=12, help_text='Zip / Postal Code')
     country = models.CharField(blank=False, max_length=64)
     ###################################
 
@@ -68,7 +68,7 @@ class Address(models.Model):
     #     ]
 
     def __str__(self):
-        return "%s" % (str(self.id))
+        return "%s" % (str(self.nickname))
 #        return "%s %s" % (self.first_name, self.last_name)
 
     def get_absolute_url(self):

@@ -1,0 +1,58 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Update Clock Information{% endblock title %}
+
+{% block content %}
+<form action="" class='form' method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class='row'>
+        <div class='col-md-6'>
+            <table border="1">
+                {% for field in form.visible_fields %}
+                    {% if field.name != 'choices_are_locked' %}
+                    <tr>
+                        <th>{{ field.label_tag }}</th>
+                        <td>
+                        {% if field.errors %}
+                            <ul>
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {{ field }}
+                        {% if field.help_text %}
+                            {{ field.help_text }}
+                        {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                {% if request.COOKIES.user_type == 'repairer' %}
+                    <tr>
+                        <th>{{ form.choices_are_locked.label_tag }}</th>
+                        <td>
+                        {% if form.choices_are_locked.errors %}
+                            <ul>
+                            {% for error in form.choices_are_locked.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {{ form.choices_are_locked }}
+                        {% if form.choices_are_locked.help_text %}
+                            {{ form.choices_are_locked.help_text }}
+                        {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+    <input class='btn btn-primary' type='submit'>
+    <input class="btn btn-secondary" type="button" value="Cancel" onclick="history.back()" />
+</form>
+{% endblock content %}
+
+<tr><th><label for="id_choices_are_locked">Choices are locked:</label></th><td><input type="checkbox" name="choices_are_locked" id="id_choices_are_locked"><br><span class="helptext">(Note: Customer can only change their clock information when True)</span></td></tr>

@@ -8,6 +8,9 @@ from .models import Customer
 from repairer.models import Repairer
 #from clock.models import Clock
 from django.template import Context
+# Decorators to force users to be logged in to access the different Views.
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 customer_fields_viewable_by_everyone = [
         'first_name',
@@ -15,66 +18,43 @@ customer_fields_viewable_by_everyone = [
         'phone',
 ]
 
+@method_decorator(login_required, name='dispatch')
 class CustomerListView(ListView):
-#    model = Customer
-#    queryset = Customer.objects.filter(user_fk_id__exact=request.user)
-#    queryset = Customer.objects.filter(user_fk_id__exact=7)
-#    queryset = Customer.objects.filter(last_name__exact='Three')
+    model = Customer
     context_object_name = 'customers'
     template_name = 'customer/customers.html'
 
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return None
-
-        try:
-            return Customer.objects.filter(user_fk_id__exact=self.request.user)
-        except:
-            return None
-
-class CustomerDetailView(DetailView):
-    model = Customer
-    context_object_name = 'customer'
-    template_name = 'customer/customer.html'
-
-# Form Views 
+@method_decorator(login_required, name='dispatch')
 class CustomerCreateView(CreateView):
     model = Customer
     fields = customer_fields_viewable_by_everyone
     context_object_name = 'customer_create'
     template_name = 'customer/create.html'
+    success_url='/customers'
 
     def form_valid(self, form):
-        longitude = form.cleaned_data['longitude']
-        latitude = form.cleaned_data['latitude']
         form.instance.user_fk = self.request.user
-        form.instance.location = Point(longitude, latitude, srid=4326)
         response = super().form_valid(form)
         response.set_cookie('user_type', 'customer', 3600 * 24 * 365 * 2) # = 63,072,000 seconds = 2 years
         return response
 
+@method_decorator(login_required, name='dispatch')
 class CustomerUpdateView(UpdateView):
     model = Customer
     fields = customer_fields_viewable_by_everyone
     context_object_name = 'customer_update'
     template_name = 'customer/update.html'
+    success_url='/customers'
 
     def form_valid(self, form):
         response = super().form_valid(form)
         response.set_cookie('user_type', 'customer', 3600 * 24 * 365 * 2) # = 63,072,000 seconds = 2 years
         return response
 
+@method_decorator(login_required, name='dispatch')
 class RepairersNearMeView(ListView):
     context_object_name = 'customers'
     template_name = 'customer/nearme.html'
-
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return None
-        try:
-            return Customer.objects.filter(user_fk_id__exact=self.request.user)
-        except:
-            return None
 
     def get_context_data(self, **kwargs):
         if not self.request.user.is_authenticated:

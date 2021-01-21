@@ -9,22 +9,14 @@
     <!-- ({{ customer.user_fk_id }}) =? ({{ user.id }}) -->
       {% if customer.user_fk_id == user.id %}
       <h2><a href="{% url 'customer_update' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a></h2>
-      <p>{{ customer.address_street }}
-          {% if customer.address_other %}
-          {{ customer.address_other }}
-          {% endif %}
-          <br>{{ customer.city }}, {{ customer.state }} {{ customer.zipcode }}
-          <br>{{ customer.phone_number.as_national }}
-      </p>
-      <div>
-        <a class="btn btn-outline-primary" href="{% url 'repairers_near_me' %}">Find Repair Person</a>
-      </div>
+          {{ customer.phone.as_national }}
       {% endif %}
     {% endfor %}
   {% else %}
   <div class="row">
     <div class="col-sm">
-      If you would like to get a clock repaired, please <a href="{% url 'customer_create' %}">add your address...</a>
+      To enter your customer name and phone click the Begin button<br>
+      <a class="btn btn-outline-primary" href="{% url 'customer_create' %}">Begin</a>
     </div>
   </div>
 {% endif %}

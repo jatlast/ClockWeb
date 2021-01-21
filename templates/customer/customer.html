@@ -6,7 +6,6 @@
 {% if user.is_authenticated %}
 <div class="row">
   <div class="col">
-    <h4>Contact Information</h4><br>
     <h2><a href="{% url 'customer_update' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a></h2>
     <p>
       {{ customer.address_street }}

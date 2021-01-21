@@ -1,6 +1,6 @@
 {% extends '_base.html' %}
 
-{% block title %} Become A Repairer {% endblock title %}
+{% block title %} Add Workorder {% endblock title %}
 
 {% block content %}
 {% if user.is_authenticated %}
@@ -20,13 +20,3 @@
 </div>
 {% endif %}
 {% endblock content %}
-
-<!-- Old Code -->
-<script language="javascript" type="text/javascript">
-  navigator.geolocation.getCurrentPosition(function (position) {
-      var lat = document.getElementById('id_latitude');
-      var lon = document.getElementById('id_longitude');
-      lat.value = position.coords.latitude;
-      lon.value = position.coords.longitude;
-  });
-</script>

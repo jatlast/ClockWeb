@@ -38,6 +38,8 @@ class Repairer(models.Model):
     service_call_hours_minimum = models.PositiveSmallIntegerField(blank=False, default=2, help_text='This number is multiplied by hourly rate to determine the minimum servie charge')
     repairs_grandfathers = models.BooleanField(blank=False, default=False, help_text='Select if you work on Longcase / Grandfather clocks')
     repairs_tubular_grandfathers = models.BooleanField(blank=False, default=False, help_text='Select if you work on Tubular Chime - Longcase / Grandfather clocks')
+    packs_grandfathers_for_shipping = models.BooleanField(blank=False, default=False, help_text='Select if you pack Longcase / Grandfather clocks to be moved')
+    moves_grandfathers = models.BooleanField(blank=False, default=False, help_text='Select if you move Longcase / Grandfather clocks from one location to another')
     repairs_cuckoos = models.BooleanField(blank=False, default=False, help_text='Select if you work on Cuckoo clocks')
     repairs_atmospherics = models.BooleanField(blank=False, default=False, help_text='Select if you work on Atmos clocks')
     repairs_anniversarys = models.BooleanField(blank=False, default=False, help_text='Select if you work on 400 Day / Anniversary clocks')
@@ -52,7 +54,7 @@ class Repairer(models.Model):
 
     personal_description = models.TextField(blank=False, default='Tell potential customers about yourself...', help_text="Whatever you type here will be seen by potential Customers on the Repairer's About page")
     # image_# - Five associated pictures
-    image_1 = models.ImageField(upload_to='repairers/', blank=True, height_field="This picture will be seen by potential Customers on the Repairer's About page")
+    image_1 = models.ImageField(upload_to='repairers/', blank=True, help_text="This picture will be seen by potential Customers on the Repairer's About page")
     image_2 = models.ImageField(upload_to='repairers/', blank=True)
     image_3 = models.ImageField(upload_to='repairers/', blank=True)
     image_4 = models.ImageField(upload_to='repairers/', blank=True)
