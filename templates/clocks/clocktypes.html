@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load djmoney %}
 
 {% block title %}Clocktypes{% endblock title %}
 
@@ -35,10 +36,32 @@
       <input type='hidden' id='has_tubes' name='has_tubes' value='{{ clocktype.has_tubes }}'>
       <input type='hidden' id='tube_count' name='tube_count' value='{{ clocktype.tube_count }}'>
       <!-- using django's as_hitten function -->
+
       <div class="row align-items-center">
-        <div class="col-2">
+        <div class="col-3">
           {{clocktype.description}}<br><br>
-          <input type="submit" value="{{ clocktype.clock_type }}">
+          {% if request.COOKIES.user_type == 'repairer' %}
+            <h5>{{clocktype.clock_type}}</h5><br>
+          <!-- user_type repairer can see dynamic estimates for all clock types -->
+          <!-- user_type cookie repairer = {{ request.COOKIES.user_type }} -->
+            {% for est in estimate_list%}
+          <!-- {{ est.clock_pk }} == {{ clocktype.id }} -->
+              {% if est.clock_pk == clocktype.id %}
+                  {% if est.available %}
+                    <h6>{{ est.distance_from_repairer }} miles away</h6>
+                    <h6>{{ est.dynamic_estimate_hours|floatformat:2 }} hours of work</h6>
+                    <h6>@ {% money_localize est.repairer_hourly_rate est.repairer_hourly_rate_currency %} per/hr</h6>
+                    <h6>Equals: {% money_localize est.dynamic_estimate est.repairer_hourly_rate_currency %}</h6>
+                    <!-- {{ est.debug }} -->
+                  {% else %}
+                      <h6>You do not work on this type of clock</h6>
+                  {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <!-- Only user_type customer can access the submit button -->
+            <input type="submit" value="{{ clocktype.clock_type }}">
+          {% endif %}
         </div>
         <div class="col">
           {% if clocktype.image_1 %}
@@ -77,3 +100,5 @@
     {% endif %}
 {% endif %}
 {% endblock content %}
+
+<br><br><h6>{{ est.dynamic_estimate_hours|floatformat:2 }} hrs * {% money_localize est.repairer_hourly_rate est.repairer_hourly_rate_currency %} per/hr = {% money_localize est.dynamic_estimate est.repairer_hourly_rate_currency %} cost.</h6>
