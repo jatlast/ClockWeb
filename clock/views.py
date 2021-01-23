@@ -399,6 +399,15 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
             est_debug_text += ' != Cable or ' + clock.drive_type + ' != String'
         est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
 
+        # Check for Electric...
+        est_debug_text += clock.drive_type
+        if clock.drive_type == 'Electric':
+            extra_features += 1.5
+            est_debug_text += ' == Electric'
+        else:
+            est_debug_text += ' != Electric'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
         if clock.drive_type == 'Quartz':
             est_hours += (QUARTZ_HOURS - MECHANICAL_HOURS)
             est_debug_text += clock.drive_type + ' == Quartz | extras (' + str(round(extra_features,2)) + ')\n'
