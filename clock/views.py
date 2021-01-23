@@ -48,54 +48,106 @@ clock_fields_viewable_by_everyone = [
         'image_4',
         'image_5',
     ]
+# The least amout of time all repairs take:
+#   10 - talking to customer while taking the clock in from the customer
+#   15 - dissasembly
+#   15 - reasembly
+#   10 - talking to customer while letting the clock out to the customer
+# ------
+#   40 - total
+# Mechanical
+#   10 - cleaning solution
+#   10 - rinsing solution
+#   10 - in from of the dryer
+#   15 - checking pivots
+#   15 - oiling back up
+# ------
+#   60 + 40 = 100 minutes or 1.67 hours total
+# Quartz
+#   10 - finding replacement movement
+#   10 - finding replacement hands
+# ------
+#   20 + 40 = 60 minutes or 1.00 hours total
+# Grandfather
+#   30 - additional dissasembly
+#   30 - additional reasembly
+#   20 - additional cleaning solution
+#   20 - additional rinsing solution
+#   10 - additional in from of the dryer
+#   15 - additional checking pivots
+#   15 - additional oiling back up
+#   30 - picking up from customer's house
+#   15 - packing for delivery
+#   15 - un-packing at workshop
+#   30 - setting up at customer's house
+# ------
+#   230 + 40 + 60 = 330 minutes or 5.50 hours total
+#### Double Totals ####
+# Mechanical Least = 200 minutes or 3.34 hours
+# Quartz Least = 120 minutes or 2.00 hours
+# Grandfather Least = 200 minutes or 3.34 hours
+# Thus, if quartz subtract 540 minutes or 9.00 hours
+
+EXTRAS_MULTIPLIER = 0.50
+MURPHY_MULTIPLIER = 1.50
+MECHANICAL_MINIMUM = 1.67
+QUARTZ_MINIMUM = 1.00
+GRANDFATHER_MINIMUM = (3.83 + MECHANICAL_MINIMUM)
+MECHANICAL_HOURS = (MECHANICAL_MINIMUM * MURPHY_MULTIPLIER)
+QUARTZ_HOURS = (QUARTZ_MINIMUM * MURPHY_MULTIPLIER)
+GRANDFATHER_HOURS = (GRANDFATHER_MINIMUM * MURPHY_MULTIPLIER)
 
 clock_type_minimum_hours = {
-    'Advertising' : 2.25,
-    'Animated' : 2.00,
-    'Anniversary' : 2.50,
-    'Atmos' : 5.00,
-    'Balloon' : 1.50,
-    'Banjo' : 2.00,
-    'Beehive' : 2.00,
-    'Black Mantel' : 2.50,
-    'Blinking Eye' : 1.25,
-    'Calendar' : 2.25,
-    'Carriage' : 1.25,
-    'China/Porcelain' : 3.00,
-    'Column' : 2.25,
-    'Crystal Regulator' : 3.50,
-    'Cuckoo' : 2.5,
-    'Dial' : 1.00,
-    'Drop Trunk/Schoolhouse' : 1.25,
-    'Figural' : 1.00,
-    'Garnitures' : 2.25,
-    'Gothic' : 1.50,
-    'Kitchen' : 2.25,
-    'Lantern' : 2.00,
-    'Longcase/Grandfather' : 7.25,
-    'Lyre' : 3.50,
-    'Mission' : 1.50,
-    'Mantel' : 1.50,
-    'Mystery' : 1.25,
-    'Novelty' : 1.00,
-    'Ogee' : 2.50,
-    'Picture' : 2.00,
-    'Portico' : 3.00,
-    'Pillar & Scroll' : 2.00,
-    'Plato' : 2.50,
-#                    'Shelf' : 2.00,
-    "Ship's" : 4.00,
-    'Skeleton' : 2.00,
-    'Steeple' : 2.00,
-    'Swinging' : 1.50,
-    'Tambour' : 2.00,
-    'Tape' : 3.00,
-    'Vienna Regulator' : 4.50,
-    'Wag on the Wall' : 2.00,
-    'Wall' : 2.00,
+    'Advertising' : MECHANICAL_HOURS,
+    'Animated' : MECHANICAL_HOURS,
+    'Anniversary' : (MECHANICAL_HOURS + 2),
+    'Atmos' : (MECHANICAL_HOURS + 3),
+    'Balloon' : MECHANICAL_HOURS,
+    'Banjo' : MECHANICAL_HOURS,
+    'Beehive' : MECHANICAL_HOURS,
+    'Black Mantel' : MECHANICAL_HOURS,
+    'Blinking Eye' : MECHANICAL_HOURS,
+    'Calendar' : MECHANICAL_HOURS,
+    'Carriage' : MECHANICAL_HOURS,
+    'China/Porcelain' : (MECHANICAL_HOURS + 2),
+    'Column' : MECHANICAL_HOURS,
+    'Crystal Regulator' : (MECHANICAL_HOURS + 2),
+    'Cuckoo' : MECHANICAL_HOURS,
+    'Desk' : MECHANICAL_HOURS,
+    'Dial' : MECHANICAL_HOURS,
+    'Drop Trunk/Schoolhouse' : MECHANICAL_HOURS,
+    'Figural' : MECHANICAL_HOURS,
+    'Garnitures' : MECHANICAL_HOURS,
+    'Gothic' : MECHANICAL_HOURS,
+    'Kitchen' : MECHANICAL_HOURS,
+    'Lantern' : MECHANICAL_HOURS,
+    'Longcase/Grandfather' : GRANDFATHER_HOURS,
+    'Lyre' : MECHANICAL_HOURS,
+    'Mission' : MECHANICAL_HOURS,
+    'Mantel' : MECHANICAL_HOURS,
+    'Mystery' : MECHANICAL_HOURS,
+    'Novelty' : MECHANICAL_HOURS,
+    'Ogee' : MECHANICAL_HOURS,
+    'Picture' : MECHANICAL_HOURS,
+    'Portico' : MECHANICAL_HOURS,
+    'Pillar & Scroll' : MECHANICAL_HOURS,
+    'Plato' : MECHANICAL_HOURS,
+    # 'Shelf' : 2.00,
+    "Ship's" : (MECHANICAL_HOURS + 1),
+    'Skeleton' : MECHANICAL_HOURS,
+    'Steeple' : MECHANICAL_HOURS,
+    'Swinging' : MECHANICAL_HOURS,
+    'Tambour' : MECHANICAL_HOURS,
+    'Tape' : MECHANICAL_HOURS,
+    'Vienna Regulator' : (MECHANICAL_HOURS + 2.5),
+    'Wag on the Wall' : MECHANICAL_HOURS,
+    'Wall' : MECHANICAL_HOURS,
 }
 
 def GetClockRepairHours(repairer, clock, distance_from_repairer):
+    # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3835347/
+    #  Table 2 - "Note: Predicted Travel Distance = Straight-Line Distance * 1.417."
+    distance_from_repairer = (distance_from_repairer * 1.417)
     # Begin clock repair estimation logic...
     #   convert distance to road time in minutes: miles / mph * 60
     mph = 45 # assuming 45 mph because distance is "as the crow flies" so as not to use direction software
@@ -114,7 +166,6 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
     est_debug_text = '\n'
 
     clock_type = 'Unknown'
-
     try:
         clock_type = clock.clock_type_fk
     except:
@@ -135,17 +186,12 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
     if repairer.still_accepting_jobs and double_round_trip_minutes <= double_repairer_round_trip_max:
         est_debug_text += 'Accepting Jobs\n'
 
-# 'still_accepting_jobs',
-# 'makes_service_calls',
-# 'service_call_hours_minimum',
-# 'repairs_grandfathers',
-# 'repairs_tubular_grandfathers',
-# 'repairs_cuckoos',
-# 'repairs_atmospherics',
-# 'repairs_anniversarys',
-# 'repairs_most_mechanical',
-# 'repairs_most_quartz',
-
+# Fields not yet incorporated into the estimation algorithm
+#   makes_service_calls
+#   service_call_hours_minimum
+#   packs_grandfathers_for_shipping
+#   moves_grandfathers
+# has_pendulum - Yes/No | 1/0
 
         # Determine if repairer works on this clock_type...
         if str(clock_type) == 'Longcase/Grandfather':
@@ -158,87 +204,256 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
             repairer_available = repairer.repairs_anniversarys
         elif clock.drive_type == 'Quartz':
             repairer_available = repairer.repairs_most_quartz
-            extra_features -= 2
         else:
             repairer_available = repairer.repairs_most_mechanical
 
         est_debug_text += 'Available ' + str(repairer_available) + '\n'
 
-        # Exit loop if repairer is not available...
-        # if repairer_available != True:
-        #     break
-
-        # Check for extra drive time...
-        if double_repairer_round_trip_included < double_round_trip_minutes:
-            extra_for_road_time = (double_round_trip_minutes - double_repairer_round_trip_included) / 60
-            est_hours += extra_for_road_time
-            est_debug_text += 'Extra for road time for ' + str(distance_from_repairer) + ' miles: ' + str(extra_for_road_time) + ' | hours(' + str(round(est_hours,2)) + ')\n'
-        else:
-            est_debug_text += 'No extra road time: ' + str(double_repairer_round_trip_included) + ' < ' + str(double_round_trip_minutes) + ' | hours(' + str(round(est_hours,2)) + ')\n'
-
+        ###############################
         # Check for extra features...
+        ###############################
+
+        if str(clock_type) == 'Longcase/Grandfather':
+            # Assuming only Longcase/Grandfather clocks necessitate pickup and delivery
+            # Check for extra drive time...
+            if double_repairer_round_trip_included < double_round_trip_minutes:
+                extra_for_road_time = (double_round_trip_minutes - double_repairer_round_trip_included) / 60
+                est_hours += extra_for_road_time
+                est_debug_text += 'Extra for road time for ' + str(distance_from_repairer) + ' miles: ' + str(extra_for_road_time) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+            else:
+                est_debug_text += 'No extra road time: ' + str(double_repairer_round_trip_included) + ' < ' + str(double_round_trip_minutes) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+        else:
+            # Train count only includes single train in minimum estimate
+            est_debug_text += 'Has train count ' + str(clock.train_count)
+            if clock.train_count > 1:
+                extra_features += (clock.train_count - 1)
+                est_debug_text += ' > 1'
+            else:
+                est_debug_text += ' < 2'
+            est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+            # Wind interval only includes one day clocks in minimum estimate
+            est_debug_text += 'Has wind interval ' + str(clock.wind_interval_days)
+            if clock.wind_interval_days == 8:
+                extra_features += 0.50
+                est_debug_text += ' == 8'
+            elif clock.wind_interval_days == 15:
+                extra_features += 0.75
+                est_debug_text += ' == 15'
+            elif clock.wind_interval_days == 30:
+                extra_features += 1.00
+                est_debug_text += ' == 30'
+            elif clock.wind_interval_days == 400:
+                extra_features += 2.00
+                est_debug_text += ' == 400'
+            else:
+                est_debug_text += ' < 8'
+            est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+            # No strike included in minimum
+            est_debug_text += clock.strike_type
+            if clock.strike_type == 'Hourly Note':
+                extra_features += 0.125
+                est_debug_text += ' == Hourly Note'
+            elif clock.strike_type == 'Hourly Chord' or clock.strike_type == 'Bim-Bam':
+                extra_features += 0.25
+                est_debug_text += ' == Hourly Chord or Bim-Bam'
+            elif clock.strike_type == 'Ships Bell':
+                extra_features += 2
+                est_debug_text += ' == Ships Bell'
+            est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+            # Has moon dial
+            est_debug_text += 'Has half hour strike: ' + str(clock.has_half_hour_strike)
+            if clock.has_half_hour_strike:
+                extra_features += 0.125
+                est_debug_text += ' == True'
+            else:
+                est_debug_text += ' == False'
+            est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+        # Chime cound is not included in minimum estimate
+        est_debug_text += 'Has chime count ' + str(clock.chime_count)
+        if clock.chime_count == 1:
+            extra_features += 0.50
+            est_debug_text += ' == 1'
+        elif clock.chime_count == 2:
+            extra_features += 0.75
+            est_debug_text += ' == 2'
+        elif clock.chime_count == 3:
+            extra_features += 1.00
+            est_debug_text += ' == 3'
+        elif clock.chime_count > 3:
+            extra_features += 1.25
+            est_debug_text += ' > 3'
+        else:
+            est_debug_text += ' < 1'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
         # Wooden gears
+        est_debug_text += clock.gear_material
         if clock.gear_material == 'Wood':
             repairer_available = repairer.repairs_most_mechanical
             extra_features += 2
+            est_debug_text += ' == Wood'
         else:
-            est_debug_text += clock.gear_material + ' != Wood | hours(' + str(round(est_hours,2)) + ')\n'
+            est_debug_text += ' != Wood'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+        # Has self-adjusting beat
+        est_debug_text += 'Has self adjusting beat: ' + str(clock.has_self_adjusting_beat)
+        if clock.has_self_adjusting_beat:
+            extra_features += -0.5
+            est_debug_text += ' == True'
+        else:
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
         # Not self-adjusting strike
-        if clock.has_self_adjusting_strike == False:
-            extra_features += 1
+        est_debug_text += 'Has self adjusting strike: ' + str(clock.has_self_adjusting_strike)
+        if clock.has_self_adjusting_strike:
+            est_debug_text += ' == True'
         else:
-            est_debug_text += 'Has self adjusting strike: ' + str(clock.has_self_adjusting_strike) + ' != False | hours(' + str(round(est_hours,2)) + ')\n'
+            extra_features += 0.5
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+        # Has second hand
+        est_debug_text += 'Has second hand: ' + str(clock.has_second_hand)
+        if clock.has_second_hand:
+            extra_features += 0.25
+            est_debug_text += ' == True'
+        else:
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
         # Has off-at-night
+        est_debug_text += 'Has off-at-night: ' + str(clock.has_off_at_night)
         if clock.has_off_at_night:
             extra_features += 0.5
+            est_debug_text += ' == True'
         else:
-            est_debug_text += 'Has off-at-night: ' + str(clock.has_off_at_night) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
         # Has calendar
+        est_debug_text += 'Has calendar: ' + str(clock.has_calendar)
         if clock.has_calendar:
             extra_features += 0.5
+            est_debug_text += ' == True'
         else:
-            est_debug_text += 'Has calendar: ' + str(clock.has_calendar) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
         # Has moon dial
+        est_debug_text += 'Has moon dial: ' + str(clock.has_moon_dial)
         if clock.has_moon_dial:
             extra_features += 0.25
+            est_debug_text += ' == True'
         else:
-            est_debug_text += 'Has moon dial: ' + str(clock.has_moon_dial) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
         # Has alarm
+        est_debug_text += 'Has alarm: ' + str(clock.has_alarm)
         if clock.has_alarm:
             extra_features += 1
+            est_debug_text += ' == True'
         else:
-            est_debug_text += 'Has alarm: ' + str(clock.has_alarm) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
         # Has music box
+        est_debug_text += 'Has music box: ' + str(clock.has_music_box)
         if clock.has_music_box:
-            extra_features += 1.5
+            extra_features += 1
+            est_debug_text += ' == True'
         else:
-            est_debug_text += 'Has music box: ' + str(clock.has_music_box) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
         # Has activity other
+        est_debug_text += 'Has activity other: ' + str(clock.has_activity_other)
         if clock.has_activity_other:
             extra_features += 1
+            est_debug_text += ' == True'
         else:
-            est_debug_text += 'Has activity other: ' + str(clock.has_activity_other) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
-        # Five tubes included in the price
-        if clock.tube_count >= 5:
-            extra_features += 0.50
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+        # Has light
+        est_debug_text += 'Has light: ' + str(clock.has_light)
+        if clock.has_light:
+            extra_features += 0.125
+            est_debug_text += ' == True'
         else:
-            est_debug_text += 'tube_count: ' + str(clock.tube_count) + ' < 6\n'
+            est_debug_text += ' == False'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
 
         # Check for Cable or String...
+        est_debug_text += clock.drive_type
         if clock.drive_type == 'Cable' or clock.drive_type == 'String':
-            est_hours += 1.5
+            extra_features += 1.5
+            est_debug_text += ' == Cable or ' + clock.drive_type + ' == String'
         else:
-            est_debug_text += clock.drive_type + ' != Cable or' + clock.drive_type + ' != String | hours(' + str(round(est_hours,2)) + ')\n'
+            est_debug_text += ' != Cable or ' + clock.drive_type + ' != String'
+        est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+        if clock.drive_type == 'Quartz':
+            est_hours += (QUARTZ_HOURS - MECHANICAL_HOURS)
+            est_debug_text += clock.drive_type + ' == Quartz | extras (' + str(round(extra_features,2)) + ')\n'
+
+            est_debug_text += str(clock.dial_diameter_centimeters)
+            if clock.dial_diameter_centimeters >= 35:
+                extra_features += 1
+                est_debug_text += ' >= 35'
+            else:
+                est_debug_text += ' < 35'
+            est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+            est_debug_text += str(clock.has_glass_over_face)
+            est_debug_text += 'Has glass/plastic over face: ' + str(clock.has_glass_over_face)
+            if clock.has_glass_over_face:
+                extra_features += 1
+                est_debug_text += ' == True'
+            else:
+                est_debug_text += ' == False'
+            est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+
+            # Battery count only includes a single battery in minimum estimate
+            est_debug_text += 'Battery count ' + str(clock.battery_count)
+            if clock.battery_count > 3:
+                extra_features += 1.00
+                est_debug_text += ' > 3'
+            elif clock.battery_count > 2:
+                extra_features += 0.75
+                est_debug_text += ' > 2'
+            elif clock.battery_count > 1:
+                extra_features += 0.50
+                est_debug_text += ' > 1'
+            else:
+                est_debug_text += ' <= 1'
+            est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
+        else:
+            est_debug_text += clock.drive_type + ' != Quartz | extras (' + str(round(extra_features,2)) + ')\n'
+
         # Check if Tubular...
         if clock.has_tubes:
             repairer_available = repairer.repairs_tubular_grandfathers
-            est_hours += 5
+            extra_features += 5
+            est_debug_text += 'Has tubes: ' + str(clock.has_tubes) + ' == True | extras (' + str(round(extra_features,2)) + ')\n'
+            # Five tubes included in the price
+            if clock.tube_count >= 5:
+                extra_features += 0.50
+            else:
+                est_debug_text += 'tube_count: ' + str(clock.tube_count) + ' < 5\n'
         else:
-            est_debug_text += 'Has tubes: ' + str(clock.has_tubes) + ' != True | hours(' + str(round(est_hours,2)) + ')\n'
+            est_debug_text += 'Has tubes: ' + str(clock.has_tubes) + ' != True | extras (' + str(round(extra_features,2)) + ')\n'
 
-        est_debug_text += 'extras: ' + str(extra_features) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+        est_debug_text += 'Hours ' + str(est_hours) + ' (extras ' + str(extra_features) + ' * ' + str(EXTRAS_MULTIPLIER) + ')'
+        est_hours += (extra_features * EXTRAS_MULTIPLIER)
+        est_debug_text += ' = ' + str(round(est_hours,2)) + ' Total Hours)\n'
 
-        est_hours += (extra_features * 0.50)
     else:
         repairer_available = False
         est_debug_text += 'Accepting Jobs (' + str(repairer.still_accepting_jobs) + ') and ' + str(double_round_trip_minutes) + ' <= ' + str(repairer.road_time_minutes_maximum) + ' | hours(' + str(round(est_hours,2)) + ')\n'

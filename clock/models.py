@@ -190,7 +190,7 @@ class Clocktypes(models.Model):
     has_activity_other = models.BooleanField(blank=False, default=False)
     # has_light - Yes/No | 1/0
     has_light = models.BooleanField(blank=False, default=False)
-    # battery_count - NULL, 5, 9, ?
+    # battery_count - 0,1,2,3,4,5+
     battery_count = models.PositiveSmallIntegerField(blank=True, choices=BATTERY_COUNT_CHOICES, default=0)
     # has_tubes - Yes/No | 1/0
     has_tubes = models.BooleanField(blank=False, default=False)
