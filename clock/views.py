@@ -89,7 +89,7 @@ clock_fields_viewable_by_everyone = [
 # Thus, if quartz subtract 540 minutes or 9.00 hours
 
 EXTRAS_MULTIPLIER = 0.50
-MURPHY_MULTIPLIER = 1.50
+MURPHY_MULTIPLIER = 1.25
 MECHANICAL_MINIMUM = 1.67
 QUARTZ_MINIMUM = 1.00
 GRANDFATHER_MINIMUM = (3.83 + MECHANICAL_MINIMUM)
@@ -100,8 +100,8 @@ GRANDFATHER_HOURS = (GRANDFATHER_MINIMUM * MURPHY_MULTIPLIER)
 clock_type_minimum_hours = {
     'Advertising' : MECHANICAL_HOURS,
     'Animated' : MECHANICAL_HOURS,
-    'Anniversary' : (MECHANICAL_HOURS + 2),
-    'Atmos' : (MECHANICAL_HOURS + 3),
+    'Anniversary' : (MECHANICAL_HOURS + 0.5),
+    'Atmos' : (MECHANICAL_HOURS + 1.50),
     'Balloon' : MECHANICAL_HOURS,
     'Banjo' : MECHANICAL_HOURS,
     'Beehive' : MECHANICAL_HOURS,
@@ -109,9 +109,9 @@ clock_type_minimum_hours = {
     'Blinking Eye' : MECHANICAL_HOURS,
     'Calendar' : MECHANICAL_HOURS,
     'Carriage' : MECHANICAL_HOURS,
-    'China/Porcelain' : (MECHANICAL_HOURS + 2),
+    'China/Porcelain' : (MECHANICAL_HOURS + 0.75),
     'Column' : MECHANICAL_HOURS,
-    'Crystal Regulator' : (MECHANICAL_HOURS + 2),
+    'Crystal Regulator' : (MECHANICAL_HOURS + 0.75),
     'Cuckoo' : MECHANICAL_HOURS,
     'Desk' : MECHANICAL_HOURS,
     'Dial' : MECHANICAL_HOURS,
@@ -133,13 +133,13 @@ clock_type_minimum_hours = {
     'Pillar & Scroll' : MECHANICAL_HOURS,
     'Plato' : MECHANICAL_HOURS,
     # 'Shelf' : 2.00,
-    "Ship's" : (MECHANICAL_HOURS + 1),
+    "Ship's" : (MECHANICAL_HOURS + 0.25),
     'Skeleton' : MECHANICAL_HOURS,
     'Steeple' : MECHANICAL_HOURS,
     'Swinging' : MECHANICAL_HOURS,
     'Tambour' : MECHANICAL_HOURS,
     'Tape' : MECHANICAL_HOURS,
-    'Vienna Regulator' : (MECHANICAL_HOURS + 2.5),
+    'Vienna Regulator' : (MECHANICAL_HOURS + 0.75),
     'Wag on the Wall' : MECHANICAL_HOURS,
     'Wall' : MECHANICAL_HOURS,
 }
