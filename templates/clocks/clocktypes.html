@@ -41,7 +41,7 @@
         <div class="col-3">
           {{clocktype.description}}<br><br>
           {% if request.COOKIES.user_type == 'repairer' %}
-            <h5>{{clocktype.clock_type}}</h5><br>
+            <h5>{{ clocktype.id }}: {{clocktype.clock_type}}</h5><br>
           <!-- user_type repairer can see dynamic estimates for all clock types -->
           <!-- user_type cookie repairer = {{ request.COOKIES.user_type }} -->
             {% for est in estimate_list%}
