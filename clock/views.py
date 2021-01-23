@@ -489,7 +489,7 @@ class ClocktypesListView(ListView):
         context = super(ClocktypesListView, self).get_context_data(**kwargs)
         context['debug'] = Context({"foo": "bar"})
         context['clocktypes_list'] = Context({"foo": "bar"})
-        context['clocktypes_list'] = Clocktypes.objects.all().order_by('clock_type', 'train_count', 'chime_count', 'tube_count', 'battery_count')
+        context['clocktypes_list'] = Clocktypes.objects.all().order_by('clock_type', 'wind_interval_days', 'train_count', 'chime_count', 'tube_count', 'battery_count')
 
         context['estimate_list'] =  Context({"foo": "bar"})
 
