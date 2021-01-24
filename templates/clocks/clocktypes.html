@@ -48,7 +48,9 @@
           <!-- {{ est.clock_pk }} == {{ clocktype.id }} -->
               {% if est.clock_pk == clocktype.id %}
                   {% if est.available %}
-                    <h6>{{ est.distance_from_repairer }} miles away</h6>
+                    {% if clocktype.clock_type == 'Longcase/Grandfather' %}
+                      <h6>{{ est.distance_from_repairer }} miles away</h6>
+                    {% endif %}
                     <h6>{{ est.dynamic_estimate_hours|floatformat:2 }} hours of work</h6>
                     <h6>@ {% money_localize est.repairer_hourly_rate est.repairer_hourly_rate_currency %} per/hr</h6>
                     <h6>Equals: {% money_localize est.dynamic_estimate est.repairer_hourly_rate_currency %}</h6>

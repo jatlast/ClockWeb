@@ -117,12 +117,12 @@ clock_type_minimum_hours = {
     'Dial' : MECHANICAL_HOURS,
     'Drop Trunk/Schoolhouse' : MECHANICAL_HOURS,
     'Figural' : MECHANICAL_HOURS,
-    'Garnitures' : MECHANICAL_HOURS,
+    'Garnitures' : (MECHANICAL_HOURS + 0.35),
     'Gothic' : MECHANICAL_HOURS,
     'Kitchen' : MECHANICAL_HOURS,
-    'Lantern' : MECHANICAL_HOURS,
+    'Lantern' : (MECHANICAL_HOURS + 0.25),
     'Longcase/Grandfather' : GRANDFATHER_HOURS,
-    'Lyre' : MECHANICAL_HOURS,
+    'Lyre' : (MECHANICAL_HOURS + 0.75),
     'Mission' : MECHANICAL_HOURS,
     'Mantel' : MECHANICAL_HOURS,
     'Mystery' : MECHANICAL_HOURS,
@@ -357,7 +357,7 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
         # Has alarm
         est_debug_text += 'Has alarm: ' + str(clock.has_alarm)
         if clock.has_alarm:
-            extra_features += 1
+            extra_features += 0.50
             est_debug_text += ' == True'
         else:
             est_debug_text += ' == False'
