@@ -4,7 +4,7 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-  {% if addresses.count > 0 %}
+  {% if addresses %}
     {% for address in addresses %}
     <!-- ({{ address.user_fk_id }}) =? ({{ user.id }}) -->
       {% if address.user_fk_id == user.id %}

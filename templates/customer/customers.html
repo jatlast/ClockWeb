@@ -4,7 +4,7 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-  {% if customers.count > 0 %}
+  {% if customers %}
     {% for customer in customers %}
     <!-- ({{ customer.user_fk_id }}) =? ({{ user.id }}) -->
       {% if customer.user_fk_id == user.id %}

@@ -24,6 +24,15 @@ class CustomerListView(ListView):
     context_object_name = 'customers'
     template_name = 'customer/customers.html'
 
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return None
+        else:
+            context = super(CustomerListView, self).get_context_data(**kwargs)
+            context['customers'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
+            return context
+
+
 @method_decorator(login_required, name='dispatch')
 class CustomerCreateView(CreateView):
     model = Customer

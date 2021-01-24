@@ -4,21 +4,21 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-<div class="row">
-  <div class="col">
-{% if repairers.count > 0 %}
+  {% if repairers %}
     {% for repairer in repairers %}
-    <!-- ({{ repairer.user_fk_id }}) =? ({{ user.id }}) -->
-      {% if repairer.user_fk_id == user.id %}
-        <h2><a href="{% url 'repairer_update' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h2>
-        {{ repairer.phone.as_national }}
-        <br><br>
-      <a class="btn btn-outline-primary" href="{% url 'repairer' repairer.id %}">View Details</a>
-      {% endif %}
-      {% endfor %}
-  </div>
-</div>
-{% else %}
+      <div class="row">
+        <div class="col">
+          <!-- ({{ repairer.user_fk_id }}) =? ({{ user.id }}) -->
+        {% if repairer.user_fk_id == user.id %}
+          <h2><a href="{% url 'repairer_update' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h2>
+          {{ repairer.phone.as_national }}
+          <br><br>
+        <a class="btn btn-outline-primary" href="{% url 'repairer' repairer.id %}">View Details</a>
+        {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
   <div class="row">
     <div class="col-sm">
       If you would like to be listed as a repair person, please <a href="{% url 'repairer_create' %}">add your information...</a>

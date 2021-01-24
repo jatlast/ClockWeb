@@ -1,24 +1,119 @@
 {% extends '_base.html' %}
-{% load static %}
 {% load account %}
 
 {% block title %}MI - Clock Repair | Home{% endblock title %}
 
 {% block content %}
-<script src="{% static 'js/cookiehelper.js' %}"></script>
 
 {% if user.is_authenticated %}
+<!-- If Customer... -->
+  <!-- Customer Information -->
   {% if customers %}
   <script>setCookie('user_type', 'customer', 30)</script>
-    <div class="col">
-      <div class="row"><h2>Use the "My Information" dropdown menu to navigate this site.</h2></div>  
+    {% for customer in customers %}
+      <!-- ({{ customer.user_fk_id }}) =? ({{ user.id }}) -->
+      <div class="row">
+        <div class="col">
+          {% if customer.user_fk_id == user.id %}
+          <h3>Customer Information</h3>
+          <h5><a href="{% url 'customer_update' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a></h5>
+          {{ customer.phone.as_national }}
+        </div>  
+      </div>
+      {% endif %}
+    {% endfor %}
+    <hr>
+
+    <!-- Address Information -->
+    {% if addresses %}
+    <div class="row">
+      <h3>Address Information</h3>
     </div>
+    <div class="row">
+      {% for address in addresses %}
+    <!-- ({{ address.user_fk_id }}) =? ({{ user.id }}) -->
+      {% if address.user_fk_id == user.id %}
+      <div class="col">
+        <div class="row">
+          <div class="col">
+            <h5><a href="{% url 'address_update' address.id %}"> {{ address.nickname }}</a></h5>
+          {{ address.contact_name }}<br>
+          {{ address.contact_phone.as_national }}<br><br>
+          <address>
+            {{ address.address }}
+              {% if address.address_other %}
+              , {{ address.address_other }}
+              {% endif %}
+              <br>{{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}
+              <br>{{ address.country }}
+          </address>
+            {% if customers %}
+              <div>
+                    <a class="btn btn-outline-primary" href="{% url 'repairers_nearby' address.id %}">Find Repair People</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+        <hr>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="row">
+        <div class="col-sm">
+          <a class="btn btn-outline-primary" href="{% url 'address_add' %}">Add Address</a>
+        </div>
+      </div>
+    {% endif %}
+
+    <hr>
+
+    <!-- Clock Information -->
+    {% if clocks %}
+    <h3>Clock Information</h3>
+    {% for clock in clocks %}
+      <div class="row align-items-center">
+        <div class="col-3">
+          <a href="{% url 'clock' clock.id %}">{{ clock.nickname }}</a>
+        </div>
+        <div class="col-3">
+          {% if clock.image_1 %}
+          <img class="img-thumbnail" src="{{clock.image_1.url}}" alt="{{clock.nickname}}">
+          {% endif %}
+          </div>
+        </div>
+      <hr>
+    {% endfor %}
+    <div>
+      <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Add Clock</a>
+    </div>
+  {% else %}
+    <div class="row">
+      <div class="col-sm">
+        <a class="btn btn-outline-primary" href="{% url 'clocktypes' %}">Add Clock</a>
+      </div>
+    </div>
+  {% endif %}
+  <hr>
   
-  {% elif repairers.count > 0 %}
-  <div class="col">
-    <div class="row"><h2>Use the "My Information" dropdown menu to navigate this site.</h2></div>  
-  </div>
-  <script>setCookie('user_type', 'repairer', 30)</script>
+<!-- Els if Repairer... -->
+  <!-- Repairer Information -->
+  {% elif repairers %}
+    <script>setCookie('user_type', 'repairer', 30)</script>
+    {% for repairer in repairers %}
+    <div class="row">
+      <div class="col">
+        <!-- ({{ repairer.user_fk_id }}) =? ({{ user.id }}) -->
+      {% if repairer.user_fk_id == user.id %}
+        <h2><a href="{% url 'repairer_update' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h2>
+        {{ repairer.phone.as_national }}
+        <br><br>
+      <a class="btn btn-outline-primary" href="{% url 'repairer' repairer.id %}">View Details</a>
+      {% endif %}
+      </div>
+    </div>
+    {% endfor %}
 
   {% else %}
   <div class="row">
@@ -27,7 +122,7 @@
   </div>
   <div class="row">
     <div class="col"><h4><a href="{% url 'customers' %}">Becomer A Customer</a></h4></div>
-    <div class="col"><h4><a href="{% url 'repairer_create' %}">Become A Repair Person</a></h4></div>
+    <div class="col"><h4><a href="{% url 'repairers' %}">Become A Repair Person</a></h4></div>
   </div>  
   {% endif %}
 

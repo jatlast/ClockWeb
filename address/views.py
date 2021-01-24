@@ -110,7 +110,7 @@ class RepairersNearbyView(DetailView):
         context['debug']['nickname'] = context['address'].location
 
         try:
-            context['address_list'] = Address.objects.exclude(user_fk_id=context['address'].user_fk_id).annotate(distance=Distance('location', context['address'].location)).order_by('distance')[0:5]
+            context['address_list'] = Address.objects.exclude(user_type_int__exact=0).annotate(distance=Distance('location', context['address'].location)).order_by('distance')[0:5]
 
             context['repairer_list'] =  Context({"foo": "bar"})
 

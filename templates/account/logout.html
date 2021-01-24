@@ -6,6 +6,7 @@
 {% block content %}
   <h1>Log Out</h1>
   <p>Are you sure you want to log out?</p>
+  <script>setCookie('user_type', '', 30)</script>
   <form method="post" action="{% url 'account_logout' %}">
     {% csrf_token %}
     {{ form|crispy }}

@@ -332,6 +332,7 @@ class Clock(models.Model):
 # Specific for this project
 #   docker exec -it books_db_1 psql -U postgres
 #   docker exec -it books_db_1 psql -h localhost -U docker gis
+#   sudo docker exec -it clockweb_db_1 psql -h localhost -U postgres
 # List tables
 #   \dt
 # List Databases

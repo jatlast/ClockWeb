@@ -46,6 +46,15 @@ class RepairerListView(ListView):
     context_object_name = 'repairers'
     template_name = 'repairer/repairers.html'
 
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return None
+        else:
+            context = super(RepairerListView, self).get_context_data(**kwargs)
+            context['repairers'] = Repairer.objects.filter(user_fk_id__exact=self.request.user)
+            return context
+
+
 @method_decorator(login_required, name='dispatch')
 class RepairerDetailView(DetailView):
     model = Repairer
