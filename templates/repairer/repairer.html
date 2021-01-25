@@ -19,12 +19,20 @@
         </h5>
         <p class="card-text">
           {% if address %}
-            {{ address.address }}
+            {% if not repairer.hide_my_address %}
+              {{ address.address }}
               {% if address.address_other %}
-              , {{ address.address_other }}
+                  , {{ address.address_other }}
               {% endif %}
-            <br>{{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}
+              <br>
+            {% endif %}
+            {{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}
+            {% if not repairer.hide_my_phone %}
             <br>{{ address.contact_phone.as_national }}
+            {% endif %}
+            {% if not repairer.hide_my_email %}
+            <br>{{ repairer.email }}
+            {% endif %}
             {% elif request.COOKIES.user_type == 'repairer' %}
               <a class="btn btn-primary" href="{% url 'address_add' %}">Add your address</a>
               {% if debug.exception %}
@@ -43,7 +51,10 @@
           {% endif %}
 
           <li>Has {{ repairer.experience_in_years }} years of experience</li>
+
+          {% if not repairer.hide_my_hourly_rate %}
           <li>Hourly rate of {{ repairer.hourly_rate }}</li>
+          {% endif %}
           
           {% if repairer.makes_service_calls %}
           <li>Does house/service calls</li>
@@ -106,9 +117,6 @@
       </div>
     </div>
     <input class="btn btn-secondary" type="button" value="Back" onclick="history.back()" />    
-    {% if not user.email_verified %}
-      <a href="{% url 'account_email' %}">Verify your email...</a>
-    {% endif %}
   </div>
 </div>
 {% endif %}

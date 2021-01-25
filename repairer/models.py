@@ -36,6 +36,7 @@ class Repairer(models.Model):
     hide_my_address = models.BooleanField(blank=False, default=False, help_text='Select to prevent customers from seeing your full address')
     hide_my_phone = models.BooleanField(blank=False, default=False, help_text='Select to prevent customers from seeing your telephone number')
     hide_my_email = models.BooleanField(blank=False, default=False, help_text='Select to prevent customers from seeing your email address')
+    hide_my_hourly_rate = models.BooleanField(blank=False, default=False, help_text='Select to prevent customers from seeing your hourly rate')
 
     experience_in_years = models.PositiveSmallIntegerField(blank=False, default=1, help_text='Enter total years of experience')
     still_accepting_jobs = models.BooleanField(blank=False, default=True, help_text='Select if you are still accepting new Work Orders')
