@@ -30,6 +30,11 @@ class Customer(models.Model):
     last_name = models.CharField(blank=False, max_length=32)
     company_name = models.CharField(blank=True, max_length=128)
     phone = PhoneNumberField(blank=False)
+    email = models.EmailField(blank=True, max_length=254)
+
+    hide_my_address = models.BooleanField(blank=False, default=False, help_text='Select to prevent repairers from seeing your full address')
+    hide_my_phone = models.BooleanField(blank=False, default=False, help_text='Select to prevent repairers from seeing your telephone number')
+    hide_my_email = models.BooleanField(blank=False, default=False, help_text='Select to prevent repairers from seeing your email address')
 
     # class Meta:
     #     indexes = [

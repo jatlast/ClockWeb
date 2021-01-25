@@ -131,6 +131,11 @@ class RepairersNearbyView(DetailView):
                 context['repairer_list']['experience_in_years'] = repairer.experience_in_years
                 context['repairer_list']['first_name'] = repairer.first_name
                 context['repairer_list']['last_name'] = repairer.last_name
+                context['repairer_list']['phone'] = repairer.phone
+                context['repairer_list']['email'] = repairer.email
+                context['repairer_list']['hide_my_address'] = repairer.hide_my_address
+                context['repairer_list']['hide_my_phone'] = repairer.hide_my_phone
+                context['repairer_list']['hide_my_email'] = repairer.hide_my_email
                 context['repairer_list'].push()
                 repairer_count += 1
             return context

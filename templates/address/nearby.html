@@ -25,12 +25,20 @@
                 {% if repairer.distance %}
                   <h4>{{ repairer.distance.mi|floatformat:2 }} miles - <a href="{% url 'repairer' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h4>
                   <p>
-                      {{ repairer.address }}
-                      {% if repairer.address_other %}
-                          , {{ repairer.address_other }}
+                      {% if not repairer.hide_my_address %}
+                        {{ repairer.address }}
+                        {% if repairer.address_other %}
+                            , {{ repairer.address_other }}
+                        {% endif %}
+                        <br>
                       {% endif %}
-                      <br>{{ repairer.place_city }}, {{ repairer.region_state }} {{ repairer.postcode }}
-                      <br>{{ repairer.phoner.as_national }}
+                      {{ repairer.place_city }}, {{ repairer.region_state }} {{ repairer.postcode }}
+                      {% if not repairer.hide_my_phone %}
+                      <br>{{ repairer.phone.as_national }}
+                      {% endif %}
+                      {% if not repairer.hide_my_email %}
+                      <br>{{ repairer.email }}
+                      {% endif %}
                       <br>Years of experience: {{ repairer.experience_in_years }}
                   </p>
                   <hr>

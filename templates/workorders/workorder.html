@@ -29,13 +29,21 @@
                                 {% if request.COOKIES.user_type == 'repairer' %}
                                     <a href="{% url 'address_update' address_repairer.id %}"> {{ address_repairer.nickname }}</a><br>
                                 {% endif %}
-                                {{ repairer.phone.as_national }}<br>
                                 <address>
-                                  {{ address_repairer.address }}
-                                    {% if address_repairer.address_other %}
-                                    , {{ address_repairer.address_other }}
+                                    {% if not repairer.hide_my_address %}
+                                        {{ address_repairer.address }}
+                                        {% if address_repairer.address_other %}
+                                            , {{ address_repairer.address_other }}
+                                        {% endif %}
+                                        <br>
                                     {% endif %}
-                                    <br>{{ address_repairer.place_city }}, {{ address_repairer.region_state }} {{ address_repairer.postcode }}
+                                    {{ address_repairer.place_city }}, {{ address_repairer.region_state }} {{ address_repairer.postcode }}
+                                    {% if not repairer.hide_my_phone %}
+                                    <br>{{ repairer.phone.as_national }}
+                                    {% endif %}
+                                    {% if not repairer.hide_my_email %}
+                                    <br>{{ repairer.email }}
+                                    {% endif %}
                                 </address>
                             </td>
                         </tr>
@@ -53,13 +61,21 @@
                                     <a href="{% url 'address_update' address_clock.id %}"> {{ address_clock.nickname }}</a><br>
                                 {% endif %}
                                 {{ address_clock.contact_name }}<br>
-                                {{ address_clock.contact_phone.as_national }}<br>
                                 <address>
-                                  {{ address_clock.address }}
-                                    {% if address_clock.address_other %}
-                                    , {{ address_clock.address_other }}
+                                    {% if not customer.hide_my_address %}
+                                        {{ address_clock.address }}
+                                        {% if address_clock.address_other %}
+                                            , {{ address_clock.address_other }}
+                                        {% endif %}
+                                        <br>
                                     {% endif %}
-                                    <br>{{ address_clock.place_city }}, {{ address_clock.region_state }} {{ address_clock.postcode }}
+                                    {{ address_clock.place_city }}, {{ address_clock.region_state }} {{ address_clock.postcode }}
+                                    {% if not customer.hide_my_phone %}
+                                    <br>{{ customer.phone.as_national }}
+                                    {% endif %}
+                                    {% if not customer.hide_my_email %}
+                                    <br>{{ customer.email }}
+                                    {% endif %}
                                 </address>
                             </td>
                             <td>
@@ -69,15 +85,20 @@
                                         <a href="{% url 'address_update' address_deliver.id %}"> {{ address_deliver.nickname }}</a><br>
                                     {% endif %}
                                     {{ address_deliver.contact_name }}<br>
-                                    {{ address_deliver.contact_phone.as_national }}<br>
                                     <address>
-                                    {{ address_deliver.address }}
-                                        {% if address_deliver.address_other %}
-                                        , {{ address_deliver.address_other }}
+                                        {% if not customer.hide_my_address %}
+                                            {{ address_deliver.address }}
+                                            {% if address_deliver.address_other %}
+                                                , {{ address_deliver.address_other }}
+                                            {% endif %}
+                                            <br>
                                         {% endif %}
-                                        <br>{{ address_deliver.place_city }}, {{ address_deliver.region_state }} {{ address_deliver.postcode }}
+                                        {{ address_deliver.place_city }}, {{ address_deliver.region_state }} {{ address_deliver.postcode }}
+                                        {% if not customer.hide_my_phone %}
+                                        <br>{{ customer.phone.as_national }}
+                                        {% endif %}
                                     </address>
-                                {% endif %}
+                                    {% endif %}
                             </td>
                         </tr>
                     </table>
