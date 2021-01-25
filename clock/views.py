@@ -145,14 +145,11 @@ clock_type_minimum_hours = {
 }
 
 def GetClockRepairHours(repairer, clock, distance_from_repairer):
-    # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3835347/
-    #  Table 2 - "Note: Predicted Travel Distance = Straight-Line Distance * 1.417."
-    distance_from_repairer = (distance_from_repairer * 1.417)
     # Begin clock repair estimation logic...
     #   convert distance to road time in minutes: miles / mph * 60
     mph = 45 # assuming 45 mph because distance is "as the crow flies" so as not to use direction software
     minutes = 60 # obvious
-    miles_to_minutes_multiple = mph / minutes
+    miles_to_minutes_multiple = minutes / mph
     # Repairs reuire both a pick-up and a delivery, hence double round trip
     double_round_trip_minutes = (distance_from_repairer * miles_to_minutes_multiple * 4)
     # The included round trip is singular so it neecs to be doubled to reflect both the pick-up and the delivery
@@ -579,7 +576,9 @@ class ClockRepairEstimateView(DetailView):
         context['customer'] = Customer.objects.get(user_fk_id__exact=self.request.user)
         # context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', context['customer_list'][0].location)).order_by('distance')[0:5]
 
-        context['address_list'] = Address.objects.exclude(user_type_int__exact=0).annotate(distance=Distance('location', context['address'].location)).order_by('distance')[0:5]
+        # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3835347/
+        #  Table 2 - "Note: Predicted Travel Distance = Straight-Line Distance * 1.417."
+        context['address_list'] = Address.objects.exclude(user_type_int__exact=0).annotate(distance=(Distance('location', context['address'].location) * 1.417)).order_by('distance')[0:5]
         context['repairer_list'] =  Context({"foo": "bar"})
         context['estimate_list'] =  Context({"foo": "bar"})
 
