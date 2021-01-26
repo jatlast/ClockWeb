@@ -99,7 +99,7 @@ GRANDFATHER_HOURS = (GRANDFATHER_MINIMUM * MURPHY_MULTIPLIER)
 
 clock_type_minimum_hours = {
     'Advertising' : (MECHANICAL_HOURS + 0.5),
-    'Animated' : (MECHANICAL_HOURS - 0.75),
+    'Animated' : (MECHANICAL_HOURS - 0.65),
     'Anniversary' : (MECHANICAL_HOURS + 0.5),
     'Atmos' : (MECHANICAL_HOURS + 1.70),
     'Balloon' : MECHANICAL_HOURS,
@@ -117,10 +117,10 @@ clock_type_minimum_hours = {
     'Dial' : MECHANICAL_HOURS,
     'Drop Trunk/Schoolhouse' : MECHANICAL_HOURS,
     'Figural' : MECHANICAL_HOURS,
-    'Garnitures' : (MECHANICAL_HOURS + 0.35),
+    'Garnitures' : (MECHANICAL_HOURS + 0.39),
     'Gothic' : MECHANICAL_HOURS,
     'Kitchen' : MECHANICAL_HOURS,
-    'Lantern' : (MECHANICAL_HOURS + 0.25),
+    'Lantern' : (MECHANICAL_HOURS + 0.35),
     'Longcase/Grandfather' : GRANDFATHER_HOURS,
     'Lyre' : (MECHANICAL_HOURS + 0.75),
     'Mission' : MECHANICAL_HOURS,
@@ -327,7 +327,7 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
         # Has off-at-night
         est_debug_text += 'Has off-at-night: ' + str(clock.has_off_at_night)
         if clock.has_off_at_night:
-            extra_features += 0.5
+            extra_features += 0.25
             est_debug_text += ' == True'
         else:
             est_debug_text += ' == False'
@@ -372,7 +372,7 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
         # Has activity other
         est_debug_text += 'Has activity other: ' + str(clock.has_activity_other)
         if clock.has_activity_other:
-            extra_features += 1
+            extra_features += 0.55
             est_debug_text += ' == True'
         else:
             est_debug_text += ' == False'
@@ -446,7 +446,7 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
         # Check if Tubular...
         if clock.has_tubes:
             repairer_available = repairer.repairs_tubular_grandfathers
-            extra_features += 5
+            extra_features += 5.75
             est_debug_text += 'Has tubes: ' + str(clock.has_tubes) + ' == True | extras (' + str(round(extra_features,2)) + ')\n'
             # Five tubes included in the price
             if clock.tube_count >= 5:
