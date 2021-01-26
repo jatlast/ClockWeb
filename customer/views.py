@@ -16,6 +16,12 @@ customer_fields_viewable_by_everyone = [
         'first_name',
         'last_name',
         'phone',
+        'company_name',
+        'phone',
+        'email',
+        'hide_my_address',
+        'hide_my_phone',
+        'hide_my_email',
 ]
 
 @method_decorator(login_required, name='dispatch')
