@@ -27,3 +27,10 @@ class HomePageView(TemplateView):
 
 class AboutPageView(TemplateView):
     template_name = 'about.html'
+
+class PageWalkthroughCustomerView(TemplateView):
+    template_name = 'cwt.html'
+
+class PageWalkthroughRepairerView(TemplateView):
+    template_name = 'rwt.html'
+
