@@ -143,7 +143,7 @@
                         <input type="hidden" id="added_part_cost_0" name="added_part_cost_0" value=0>
                         <input type="hidden" id="added_part_cost_1" name="added_part_cost_1" value="USD">
                         Item <input class='btn btn-link' type='submit' value="+">
-                      </form>
+                    </form>
                 </td>
                 <td>Price</td>
             </tr>
@@ -153,7 +153,19 @@
                     {{ workorder.repair_type }}
                 </td>
                 <td>
-                    {% money_localize workorder.dynamic_estimate workorder.repairer_hourly_rate_currency %}
+                    {% if request.COOKIES.user_type == 'repairer' %}
+                    <form action="{% url 'clock_estimate' workorder.clock_fk_id %}" method="GET">
+                        {% csrf_token %}
+                        <input type='hidden' id='id_customer_fk' name='customer_fk' value='{{ workorder.customer_fk_id }}'>
+                        <input type='hidden' id='id_repairer_fk' name='repairer_fk' value='{{ workorder.repairer_fk_id }}'>
+                        <input type='hidden' id='id_address_clock_fk' name='address_clock_fk' value='{{ workorder.address_clock_fk_id }}'>
+                        <input type='hidden' id='id_address_deliver_fk' name='address_deliver_fk' value='{{ workorder.address_deliver_fk_id }}'>
+                        <input type='hidden' id='id_repair_type' name='repair_type' value='{{ workorder.repair_type }}'>
+                        <input class='btn btn-link' type='submit' value="{% money_localize workorder.dynamic_estimate workorder.repairer_hourly_rate_currency %}">
+                    </form>
+                    {% else %}
+                        {% money_localize workorder.dynamic_estimate workorder.repairer_hourly_rate_currency %}
+                    {% endif %}
                 </td>
             </tr>
             <!-- Line items -->

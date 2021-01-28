@@ -571,16 +571,22 @@ class ClockRepairEstimateView(DetailView):
 
         context['form_fields']['repair_type'] = self.request.GET.get('repair_type', 'Empty')
         context['form_fields']['address_clock_fk'] = self.request.GET.get('address_clock_fk', 'Empty')
+
         context['address'] = Address.objects.get(id=context['form_fields']['address_clock_fk'])
 
-        context['customer'] = Customer.objects.get(user_fk_id__exact=self.request.user)
+        user_type_cookie = self.request.COOKIES.get('user_type')
+        if user_type_cookie == 'customer':
+            context['customer'] = Customer.objects.get(user_fk_id__exact=self.request.user)
+        else:
+            context['customer'] = Customer.objects.get(id__exact=self.request.GET.get('customer_fk', 'Empty'))
+
         # context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', context['customer_list'][0].location)).order_by('distance')[0:5]
 
         # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3835347/
         #  Table 2 - "Note: Predicted Travel Distance = Straight-Line Distance * 1.417."
         context['address_list'] = Address.objects.exclude(user_type_int__exact=0).annotate(distance=(Distance('location', context['address'].location) * 1.417)).order_by('distance')[0:5]
-        context['repairer_list'] =  Context({"foo": "bar"})
-        context['estimate_list'] =  Context({"foo": "bar"})
+        context['repairer_list'] = Context({"foo": "bar"})
+        context['estimate_list'] = Context({"foo": "bar"})
 
         repairer_count = 0
 #        for repairer in context['repairer_list']:
