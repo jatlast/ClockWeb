@@ -123,6 +123,7 @@ class Addons(models.Model):
     PAYMENT_METHOD_CHOICES = [
         ('Cash','Cash'),
         ('Cashier Check',"Cashier's Check"),
+        ('Check',"Check"),
         ('Credit Card','Credit Card'),
         ('Direct Deposit','Direct Deposit'),
         ('Electronic Payment','Electronic Payment'),
