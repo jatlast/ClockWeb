@@ -220,7 +220,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     est_debug_text += 'For ' + repair_type + ' | hours multiplier (' + str(HOURS_MULTIPLIER) + ') | extras multiplier (' + str(EXTRAS_MULTIPLIER) + ') | hours(' + str(round(est_hours,2)) + ')\n'
 
     # Determine if repairer works on this clock_type...
-    if repairer_available:
+    if repairer_available and repair_type != 'Prepair to Move' and repair_type != 'Move Grandfather':
         if str(clock_type) == 'Longcase/Grandfather':
             repairer_available = repairer.repairs_grandfathers
         elif str(clock_type) == 'Cuckoo':
