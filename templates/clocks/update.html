@@ -8,7 +8,7 @@
     {% csrf_token %}
     <div class='row'>
         <div class='col-md-6'>
-            <table border="1">
+            <table cellpadding="10" cellspacing="10" border="1">
                 {% for field in form.visible_fields %}
                     {% if field.name != 'choices_are_locked' %}
                     <tr>

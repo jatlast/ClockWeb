@@ -143,6 +143,9 @@ addons_fields_viewable_by_template = [
         'added_part_cost',
         'part_cost_multiple',
         # 'added_customer_cost',
+        'payment_method',
+        'payment_information',
+        'payment_amount',
         'image_1',
         'image_2',
         'image_3',
@@ -163,6 +166,9 @@ addons_fields_viewable_by_repairer = [
         'added_part_cost',
         'part_cost_multiple',
         # 'added_customer_cost',
+        'payment_method',
+        'payment_information',
+        'payment_amount',
         'image_1',
         'image_2',
         'image_3',
@@ -212,15 +218,16 @@ class AddonsCreateView(CreateView):
         workorder_fk = self.request.POST.get('workorder_fk', 'PostGetError')
         workorder = Workorder.objects.get(id=workorder_fk)
         workorder.date_last_updated = datetime.now()
-        addon.added_by = 'Repairer'
         addon.repair_status_previous = workorder.repair_status
         addon.user_fk_id = self.request.user
+
         if addon.added_part_cost:
             addon.added_customer_cost = math.ceil(addon.added_part_cost * addon.part_cost_multiple)
             workorder.total_cost = workorder.total_cost + addon.added_customer_cost
         elif addon.added_hours:
             addon.added_customer_cost = math.ceil(addon.added_hours * workorder.repairer_hourly_rate)
             workorder.total_cost = workorder.total_cost + addon.added_customer_cost
+
         addon.save()
         workorder.repair_status = self.request.POST.get('repair_status_update', 'PostGetError')
         workorder.save()

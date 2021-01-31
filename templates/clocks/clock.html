@@ -75,34 +75,71 @@
     <input class="btn btn-secondary" type="button" value="Back" onclick="history.back()" />
   </div>
   <div class="col">
-    <div class="row">
-      <div class="col">
         {% if not workorders %}
         {% if customer_addresses %}
       {% if request.COOKIES.user_type == 'customer' %}
         <form class='form' action="{% url 'clock_estimate' clock.id %}" method="GET">
           {% csrf_token %}
           <input type="hidden" id="id_clock_id" name="clock_id" value={{ clock.id }}>
-          <input type="hidden" id="id_repair_type" name="repair_type" value="Clean & Overhaul">
-          <div class="row">
-            <select name="address_clock_fk" required id="id_address_clock_fk">
-              {% for address in customer_addresses %}
-              <option value="{{ address.id }}">{{ address.nickname }}</option>
-              {% endfor %}
-            </select>
-        </div>
-        <hr>
-          <div class="row">
-            <input class='btn btn-primary' type='submit' value="Get Repair Estimate">
-          </div>
+          <h5>Get Approximate Estimate</h5>
+          <br>
+          <table cellpadding="10" cellspacing="10" border="1">
+            <tr>
+              <th nowrap><label for="id_address_clock_fk">Clock Address</label></th>
+              <td>
+                <select name="address_clock_fk" required id="id_address_clock_fk">
+                  {% for address in customer_addresses %}
+                  <option value="{{ address.id }}">{{ address.nickname }}</option>
+                  {% endfor %}
+                </select>
+                <!-- The address where the clock resides -->
+                </td>
+            </tr>
+            <tr>
+              <th nowrap><label for="id_repair_type">Estimate Type</label></th>
+              <td>
+                <select name="repair_type" required id="id_repair_type">
+                  <option value="House Call">House Call (on-site adjustments)</option>
+                  <!-- Same as Clean & Overhaul -->
+                  <option value="Refurbish Mechanical" selected>Clean / Overhaul Mechanical Clock</option>
+                  <option value="Refurbish Quartz">Refurbish / Replace Battery Movement</option>
+                  <!-- Same as Clean & Overhaul -->
+                  <option value="Refurbish Electric">Refurbish / Replace Electric Movement</option>
+                  <option value="Get Working">Adjust / Get Working</option>
+                  <option value="Replace Parts">Add / Replace Parts</option>
+                  <option value="Mechanical to Quartz">Replace Mechanical Movement w/ Battery Movement</option>
+                  <option value="Regulate">Regulate Time</option>
+                  <option value="Prepair to Move">Prepair Grandfather Clock for Move / Shipping</option>
+                  <option value="Move Grandfather">Move Grandfather Clock from one Address to Another</option>
+                </select>
+                <!-- The repair type needed -->
+              </td>
+            </tr>
+            <tr>
+              <th nowrap><label for="id_address_deliver_fk">Move to Address</label></th>
+              <td>
+                <select name="address_deliver_fk" id="id_address_deliver_fk">
+                  <option value="">---------</option>
+                  {% for address in customer_addresses %}
+                  <option value="{{ address.id }}">{{ address.nickname }}</option>
+                  {% endfor %}
+                </select>
+                Destination address
+                </td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td>
+                <input class='btn btn-primary' type='submit' value="Get Estimate">
+              </td>
+            </tr>
+          </table>
         </form>
         {% endif %}
         {% else %}
           <a class="btn btn-outline-primary" href="{% url 'address_add' %}">Add Address</a> to receive estimates.
         {% endif %}
     {% endif %}
-  </div>
-  </div>
   </div>
   </div>
 {% endif %}

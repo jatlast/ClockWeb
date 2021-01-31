@@ -120,16 +120,18 @@
                 <td>{{ workorder.date_last_updated }}</td>
             </tr>
             <!-- Payment lines -->
-            {% if workorder.repair_status == 'Paid in Full' %}
             <tr class="heading">
                 <td>Payment Method</td>
-                <td>USD</td>
+                <td>Amount</td>
             </tr>
-            <tr class="details">
-                <td></td>
-                <td></td>
-            </tr>
-            {% endif %}                    
+            {% for addon in addons %}
+                {% if addon.addon_type == 'Payment' %}
+                <tr class="details">
+                    <td>{{ addon.payment_method }}</td>
+                    <td>{% money_localize addon.payment_amount workorder.repairer_hourly_rate_currency %}</td>
+                </tr>
+                {% endif %}
+            {% endfor %}
             <!-- Line items headline -->
             <tr class="heading">
                 <td>
@@ -140,8 +142,7 @@
                         <input type='hidden' id='workorder_fk' name='workorder_fk' value='{{ workorder.id }}'>
                         <input type='hidden' id='repair_status_update' name='repair_status_update' value='{{ workorder.repair_status }}'>
                         <input type='hidden' id='added_hours' name='added_hours' value=0>
-                        <input type="hidden" id="added_part_cost_0" name="added_part_cost_0" value=0>
-                        <input type="hidden" id="added_part_cost_1" name="added_part_cost_1" value="USD">
+                        <input type="hidden" id="added_part_cost" name="added_part_cost" value=0>
                         Item <input class='btn btn-link' type='submit' value="+">
                     </form>
                 </td>
@@ -274,6 +275,18 @@
             <tr class="details">
                 <td>{{ addon.addon_type }}</td>
                 <td>{% money_localize addon.added_customer_cost workorder.repairer_hourly_rate_currency %}</td>
+            </tr>
+            {% endif %}                    
+
+            <!-- Added Payments -->
+            {% if addon.payment_amount %}
+            <tr class="heading">
+                <td>Payment Method</td>
+                <td>Amount</td>
+            </tr>
+            <tr class="details">
+                <td>{{ addon.payment_method }}</td>
+                <td>{% money_localize addon.payment_amount workorder.repairer_hourly_rate_currency %}</td>
             </tr>
             {% endif %}                    
 

@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load djmoney %}
 
 {% block title %}Repairer Workorders{% endblock title %}
 
@@ -8,18 +9,24 @@
     {% for workorder in workorders %}
       <div class="row align-items-center">
         <div class="col">
-          <a href="{% url 'workorder' workorder.id %}">{{ workorder.date_last_updated }}</a>
+          {{ workorder.date_created }}
+        </div>
+        <div class="col">
+          <a href="{% url 'workorder' workorder.id %}">{{ workorder.repair_type }}</a>
         </div>
         <div class="col">
           <a href="{% url 'clock' workorder.clock_fk_id %}">{{ workorder.clock_fk }}</a>
-          </div>
-          <div class="col">
-            {{ workorder.get_repair_status_display }}
-          </div>
-          <div class="col">
-            {{ workorder.dynamic_estimate }}
-          </div>
         </div>
+        <div class="col">
+            {{ workorder.get_repair_status_display }}
+        </div>
+        <div class="col">
+          {% money_localize workorder.dynamic_estimate workorder.repairer_hourly_rate_currency %}
+        </div>
+        <div class="col">
+            {{ workorder.date_last_updated }}
+        </div>
+      </div>
       <hr>
     {% endfor %}
     {% else %}

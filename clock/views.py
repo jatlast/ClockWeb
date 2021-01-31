@@ -88,76 +88,79 @@ clock_fields_viewable_by_everyone = [
 # Grandfather Least = 200 minutes or 3.34 hours
 # Thus, if quartz subtract 540 minutes or 9.00 hours
 
-EXTRAS_MULTIPLIER = 0.50
-MURPHY_MULTIPLIER = 1.25
-MECHANICAL_MINIMUM = 1.67
-QUARTZ_MINIMUM = 1.00
-GRANDFATHER_MINIMUM = (3.83 + MECHANICAL_MINIMUM)
-MECHANICAL_HOURS = (MECHANICAL_MINIMUM * MURPHY_MULTIPLIER)
-QUARTZ_HOURS = (QUARTZ_MINIMUM * MURPHY_MULTIPLIER)
-GRANDFATHER_HOURS = (GRANDFATHER_MINIMUM * MURPHY_MULTIPLIER)
 
-clock_type_minimum_hours = {
-    'Advertising' : (MECHANICAL_HOURS + 0.5),
-    'Animated' : (MECHANICAL_HOURS - 0.65),
-    'Anniversary' : (MECHANICAL_HOURS + 0.5),
-    'Atmos' : (MECHANICAL_HOURS + 1.70),
-    'Balloon' : MECHANICAL_HOURS,
-    'Banjo' : MECHANICAL_HOURS,
-    'Beehive' : MECHANICAL_HOURS,
-    'Black Mantel' : MECHANICAL_HOURS,
-    'Blinking Eye' : (MECHANICAL_HOURS - 0.75),
-    'Calendar' : MECHANICAL_HOURS,
-    'Carriage' : MECHANICAL_HOURS,
-    'China/Porcelain' : (MECHANICAL_HOURS + 0.75),
-    'Column' : MECHANICAL_HOURS,
-    'Crystal Regulator' : (MECHANICAL_HOURS + 0.75),
-    'Cuckoo' : (MECHANICAL_HOURS + 0.5),
-    'Desk' : MECHANICAL_HOURS,
-    'Dial' : MECHANICAL_HOURS,
-    'Drop Trunk/Schoolhouse' : MECHANICAL_HOURS,
-    'Figural' : MECHANICAL_HOURS,
-    'Garnitures' : (MECHANICAL_HOURS + 0.39),
-    'Gothic' : MECHANICAL_HOURS,
-    'Kitchen' : MECHANICAL_HOURS,
-    'Lantern' : (MECHANICAL_HOURS + 0.35),
-    'Longcase/Grandfather' : GRANDFATHER_HOURS,
-    'Lyre' : (MECHANICAL_HOURS + 0.75),
-    'Mission' : MECHANICAL_HOURS,
-    'Mantel' : MECHANICAL_HOURS,
-    'Mystery' : MECHANICAL_HOURS,
-    'Novelty' : MECHANICAL_HOURS,
-    'Ogee' : MECHANICAL_HOURS,
-    'Picture' : MECHANICAL_HOURS,
-    'Portico' : (MECHANICAL_HOURS + 0.55),
-    'Pillar & Scroll' : MECHANICAL_HOURS,
-    'Plato' : MECHANICAL_HOURS,
-    # 'Shelf' : 2.00,
-    "Ship's" : (MECHANICAL_HOURS + 0.45),
-    'Skeleton' : MECHANICAL_HOURS,
-    'Steeple' : MECHANICAL_HOURS,
-    'Swinging' : MECHANICAL_HOURS,
-    'Tambour' : MECHANICAL_HOURS,
-    'Tape' : MECHANICAL_HOURS,
-    'Vienna Regulator' : (MECHANICAL_HOURS + 0.75),
-    'Wag on the Wall' : MECHANICAL_HOURS,
-    'Wall' : MECHANICAL_HOURS,
-}
+def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
 
-def GetClockRepairHours(repairer, clock, distance_from_repairer):
+    HOURS_MULTIPLIER = 1.00
+    EXTRAS_MULTIPLIER = 0.50
+    MURPHY_MULTIPLIER = 1.25
+    MECHANICAL_MINIMUM = 1.67
+    QUARTZ_MINIMUM = 1.00
+    GRANDFATHER_MINIMUM = (3.83 + MECHANICAL_MINIMUM)
+    MECHANICAL_HOURS = (MECHANICAL_MINIMUM * MURPHY_MULTIPLIER)
+    QUARTZ_HOURS = (QUARTZ_MINIMUM * MURPHY_MULTIPLIER)
+    GRANDFATHER_HOURS = (GRANDFATHER_MINIMUM * MURPHY_MULTIPLIER)
+
+    clock_type_minimum_hours = {
+        'Advertising' : (MECHANICAL_HOURS + 0.5),
+        'Animated' : (MECHANICAL_HOURS - 0.65),
+        'Anniversary' : (MECHANICAL_HOURS + 0.5),
+        'Atmos' : (MECHANICAL_HOURS + 1.70),
+        'Balloon' : MECHANICAL_HOURS,
+        'Banjo' : MECHANICAL_HOURS,
+        'Beehive' : MECHANICAL_HOURS,
+        'Black Mantel' : MECHANICAL_HOURS,
+        'Blinking Eye' : (MECHANICAL_HOURS - 0.75),
+        'Calendar' : MECHANICAL_HOURS,
+        'Carriage' : MECHANICAL_HOURS,
+        'China/Porcelain' : (MECHANICAL_HOURS + 0.75),
+        'Column' : MECHANICAL_HOURS,
+        'Crystal Regulator' : (MECHANICAL_HOURS + 0.75),
+        'Cuckoo' : (MECHANICAL_HOURS + 0.5),
+        'Desk' : MECHANICAL_HOURS,
+        'Dial' : MECHANICAL_HOURS,
+        'Drop Trunk/Schoolhouse' : MECHANICAL_HOURS,
+        'Figural' : MECHANICAL_HOURS,
+        'Garnitures' : (MECHANICAL_HOURS + 0.39),
+        'Gothic' : MECHANICAL_HOURS,
+        'Kitchen' : MECHANICAL_HOURS,
+        'Lantern' : (MECHANICAL_HOURS + 0.35),
+        'Longcase/Grandfather' : GRANDFATHER_HOURS,
+        'Lyre' : (MECHANICAL_HOURS + 0.75),
+        'Mission' : MECHANICAL_HOURS,
+        'Mantel' : MECHANICAL_HOURS,
+        'Mystery' : MECHANICAL_HOURS,
+        'Novelty' : MECHANICAL_HOURS,
+        'Ogee' : MECHANICAL_HOURS,
+        'Picture' : MECHANICAL_HOURS,
+        'Portico' : (MECHANICAL_HOURS + 0.55),
+        'Pillar & Scroll' : MECHANICAL_HOURS,
+        'Plato' : MECHANICAL_HOURS,
+        # 'Shelf' : 2.00,
+        "Ship's" : (MECHANICAL_HOURS + 0.45),
+        'Skeleton' : MECHANICAL_HOURS,
+        'Steeple' : MECHANICAL_HOURS,
+        'Swinging' : MECHANICAL_HOURS,
+        'Tambour' : MECHANICAL_HOURS,
+        'Tape' : MECHANICAL_HOURS,
+        'Vienna Regulator' : (MECHANICAL_HOURS + 0.75),
+        'Wag on the Wall' : MECHANICAL_HOURS,
+        'Wall' : MECHANICAL_HOURS,
+    }
     # Begin clock repair estimation logic...
     #   convert distance to road time in minutes: miles / mph * 60
     mph = 45 # assuming 45 mph because distance is "as the crow flies" so as not to use direction software
     minutes = 60 # obvious
     miles_to_minutes_multiple = minutes / mph
+    one_way_minutes = (distance_from_repairer * miles_to_minutes_multiple)
     # Repairs reuire both a pick-up and a delivery, hence double round trip
-    double_round_trip_minutes = (distance_from_repairer * miles_to_minutes_multiple * 4)
+    round_trip_minutes = (one_way_minutes * 2)
     # The included round trip is singular so it neecs to be doubled to reflect both the pick-up and the delivery
-    double_repairer_round_trip_max = repairer.road_time_minutes_maximum * 2
+    repairer_round_trip_max = repairer.road_time_minutes_maximum
     # Two round trips
-    double_repairer_round_trip_included = repairer.road_time_minutes_included * 2
-    extra_features = 0 # keep track of GF extra features
-#            hourly = repairer.hourly_rate
+    repairer_round_trip_included = repairer.road_time_minutes_included
+    extra_features = 0 # keep track of extra clock features
+
     est_hours = 0.00
     repairer_available = True
     est_debug_text = '\n'
@@ -176,21 +179,48 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
     for key, value in clock_type_minimum_hours.items():
         if key == str(clock_type):
             est_hours += value
-            est_debug_text += 'clock_type: ' + key + '|' + str(value) + '\n'
+            est_debug_text += 'clock_type: ' + key + ' | ' + str(value) + '\n'
             break
 
-    # check if repairer is accepting jobs and is within the maximum drive time.
-    if repairer.still_accepting_jobs and double_round_trip_minutes <= double_repairer_round_trip_max:
-        est_debug_text += 'Accepting Jobs\n'
+    # All posible repair_type options ...
+    if repair_type == 'House Call':
+        est_hours = repairer.service_call_hours_minimum
+        repairer_available = repairer.makes_service_calls
+        EXTRAS_MULTIPLIER = 0.25
+        # HOURS_MULTIPLIER = 1.00
+    elif repair_type == 'Regulate':
+        EXTRAS_MULTIPLIER = 0.125
+        HOURS_MULTIPLIER = 0.25
+    elif repair_type == 'Get Working':
+        EXTRAS_MULTIPLIER = 0.25
+        HOURS_MULTIPLIER = 0.50
+    elif repair_type == 'Replace Parts':
+        EXTRAS_MULTIPLIER = 0.125
+        HOURS_MULTIPLIER = 0.35
+    # Same as Clean & Overhaul
+    elif repair_type == 'Refurbish Quartz' or repair_type == 'Refurbish Electric' or repair_type == 'Refurbish Mechanical':
+        EXTRAS_MULTIPLIER = 0.50
+        HOURS_MULTIPLIER = 1.00
+    elif repair_type == 'Mechanical to Quartz':
+        EXTRAS_MULTIPLIER = 0.25
+        HOURS_MULTIPLIER = 0.75
+    elif repair_type == 'Prepair to Move':
+        est_hours = repairer.service_call_hours_minimum
+        repairer_available = repairer.packs_grandfathers_for_shipping
+        EXTRAS_MULTIPLIER = 0.25
+        HOURS_MULTIPLIER = 1.25
+    elif repair_type == 'Move Grandfather':
+        est_hours = repairer.service_call_hours_minimum + (repairer.service_call_hours_minimum * 0.50)
+        repairer_available = repairer.moves_grandfathers
+        EXTRAS_MULTIPLIER = 0.25
+        # HOURS_MULTIPLIER = 1.00
+    else:
+        est_debug_text += 'repair_type (' + repair_type + ') unrecongnized\n'
 
-# Fields not yet incorporated into the estimation algorithm
-#   makes_service_calls
-#   service_call_hours_minimum
-#   packs_grandfathers_for_shipping
-#   moves_grandfathers
-# has_pendulum - Yes/No | 1/0
+    est_debug_text += 'For ' + repair_type + ' | hours multiplier (' + str(HOURS_MULTIPLIER) + ') | extras multiplier (' + str(EXTRAS_MULTIPLIER) + ') | hours(' + str(round(est_hours,2)) + ')\n'
 
-        # Determine if repairer works on this clock_type...
+    # Determine if repairer works on this clock_type...
+    if repairer_available:
         if str(clock_type) == 'Longcase/Grandfather':
             repairer_available = repairer.repairs_grandfathers
         elif str(clock_type) == 'Cuckoo':
@@ -204,21 +234,30 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
         else:
             repairer_available = repairer.repairs_most_mechanical
 
-        est_debug_text += 'Available ' + str(repairer_available) + '\n'
+    est_debug_text += 'Available ' + str(repairer_available) + '\n'
+
+    # check if repairer is accepting jobs and is within the maximum drive time.
+    if repairer_available and repairer.still_accepting_jobs and round_trip_minutes <= repairer_round_trip_max:
+        est_debug_text += 'Accepting Jobs\n'
+
+# has_pendulum - Yes/No | 1/0
+#if repair_type == 'Service Call' or repair_type == 'Prepair to Move' or repair_type == 'Move Grandfather':
 
         ###############################
-        # Check for extra features...
+        # Check extra features...
         ###############################
 
         if str(clock_type) == 'Longcase/Grandfather':
             # Assuming only Longcase/Grandfather clocks necessitate pickup and delivery
             # Check for extra drive time...
-            if double_repairer_round_trip_included < double_round_trip_minutes:
-                extra_for_road_time = (double_round_trip_minutes - double_repairer_round_trip_included) / 60
+            if repairer_round_trip_included < round_trip_minutes:
+                extra_for_road_time = (round_trip_minutes - repairer_round_trip_included) / minutes
+                if repair_type == 'Refurbish Mechanical':
+                    extra_for_road_time * 2 # 1 for pick-up & 1 for delivery
                 est_hours += extra_for_road_time
-                est_debug_text += 'Extra for road time for ' + str(distance_from_repairer) + ' miles: ' + str(extra_for_road_time) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+                est_debug_text += 'Extra for road time for ' + str(distance_from_repairer) + ' extra road time: ' + str(extra_for_road_time) + ' | hours(' + str(round(est_hours,2)) + ')\n'
             else:
-                est_debug_text += 'No extra road time: ' + str(double_repairer_round_trip_included) + ' < ' + str(double_round_trip_minutes) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+                est_debug_text += 'No extra road time: ' + str(repairer_round_trip_included) + ' < ' + str(round_trip_minutes) + ' | hours(' + str(round(est_hours,2)) + ')\n'
         else:
             # Train count only includes single train in minimum estimate
             est_debug_text += 'Has train count ' + str(clock.train_count)
@@ -300,7 +339,7 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
         # Has self-adjusting beat
         est_debug_text += 'Has self adjusting beat: ' + str(clock.has_self_adjusting_beat)
         if clock.has_self_adjusting_beat:
-            extra_features += -0.5
+            extra_features += -0.25
             est_debug_text += ' == True'
         else:
             est_debug_text += ' == False'
@@ -456,15 +495,17 @@ def GetClockRepairHours(repairer, clock, distance_from_repairer):
         else:
             est_debug_text += 'Has tubes: ' + str(clock.has_tubes) + ' != True | extras (' + str(round(extra_features,2)) + ')\n'
 
-        est_debug_text += 'Hours ' + str(est_hours) + ' (extras ' + str(extra_features) + ' * ' + str(EXTRAS_MULTIPLIER) + ')'
+        est_debug_text += 'Hours ' + str(est_hours) + ' * ' + str(HOURS_MULTIPLIER) + ')\n'
+        est_hours = (est_hours * HOURS_MULTIPLIER)
+        est_debug_text += 'Hours ' + str(est_hours) + ' (extras ' + str(extra_features) + ' * ' + str(EXTRAS_MULTIPLIER) + ')\n'
         est_hours += (extra_features * EXTRAS_MULTIPLIER)
         est_debug_text += ' = ' + str(round(est_hours,2)) + ' Total Hours)\n'
 
     else:
         repairer_available = False
-        est_debug_text += 'Accepting Jobs (' + str(repairer.still_accepting_jobs) + ') and ' + str(double_round_trip_minutes) + ' <= ' + str(repairer.road_time_minutes_maximum) + ' | hours(' + str(round(est_hours,2)) + ')\n'
+        est_debug_text += 'Accepting Jobs (' + str(repairer.still_accepting_jobs) + ') and ' + str(round_trip_minutes) + ' <= ' + str(repairer.road_time_minutes_maximum) + ' | hours(' + str(round(est_hours,2)) + ')\n'
 
-    return repairer_available, est_hours, est_debug_text
+    return repairer_available, one_way_minutes, est_hours, est_debug_text
 
 @method_decorator(login_required, name='dispatch')
 class ClockListView(ListView):
@@ -495,13 +536,15 @@ class ClocktypesListView(ListView):
             repairer = Repairer.objects.get(user_fk_id=self.request.user)
             for clocktype in context['clocktypes_list']:
                 distance_from_repairer = 10
-                repairer_available, est_hours, est_debug_text = GetClockRepairHours(repairer, clocktype, distance_from_repairer)
+                repair_type = 'Refurbish Mechanical'
+                repairer_available, one_way_minutes, est_hours, est_debug_text = GetClockRepairHours(repairer, clocktype, repair_type, distance_from_repairer)
                 context['estimate_list']['repairer_id'] = repairer.id
                 context['estimate_list']['clock_pk'] = clocktype.id
                 # Begin each repairer as "available" to field this estimate.
 
                 context['estimate_list']['available'] = repairer_available
                 context['estimate_list']['distance_from_repairer'] = distance_from_repairer
+                context['estimate_list']['one_way_minutes'] = one_way_minutes
                 hourly_rate_amount = repairer.hourly_rate.amount
                 context['estimate_list']['repairer_hourly_rate'] = hourly_rate_amount
                 context['estimate_list']['repairer_hourly_rate_currency'] = repairer.hourly_rate.currency
@@ -572,7 +615,15 @@ class ClockRepairEstimateView(DetailView):
         context['form_fields']['repair_type'] = self.request.GET.get('repair_type', 'Empty')
         context['form_fields']['address_clock_fk'] = self.request.GET.get('address_clock_fk', 'Empty')
 
-        context['address'] = Address.objects.get(id=context['form_fields']['address_clock_fk'])
+        context['address_clock'] = Address.objects.get(id=context['form_fields']['address_clock_fk'])
+
+        move_distance = 0.00
+        if context['form_fields']['repair_type'] == 'Move Grandfather':
+            context['form_fields']['address_deliver_fk'] = self.request.GET.get('address_deliver_fk', 0)
+            if context['form_fields']['address_deliver_fk']:
+                context['address_deliver'] = Address.objects.get(id=context['form_fields']['address_deliver_fk'])
+                context['deliver_list'] = Address.objects.filter(id__exact=context['address_deliver'].id).annotate(distance=(Distance('location', context['address_clock'].location) * 1.417))
+                move_distance = context['deliver_list'][0].distance.mi
 
         user_type_cookie = self.request.COOKIES.get('user_type')
         if user_type_cookie == 'customer':
@@ -584,7 +635,7 @@ class ClockRepairEstimateView(DetailView):
 
         # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3835347/
         #  Table 2 - "Note: Predicted Travel Distance = Straight-Line Distance * 1.417."
-        context['address_list'] = Address.objects.exclude(user_type_int__exact=0).annotate(distance=(Distance('location', context['address'].location) * 1.417)).order_by('distance')[0:5]
+        context['address_list'] = Address.objects.exclude(user_type_int__exact=0).annotate(distance=(Distance('location', context['address_clock'].location) * 1.417)).order_by('distance')[0:5]
         context['repairer_list'] = Context({"foo": "bar"})
         context['estimate_list'] = Context({"foo": "bar"})
 
@@ -613,20 +664,18 @@ class ClockRepairEstimateView(DetailView):
             context['repairer_list']['hide_my_address'] = repairer.hide_my_address
             context['repairer_list']['hide_my_phone'] = repairer.hide_my_phone
             context['repairer_list']['hide_my_email'] = repairer.hide_my_email
+
+            repair_type = context['form_fields']['repair_type']
+            distance_from_repairer = (address.distance.mi + (move_distance * 1.50))
+
+            repairer_available, one_way_minutes, est_hours, est_debug_text = GetClockRepairHours(repairer, self.object, repair_type, distance_from_repairer)
+
+            context['repairer_list']['one_way_minutes'] = one_way_minutes
             context['repairer_list'].push()
             repairer_count += 1
 
             context['estimate_list']['repairer_id'] = repairer.id
             context['estimate_list']['clock_pk'] = self.object.pk
-            # Begin each repairer as "available" to field this estimate.
-            context['estimate_list']['available'] = True
-
-            # est_hours = 0.00
-            # repairer_available = True
-            # est_debug_text = '\n'
-            distance_from_repairer = address.distance.mi
-
-            repairer_available, est_hours, est_debug_text = GetClockRepairHours(repairer, self.object, distance_from_repairer)
 
             context['estimate_list']['available'] = repairer_available
             context['estimate_list']['distance_from_repairer'] = distance_from_repairer

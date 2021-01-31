@@ -6,7 +6,7 @@
 {% if user.is_authenticated %}
 <div class="row">
   <div class="col-md-4">
-      <form class='form' action="" method="POST">
+      <form class='form' action="" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       <!-- Begin Hidden Fields -->
       <!-- manually entered -->
@@ -30,7 +30,7 @@
         </ul>
         {% endif %}
 
-  <table border="1">
+  <table cellpadding="10" cellspacing="10" border="1">
     {% for field in form.visible_fields %}
         <!-- field.name = ({{ field.name }}) -->
         {% for field_name in form_fields.viewable %}

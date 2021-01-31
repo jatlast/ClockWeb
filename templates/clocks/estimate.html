@@ -63,13 +63,13 @@
     <div class="col-sm">
         <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet' />
-
+        <h3>{{ form_fields.repair_type }} Estimates</h3>
         <div id='map' style='width: 500px; height: 500px;'></div>
         <br>
         {% if repairer_list %}
             {% for repairer in repairer_list reversed %}
                 {% if repairer.distance %}
-                <h4>{{ repairer.distance.mi|floatformat:2 }} miles - <a href="{% url 'repairer' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h4>
+                <h4><strong>{{ repairer.one_way_minutes|floatformat:2 }} min</strong> ({{ repairer.distance.mi|floatformat:2 }} mi) - <a href="{% url 'repairer' repairer.id %}">{{ repairer.first_name }} {{ repairer.last_name }}</a></h4>
                 <p>
                     {% if not repairer.hide_my_address %}
                         {{ repairer.address }}
@@ -98,7 +98,8 @@
                             <input type="hidden" id="repairer_fk" name="repairer_fk" value="{{ est.repairer_id }}">
                             <input type="hidden" id="customer_fk" name="customer_fk" value="{{ customer.id }}">
                             <input type="hidden" id="repair_type" name="repair_type" value="{{ form_fields.repair_type }}">
-                            <input type="hidden" id="address_clock_fk" name="address_clock_fk" value="{{ address.id }}">
+                            <input type="hidden" id="address_clock_fk" name="address_clock_fk" value="{{ address_clock.id }}">
+                            <input type="hidden" id="address_deliver_fk" name="address_deliver_fk" value="{{ address_deliver.id }}">
                             <input type="hidden" id="repair_status" name="repair_status" value="Submitted">
                             <input type="hidden" id="distance_from_repairer" name="distance_from_repairer" value="{{ est.distance_from_repairer|floatformat:2 }}">
                             <input type="hidden" id="repairer_hourly_rate" name="repairer_hourly_rate" value={{ est.repairer_hourly_rate }}>
@@ -110,7 +111,7 @@
                             <input type="submit" value="Create Work Order">
                         </form>
                         {% endif %}
-                        <!-- Estimate: {{ est.hours|floatformat:2 }} hrs * {{ repairer.hourly_rate }} per/hr = {{ est.dynamic_estimate }} cost. -->
+                        <!-- Estimate: {{ est.dynamic_estimate_hours|floatformat:2 }} hrs * {{ repairer.hourly_rate }} per/hr = {{ est.dynamic_estimate }} cost. -->
                         <!-- Debug All: {{ debug.text }} -->
                         <!-- Debug Est: {{ est.debug }} -->
                         <!-- Env: {{ est.env_dump }} -->
@@ -130,17 +131,17 @@
 </div>
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiamF0bGFzdCIsImEiOiJja2pmdXV2Mm0yOXR6MnluMGtzeng2NXp2In0.-GbX1CJH3huzw-u6B3A8DQ';
-    var longitude = {{ address.location.x }}
-    var latitude = {{ address.location.y }}
+    var longitude = {{ address_clock.location.x }}
+    var latitude = {{ address_clock.location.y }}
   
     var places = {
-                    // Add the customer's information
+                    // Add the customer's address
                         'type': 'FeatureCollection',
                         'features': [
                             {
                                 'type': 'Feature',
                                     'properties': {
-                                    'description': '{{ customer.first_name }} {{ customer.last_name }}',
+                                    'description': '{{ address_clock.contact_name }}',
                                     'icon': 'circle'
                                     },
                                     'geometry': {
@@ -148,6 +149,20 @@
                                         'coordinates': [longitude, latitude]
                                         }
                             },
+                        {% if form_fields.repair_type == 'Move Grandfather' %}
+                        // Add deilivery address
+                        {
+                            'type': 'Feature',
+                                'properties': {
+                                'description': 'To: {{ address_deliver.contact_name }}',
+                                'icon': 'square'
+                                },
+                                'geometry': {
+                                    'type': 'Point',
+                                    'coordinates': [{{ address_deliver.longitude }}, {{ address_deliver.latitude }}]
+                                    }
+                        },
+                        {% endif %}
                     // Add the repairers' information
                         {% for repairer in repairer_list%}
                             {% if repairer.latitude and repairer.longitude %}
@@ -159,7 +174,7 @@
                                     },
                                     'geometry': {
                                         'type': 'Point',
-                                        'coordinates': [{{repairer.longitude}}, {{repairer.latitude}}]
+                                        'coordinates': [{{ repairer.longitude }}, {{ repairer.latitude }}]
                                         }
                             },
                             {% endif %}

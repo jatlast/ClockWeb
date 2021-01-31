@@ -12,12 +12,18 @@ from address.models import Address
 
 class Workorder(models.Model):
     REPAIR_TYPE_CHOICES = [
-        ('Service Call','Service/House Call'),
+        ('House Call','House Call'),
+        # Same as Clean & Overhaul
+        ('Refurbish Mechanical','Clean / Overhaul Mechanical Clock'),
+        ('Refurbish Quartz','Refurbish / Replace Battery Movement'),
+        # Same as Clean & Overhaul
+        ('Refurbish Electric','Refurbish / Replace Electric Movement'),
+        ('Get Working','Adjust / Get Working'),
+        ('Replace Parts','Add / Replace Parts'),
+        ('Mechanical to Quartz','Replace Mechanical Movement w/ Battery Movement'),
         ('Regulate','Regulate Time'),
-        ('Replace Parts','Add/Replace Parts'),
-        ('New Movement','Replace Battery Movement'),
-        ('Get Working','Adjust/Get Working'),
-        ('Clean & Overhaul','Clean & Overhaul'),
+        ('Prepair to Move','Prepair Grandfather Clock for Move / Shipping'),
+        ('Move Grandfather','Move Grandfather Clock fron one Address to Another'),
     ]
 
     REPAIR_STATUS_CHOICES = [
@@ -26,6 +32,7 @@ class Workorder(models.Model):
         ('Canceled','Canceled by Customer'),
         ('Declined','Declined by Repairer'),
         ('Scheduled Pickup','Pickup is Scheduled'),
+        ('Scheduled House Call','House Call is Scheduled'),
         ('Retrieved','Picked Up by Repairer'),
         ('Started Repair','Started Repair'),
         ('Finished Repair','Finished Repair'),
@@ -33,14 +40,7 @@ class Workorder(models.Model):
         ('Scheduled Delivery','Delivery is Scheduled'),
         ('Delivered','Delivered by Repairer'),
         ('Paid in Full','Paid in Full'),
-    ]
-
-    _CHOICES = [
-        ('',''),
-        ('',''),
-        ('',''),
-        ('',''),
-        ('',''),
+        ('Partial Payment','Partial Payment'),
     ]
 
     # UUID for this table
@@ -117,13 +117,17 @@ class Addons(models.Model):
         ('Reply','Reply'),
         ('Approve','Approve Request'),
         ('Refuse','Refuse Request'),
-        ('',''),
+        ('Payment','Payment'),
     ]
 
-    # ADDED_BY_CHOICES = [
-    #     ('Customer','Customer'),
-    #     ('Repairer','Repairer'),
-    # ]
+    PAYMENT_METHOD_CHOICES = [
+        ('Cash','Cash'),
+        ('Cashier Check',"Cashier's Check"),
+        ('Credit Card','Credit Card'),
+        ('Direct Deposit','Direct Deposit'),
+        ('Electronic Payment','Electronic Payment'),
+        ('Money Order','Money Order'),
+    ]
 
     # id = autopopulated by django
 
@@ -153,6 +157,10 @@ class Addons(models.Model):
     added_part_cost = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, default=0.00)
     part_cost_multiple = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, default=0.00)
     added_customer_cost = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, default=0.00)
+
+    payment_method = models.CharField(blank=True, null=True, max_length=18, choices=PAYMENT_METHOD_CHOICES)
+    payment_information = models.CharField(blank=True, null=True, max_length=32)
+    payment_amount = models.DecimalField(blank=True, null=True, max_digits=6, decimal_places=2, default=0)
 
     # image_# - Five associated pictures
     image_1 = models.ImageField(upload_to='workorders/addons/', blank=True)

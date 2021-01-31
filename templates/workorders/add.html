@@ -17,6 +17,7 @@
       {{ form.repairer_fk.as_hidden }}
       {{ form.customer_fk.as_hidden }}
       {{ form.address_clock_fk.as_hidden }}
+      {{ form.address_deliver_fk.as_hidden }}
       {{ form.repair_type.as_hidden }}
       {{ form.distance_from_repairer.as_hidden }}
       {{ form.repair_status.as_hidden }}
@@ -42,7 +43,7 @@
         </ul>
         {% endif %}
 
-  <table border="1">
+  <table cellpadding="10" cellspacing="10" border="1">
     {% for field in form.visible_fields %}
         {% if field.name == 'repair_description' %}
         <tr>
