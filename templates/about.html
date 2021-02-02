@@ -1,11 +1,11 @@
 {% extends '_base.html' %}
 {% load static %}
 
-{% block title %} About {% endblock title %}
+{% block title %} About MI Clock Repair {% endblock title %}
 
 {% block content %}
 
-<h1></h1>
+<h1>About MI - Clock Repair</h1>
 <div class="row">
   <div class="col">
     Hello, and welcome to <strong>MI – Clock Repair</strong> (aka, Michigan Clock Repair). 
@@ -46,10 +46,12 @@
             {% if not repairer.hide_my_email %}
             <br>{{ repairer.email }}
             {% endif %}
-            {% elif request.COOKIES.user_type == 'repairer' %}
-              <a class="btn btn-primary" href="{% url 'address_add' %}">Add your address</a>
               {% if debug.exception %}
               <!-- Debug Except ({{ debug.exception }}) -->
+              {% endif %}
+              {% if not repairer.hide_my_address %}
+              <br><br>
+              <input class="btn btn-secondary" type="button" value="Get Directions" onclick="window.open('https://maps.google.com/maps?q={{ address.address }}, {{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}', '_blank');" />
               {% endif %}      
           {% endif %}
           <h6>About Info:</h6>
@@ -73,7 +75,15 @@
           <li>Does house/service calls</li>
           {% endif %}
 
-          {% if repairer.service_call_hours_minimum %}
+          {% if repairer.packs_grandfathers_for_shipping %}
+          <li>Does in-house packing of grandfather clocks for shipping</li>
+          {% endif %}
+
+          {% if repairer.moves_grandfathers %}
+          <li>Moves grandfather clocks from one address to another</li>
+          {% endif %}
+
+          {% if repairer.service_call_hours_minimum and 1 == 0 %}
           <li>Bills {{ repairer.service_call_hours_minimum }} hours minimum for service calls </li>
           {% endif %}
 
@@ -104,7 +114,7 @@
           Repairs battery operated:
           {% endif %}
         </h6>
-        
+
         <ul>
            {% if repairer.repairs_grandfathers %}
           <li>Tallcase/Grandfather Clocks</li>
@@ -131,9 +141,11 @@
       <form class='form' action="{% url 'clocktypes' %}" method="GET">
         {% csrf_token %}
         <input type="hidden" id="id_repairer_id" name="repairer_id" value="{{ repairer.id }}">
-        <input class='btn btn-secondary' type='submit' value="Display Repairer Estimates">
+        <input class='btn btn-primary' type='submit' value="Display Repairer Estimates">
       </form>
+      <br>
     </div>
+    <br><br>
   </div>
 </div>
 

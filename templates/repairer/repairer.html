@@ -33,7 +33,11 @@
             {% if not repairer.hide_my_email %}
             <br>{{ repairer.email }}
             {% endif %}
-            {% elif request.COOKIES.user_type == 'repairer' %}
+            {% if not repairer.hide_my_address %}
+              <br><br>
+              <input class="btn btn-secondary" type="button" value="Get Directions" onclick="window.open('https://maps.google.com/maps?q={{ address.address }}, {{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}', '_blank');" />
+            {% endif %}      
+          {% elif request.COOKIES.user_type == 'repairer' %}
               <a class="btn btn-primary" href="{% url 'address_add' %}">Add your address</a>
               {% if debug.exception %}
               <!-- Debug Except ({{ debug.exception }}) -->
@@ -60,7 +64,15 @@
           <li>Does house/service calls</li>
           {% endif %}
 
-          {% if repairer.service_call_hours_minimum %}
+          {% if repairer.packs_grandfathers_for_shipping %}
+          <li>Does in-house packing of grandfather clocks for shipping</li>
+          {% endif %}
+
+          {% if repairer.moves_grandfathers %}
+          <li>Moves grandfather clocks from one address to another</li>
+          {% endif %}
+
+          {% if repairer.service_call_hours_minimum and 1 == 0 %}
           <li>Bills {{ repairer.service_call_hours_minimum }} hours minimum for service calls </li>
           {% endif %}
 
