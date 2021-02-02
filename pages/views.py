@@ -33,6 +33,7 @@ class AboutPageView(TemplateView):
         context['debug'] = Context({"foo": "bar"})
 
         context['repairer'] = Repairer.objects.get(first_name__exact='Jason', last_name__exact='Baumbach')
+        context['address'] = Address.objects.get(user_fk_id__exact=context['repairer'].user_fk_id)
 
         return context
 

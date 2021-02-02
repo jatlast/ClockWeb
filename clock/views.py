@@ -544,6 +544,9 @@ class ClocktypesListView(ListView):
             repairer_id = self.request.GET.get('repairer_id', 0)
             repairer = Repairer.objects.get(id__exact=repairer_id)
 
+        context['display_options']['repairer_first_name'] = repairer.first_name
+        context['display_options']['repairer_last_name'] = repairer.last_name
+
         if user_type_cookie == 'repairer' or repairer_id:
             for clocktype in context['clocktypes_list']:
                 distance_from_repairer = 10

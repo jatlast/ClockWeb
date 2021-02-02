@@ -5,7 +5,18 @@
 
 {% block content %}
   {% if clocktypes_list %}
-  <input class="btn btn-secondary" type="button" value="Back" onclick="history.back()" />
+  <div class="row">
+    <div class="col">
+      <input class="btn btn-secondary" type="button" value="Back" onclick="history.back()" />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      {% if display_options.user_type == 'repairer' or display_options.user_type == 'guest' %}
+      <br><h3>{{ display_options.repairer_first_name }}'s approximate estimates</h3>
+      {% endif %}
+    </div>
+  </div>
     {% for clocktype in clocktypes_list %}
     <form action="{% url 'clock_add' %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
