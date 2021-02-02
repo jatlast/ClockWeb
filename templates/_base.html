@@ -58,9 +58,16 @@
         </li>
         {% endif %}
     {% endif %}
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'about' %}">About</a>
-      </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'about' %}">About</a>
+    </li>
+      <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Walkthroughs</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'customer_walkthrough' %}">How-to become a customer</a></li>
+            <li><a class="dropdown-item" href="{% url 'repairer_walkthrough' %}">How-to become a repair person</a></li>
+          </ul>
+        </li>
     {% if user.is_authenticated %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'account_logout' %}">Log Out | {{ user.email }}</a>

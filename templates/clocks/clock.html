@@ -136,7 +136,7 @@
           </table>
         </form>
         {% endif %}
-        {% else %}
+        {% elif request.COOKIES.user_type == 'customer' %}
           <a class="btn btn-outline-primary" href="{% url 'address_add' %}">Add Address</a> to receive estimates.
         {% endif %}
     {% endif %}

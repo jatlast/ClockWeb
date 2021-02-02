@@ -28,9 +28,18 @@ class HomePageView(TemplateView):
 class AboutPageView(TemplateView):
     template_name = 'about.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(AboutPageView, self).get_context_data(**kwargs)
+        context['debug'] = Context({"foo": "bar"})
+
+        context['repairer'] = Repairer.objects.get(first_name__exact='Jason', last_name__exact='Baumbach')
+
+        return context
+
 class PageWalkthroughCustomerView(TemplateView):
     template_name = 'cwt.html'
+    # template_name = 'customer-walkthrough.html'
 
 class PageWalkthroughRepairerView(TemplateView):
     template_name = 'rwt.html'
-
+    # template_name = 'clock-repair-person-walkthrough.html'

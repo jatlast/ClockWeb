@@ -6,14 +6,145 @@
 {% block content %}
 
 <h1></h1>
-
 <div class="row">
-    <div class="col"><h2>Do you want a clock repaired?</h2></div>
-    <div class="col"><h2>Do you know how to repair clocks?</h2></div>
+  <div class="col">
+    Hello, and welcome to <strong>MI – Clock Repair</strong> (aka, Michigan Clock Repair). 
+    My name is Jason – that’s me in the picture holding a tubular chime grandfather clock 
+    movement.  I built this website so Michigan residents in need of clock repair can find 
+    me.  However, this site also allows all clock repairpersons, regardless of locality, 
+    to enter their information so potential residents in their region in need of clock 
+    repair can find them.
+    <br><br>
+    To get approximate estimates for how much I charge for full mechanical clock 
+    restorations, click <strong>Display Repairer Estimates</strong>.
+
   </div>
-  <div class="row">
-    <div class="col"><h4><a href="{% url 'customer_walkthrough' %}">Learn how to becomer a customer</a></h4></div>
-    <div class="col"><h4><a href="{% url 'repairer_walkthrough' %}">Learn how to become a repair person</a></h4></div>
-  </div>  
+    <div class="col">
+      <div class="card" style="width: 18rem;">
+      {% if repairer.image_1 %}
+      <img class="card-img-top" src="{{repairer.image_1.url}}" alt="{{repairer.first_name}} {{repairer.last_name}}">
+      {% endif %}
+      <div class="card-body">
+        <h5 class="card-title">
+          {{repairer.first_name}} {{repairer.last_name}}
+          <br>
+          {{ repairer.phone.as_national }}
+        </h5>
+        <p class="card-text">
+          {% if address %}
+            {% if not repairer.hide_my_address %}
+              {{ address.address }}
+              {% if address.address_other %}
+                  , {{ address.address_other }}
+              {% endif %}
+              <br>
+            {% endif %}
+            {{ address.place_city }}, {{ address.region_state }} {{ address.postcode }}
+            {% if not repairer.hide_my_phone %}
+            <br>{{ address.contact_phone.as_national }}
+            {% endif %}
+            {% if not repairer.hide_my_email %}
+            <br>{{ repairer.email }}
+            {% endif %}
+            {% elif request.COOKIES.user_type == 'repairer' %}
+              <a class="btn btn-primary" href="{% url 'address_add' %}">Add your address</a>
+              {% if debug.exception %}
+              <!-- Debug Except ({{ debug.exception }}) -->
+              {% endif %}      
+          {% endif %}
+          <h6>About Info:</h6>
+          {{ repairer.personal_description }}<br>
+          <BR><h6>Details:</h6>
+         <ul>
+          
+          {% if repairer.still_accepting_jobs %}
+          <li>Accpting new work orders</li>
+          {% else %}
+          <li>Not accepting new work orders</li>
+          {% endif %}
+
+          <li>Has {{ repairer.experience_in_years }} years of experience</li>
+
+          {% if not repairer.hide_my_hourly_rate %}
+          <li>Hourly rate of {{ repairer.hourly_rate }}</li>
+          {% endif %}
+          
+          {% if repairer.makes_service_calls %}
+          <li>Does house/service calls</li>
+          {% endif %}
+
+          {% if repairer.service_call_hours_minimum %}
+          <li>Bills {{ repairer.service_call_hours_minimum }} hours minimum for service calls </li>
+          {% endif %}
+
+          {% if repairer.road_time_minutes_included %}
+          <li>Includes {{ repairer.road_time_minutes_included }} minutes of road time</li>
+          {% endif %}
+          
+          {% if repairer.road_time_minutes_maximum %}
+          <li>Round trip max of {{ repairer.road_time_minutes_maximum }} minutes</li>
+          {% endif %}
+          
+          <li>
+            {% if repairer.repairs_most_quartz and repairer.repairs_most_mechanical %}
+            Repairs mechanical & battery operated clocks
+            {% elif repairer.repairs_most_mechanical %}
+            Repairs only mechanical clocks
+            {% else %}
+            Repairs only battery operated clocks
+            {% endif %}
+          </li>
+        </ul>
+        <h6>
+          {% if repairer.repairs_most_quartz and repairer.repairs_most_mechanical %}
+          Repairs mechanical & battery operated:
+          {% elif repairer.repairs_most_mechanical %}
+          Repairs mechanical:
+          {% else %}
+          Repairs battery operated:
+          {% endif %}
+        </h6>
+        
+        <ul>
+           {% if repairer.repairs_grandfathers %}
+          <li>Tallcase/Grandfather Clocks</li>
+          {% endif %}
+          
+          {% if repairer.repairs_tubular_grandfathers %}
+          <li>Tubular Chime clocks</li>
+          {% endif %}
+          
+          {% if repairer.repairs_cuckoos %}
+          <li>Cuckoo clocks</li>
+          {% endif %}
+          
+          {% if repairer.repairs_atmospherics %}
+          <li>Atmos clocks</li>
+          {% endif %}
+          
+          {% if repairer.repairs_anniversarys %}
+          <li>Anniversary clocks</li>
+          {% endif %}
+        </ul>
+        </p>
+      </div>
+      <form class='form' action="{% url 'clocktypes' %}" method="GET">
+        {% csrf_token %}
+        <input type="hidden" id="id_repairer_id" name="repairer_id" value="{{ repairer.id }}">
+        <input class='btn btn-secondary' type='submit' value="Display Repairer Estimates">
+      </form>
+    </div>
+  </div>
+</div>
 
   {% endblock content %}
+
+  
+<div class="row">
+  <div class="col"><h2>Do you want a clock repaired?</h2></div>
+  <div class="col"><h2>Do you know how to repair clocks?</h2></div>
+</div>
+<div class="row">
+  <div class="col"><h4><a href="{% url 'customer_walkthrough' %}">Learn how to becomer a customer</a></h4></div>
+  <div class="col"><h4><a href="{% url 'repairer_walkthrough' %}">Learn how to become a repair person</a></h4></div>
+</div>  

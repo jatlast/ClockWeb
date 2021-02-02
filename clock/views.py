@@ -517,7 +517,7 @@ class ClockListView(ListView):
         customer__id = Customer.objects.only('id').get(user_fk_id=self.request.user).id
         return Clock.objects.filter(customer_fk_id__exact=customer__id)
 
-@method_decorator(login_required, name='dispatch')
+#@method_decorator(login_required, name='dispatch')
 class ClocktypesListView(ListView):
     model = Clock
     context_object_name = 'clocktypes'
@@ -526,22 +526,32 @@ class ClocktypesListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(ClocktypesListView, self).get_context_data(**kwargs)
         context['debug'] = Context({"foo": "bar"})
+        context['display_options'] = Context({"foo": "bar"})
         context['clocktypes_list'] = Context({"foo": "bar"})
         context['clocktypes_list'] = Clocktypes.objects.all().order_by('clock_type', 'wind_interval_days', 'train_count', 'chime_count', 'tube_count', 'battery_count')
 
         context['estimate_list'] =  Context({"foo": "bar"})
 
         user_type_cookie = self.request.COOKIES.get('user_type')
-        if user_type_cookie == 'repairer':
-            repairer = Repairer.objects.get(user_fk_id=self.request.user)
+
+        repairer_id = 0
+        if self.request.user.is_authenticated:
+            context['display_options']['user_type'] = user_type_cookie
+            if user_type_cookie == 'repairer':
+                repairer = Repairer.objects.get(user_fk_id=self.request.user)
+        else:
+            context['display_options']['user_type'] = 'guest'
+            repairer_id = self.request.GET.get('repairer_id', 0)
+            repairer = Repairer.objects.get(id__exact=repairer_id)
+
+        if user_type_cookie == 'repairer' or repairer_id:
             for clocktype in context['clocktypes_list']:
                 distance_from_repairer = 10
                 repair_type = 'Refurbish Mechanical'
                 repairer_available, one_way_minutes, est_hours, est_debug_text = GetClockRepairHours(repairer, clocktype, repair_type, distance_from_repairer)
+                context['estimate_list']['repair_type'] = repair_type
                 context['estimate_list']['repairer_id'] = repairer.id
                 context['estimate_list']['clock_pk'] = clocktype.id
-                # Begin each repairer as "available" to field this estimate.
-
                 context['estimate_list']['available'] = repairer_available
                 context['estimate_list']['distance_from_repairer'] = distance_from_repairer
                 context['estimate_list']['one_way_minutes'] = one_way_minutes
@@ -552,6 +562,8 @@ class ClocktypesListView(ListView):
                 context['estimate_list']['dynamic_estimate'] = math.ceil(est_hours * float(hourly_rate_amount))
                 context['estimate_list']['debug'] = est_debug_text
                 context['estimate_list'].push()
+        else:
+            context['debug']['text'] = 'user_type = (' + user_type_cookie + ') | repairer_id = (' + str(repairer_id) + ')\n'
 
         return context
 

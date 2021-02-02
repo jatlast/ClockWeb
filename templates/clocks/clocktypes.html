@@ -4,8 +4,8 @@
 {% block title %}Clocktypes{% endblock title %}
 
 {% block content %}
-  {% if user.is_authenticated %}
   {% if clocktypes_list %}
+  <input class="btn btn-secondary" type="button" value="Back" onclick="history.back()" />
     {% for clocktype in clocktypes_list %}
     <form action="{% url 'clock_add' %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
@@ -40,7 +40,7 @@
       <div class="row align-items-center">
         <div class="col-3">
           {{clocktype.description}}<br><br>
-          {% if request.COOKIES.user_type == 'repairer' %}
+          {% if display_options.user_type == 'repairer' or display_options.user_type == 'guest' %}
             <h5>{{ clocktype.id }}: {{clocktype.clock_type}}</h5><br>
           <!-- user_type repairer can see dynamic estimates for all clock types -->
           <!-- user_type cookie repairer = {{ request.COOKIES.user_type }} -->
@@ -51,9 +51,11 @@
                     {% if clocktype.clock_type == 'Longcase/Grandfather' %}
                       <h6>{{ est.distance_from_repairer }} miles away</h6>
                     {% endif %}
+                    {% if display_options.user_type == 'repairer' %}
                     <h6>{{ est.dynamic_estimate_hours|floatformat:2 }} hours of work</h6>
                     <h6>@ {% money_localize est.repairer_hourly_rate est.repairer_hourly_rate_currency %} per/hr</h6>
-                    <h6>Equals: {% money_localize est.dynamic_estimate est.repairer_hourly_rate_currency %}</h6>
+                    {% endif %}
+                    <h6>{{ est.repair_type }}: <strong>{% money_localize est.dynamic_estimate est.repairer_hourly_rate_currency %}</strong></h6>
                     <!-- {{ est.debug }} -->
                   {% else %}
                       <h6>You do not work on this type of clock</h6>
@@ -63,6 +65,7 @@
           {% else %}
             <!-- Only user_type customer can access the submit button -->
             <input type="submit" value="{{ clocktype.clock_type }}">
+            <!-- Debug {{ debug.text}} -->
           {% endif %}
         </div>
         <div class="col">
@@ -100,7 +103,7 @@
       </form>
       {% endfor %}
     {% endif %}
-{% endif %}
-{% endblock content %}
+    <input class="btn btn-secondary" type="button" value="Back" onclick="history.back()" />
+  {% endblock content %}
 
 <br><br><h6>{{ est.dynamic_estimate_hours|floatformat:2 }} hrs * {% money_localize est.repairer_hourly_rate est.repairer_hourly_rate_currency %} per/hr = {% money_localize est.dynamic_estimate est.repairer_hourly_rate_currency %} cost.</h6>

@@ -11,6 +11,7 @@ urlpatterns = [
 
     # List - Clocktypes
     path('clocktypes/', ClocktypesListView.as_view(), name='clocktypes'),
+    # path('clocktypes/<uuid:pk>', ClocktypesListView.as_view(), name='clocktypes'),
 
     # Details
     path('<int:pk>/', ClockDetailView.as_view(), name='clock'),
