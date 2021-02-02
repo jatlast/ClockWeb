@@ -229,10 +229,11 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
             repairer_available = repairer.repairs_atmospherics
         elif str(clock_type) == 'Anniversary':
             repairer_available = repairer.repairs_anniversarys
-        elif clock.drive_type == 'Quartz':
-            repairer_available = repairer.repairs_most_quartz
         else:
             repairer_available = repairer.repairs_most_mechanical
+
+        if repairer_available and clock.drive_type == 'Quartz':
+            repairer_available = repairer.repairs_most_quartz
 
     est_debug_text += 'Available ' + str(repairer_available) + '\n'
 

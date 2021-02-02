@@ -69,7 +69,7 @@
                     <h6>{{ est.repair_type }}: <strong>{% money_localize est.dynamic_estimate est.repairer_hourly_rate_currency %}</strong></h6>
                     <!-- {{ est.debug }} -->
                   {% else %}
-                      <h6>You do not work on this type of clock</h6>
+                      <h6>{{ display_options.repairer_first_name }} does not work on this type of clock</h6>
                   {% endif %}
               {% endif %}
             {% endfor %}
