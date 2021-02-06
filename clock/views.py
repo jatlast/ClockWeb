@@ -534,19 +534,20 @@ class ClocktypesListView(ListView):
         context['estimate_list'] =  Context({"foo": "bar"})
 
         user_type_cookie = self.request.COOKIES.get('user_type')
+        context['display_options']['user_type'] = user_type_cookie
 
-        repairer_id = 0
-        if self.request.user.is_authenticated:
-            context['display_options']['user_type'] = user_type_cookie
-            if user_type_cookie == 'repairer':
-                repairer = Repairer.objects.get(user_fk_id=self.request.user)
-        else:
+        repairer_id = self.request.GET.get('repairer_id', 0)
+
+        if repairer_id:
             context['display_options']['user_type'] = 'guest'
-            repairer_id = self.request.GET.get('repairer_id', 0)
             repairer = Repairer.objects.get(id__exact=repairer_id)
+        elif self.request.user.is_authenticated and user_type_cookie == 'repairer':
+            repairer = Repairer.objects.get(user_fk_id=self.request.user)
+            repairer_id = repairer.id
 
-        context['display_options']['repairer_first_name'] = repairer.first_name
-        context['display_options']['repairer_last_name'] = repairer.last_name
+        if repairer_id:
+            context['display_options']['repairer_first_name'] = repairer.first_name
+            context['display_options']['repairer_last_name'] = repairer.last_name
 
         if user_type_cookie == 'repairer' or repairer_id:
             for clocktype in context['clocktypes_list']:
