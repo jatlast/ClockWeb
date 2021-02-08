@@ -75,7 +75,7 @@ class WorkorderCreateView(CreateView):
 
     # def get_context_data(self, **kwargs):
     #     context = super(WorkorderCreateView, self).get_context_data(**kwargs)
-    #     context['form_fields'] = Context({"foo": "bar"})
+    #     context['form_fields'] = Context()
     #     # Required params for passing the two parts that make up MoneyField variables
     #     context['form_fields']['repairer_hourly_rate_0'] = self.request.POST.get('repairer_hourly_rate_0', 'Empty')
     #     context['form_fields']['repairer_hourly_rate_1'] = self.request.POST.get('repairer_hourly_rate_1', 'Empty')
@@ -97,7 +97,7 @@ class WorkorderDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(WorkorderDetailView, self).get_context_data(**kwargs)
-        context['debug'] = Context({"foo": "bar"})
+        context['debug'] = Context()
 
         context['debug']['clock_fk_id'] = context['workorder'].clock_fk_id
         context['debug']['repairer_fk_id'] = context['workorder'].repairer_fk_id
@@ -235,7 +235,7 @@ class AddonsCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddonsCreateView, self).get_context_data(**kwargs)
-        context['form_fields'] = Context({"foo": "bar"})
+        context['form_fields'] = Context()
         user_type_cookie = self.request.COOKIES.get('user_type')
         if user_type_cookie == 'repairer':
             context['form_fields']['viewable'] = addons_fields_viewable_by_repairer
@@ -291,7 +291,7 @@ class AddonsCreateView(CreateView):
 #             return None
 #         else:
 #             context = super(WorkorderDetailCustomerView, self).get_context_data(**kwargs)
-#             context['debug'] = Context({"foo": "bar"})
+#             context['debug'] = Context()
 #             context['debug']['clock_fk_id'] = context['workorder'].clock_fk_id
 #             context['debug']['repairer_fk_id'] = context['workorder'].repairer_fk_id
 #             try:
@@ -322,7 +322,7 @@ class AddonsCreateView(CreateView):
 #             return None
 #         else:
 #             context = super(WorkorderDetailRepairerView, self).get_context_data(**kwargs)
-#             context['debug'] = Context({"foo": "bar"})
+#             context['debug'] = Context()
 #             context['debug']['clock_fk_id'] = context['workorder'].clock_fk_id
 #             context['debug']['repairer_fk_id'] = context['workorder'].repairer_fk_id
 #             try:

@@ -83,7 +83,7 @@ class AddressListView(ListView):
             return None
         else:
             context = super(AddressListView, self).get_context_data(**kwargs)
-            context['debug'] = Context({"foo": "bar"})
+            context['debug'] = Context()
             try:
                 context['customers'] = Customer.objects.filter(user_fk_id=self.request.user)
                 # context['repairers'] = Repairer.objects.filter(user_fk_id=self.request.user)
@@ -106,7 +106,7 @@ class RepairersNearbyView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(RepairersNearbyView, self).get_context_data(**kwargs)
-        context['debug'] = Context({"foo": "bar"})
+        context['debug'] = Context()
         context['debug']['nickname'] = context['address'].location
 
         try:
@@ -115,7 +115,7 @@ class RepairersNearbyView(DetailView):
             context['address_list'] = Address.objects.exclude(user_type_int__exact=0).annotate(distance=(Distance('location', context['address'].location) * 1.417)).order_by('distance')[0:5]
 #            context['address_list'] = Address.objects.exclude(user_type_int__exact=0).annotate(distance=Distance('location', context['address'].location)).order_by('distance')[0:5]
 
-            context['repairer_list'] =  Context({"foo": "bar"})
+            context['repairer_list'] =  Context()
 
             repairer_count = 1
             for address in context['address_list']:

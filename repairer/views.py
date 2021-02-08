@@ -68,9 +68,9 @@ class RepairerDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(RepairerDetailView, self).get_context_data(**kwargs)
-        context['debug'] = Context({"foo": "bar"})
+        context['debug'] = Context()
 
-        context['added_context'] = Context({"foo": "bar"})
+        context['added_context'] = Context()
         context['added_context']['user_type'] = self.request.COOKIES.get('user_type')
 
         try:
@@ -123,7 +123,7 @@ class RepairerUpdateView(UpdateView):
 #         if not self.request.user.is_authenticated:
 #             return None
 #         context = super(RepairerAboutView, self).get_context_data(**kwargs)
-#         context['debug'] = Context({"foo": "bar"})
+#         context['debug'] = Context()
 
 #         try:
 #             # pk = self.kwargs["pk"]

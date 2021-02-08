@@ -21,7 +21,7 @@ from .models import Customer
 
 #class CustomerAdmin(admin.ModelAdmin):
 class CustomerAdmin(OSMGeoAdmin):
-    list_display = ('user_fk', 'user_fk_id', 'first_name', 'last_name')
+    list_display = ('date_created', 'user_fk', 'user_fk_id', 'first_name', 'last_name')
     date_hierarchy = 'date_created'
 
 admin.site.register(Customer, CustomerAdmin)

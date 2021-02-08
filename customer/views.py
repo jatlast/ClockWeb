@@ -80,7 +80,7 @@ class RepairersNearMeView(ListView):
             context = super(RepairersNearMeView, self).get_context_data(**kwargs)
             context['repairer_list'] = Repairer.objects.annotate(distance=Distance('location', customer[0].location)).order_by('distance')[0:5]
 
-            context['estimate_list'] =  Context({"foo": "bar"})
+            context['estimate_list'] =  Context()
 
             repairer_count = 0
             for repairer in context['repairer_list']:

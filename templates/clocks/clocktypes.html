@@ -69,11 +69,17 @@
                     <h6>@ {% money_localize est.repairer_hourly_rate est.repairer_hourly_rate_currency %} per/hr</h6>
                     {% endif %}
                     <h6>{{ est.repair_type }}: <strong>{% money_localize est.dynamic_estimate est.repairer_hourly_rate_currency %}</strong></h6>
-                    <!-- {{ est.debug }} -->
-                  {% else %}
+                  {% elif display_options.show_name %}
                       <h6>{{ display_options.repairer_first_name }} does not work on this type of clock</h6>
                   {% endif %}
-              {% endif %}
+                  {{ est.repair_type }} Aggregates:
+                  <ul>
+                    <li>{% money_localize est.dynamic_estimate_min "USD" %} min</li>
+                    <li>{% money_localize est.dynamic_estimate_avg "USD" %} avg</li>
+                    <li>{% money_localize est.dynamic_estimate_max "USD" %} max</li>
+                  </ul>
+                  <!-- {{ est.debug }} -->
+            {% endif %}
             {% endfor %}
           {% else %}
             <!-- Only user_type customer can access the submit button -->

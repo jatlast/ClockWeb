@@ -14,7 +14,7 @@ class HomePageView(TemplateView):
             return None
         else:
             context = super(HomePageView, self).get_context_data(**kwargs)
-            context['debug'] = Context({"foo": "bar"})
+            context['debug'] = Context()
 
             context['customers'] = Customer.objects.filter(user_fk_id__exact=self.request.user)
             context['repairers'] = Repairer.objects.filter(user_fk_id__exact=self.request.user)
@@ -30,7 +30,7 @@ class AboutPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AboutPageView, self).get_context_data(**kwargs)
-        context['debug'] = Context({"foo": "bar"})
+        context['debug'] = Context()
 
         context['repairer'] = Repairer.objects.get(first_name__exact='Jason', last_name__exact='Baumbach')
         context['address'] = Address.objects.get(user_fk_id__exact=context['repairer'].user_fk_id)

@@ -138,18 +138,14 @@
         </ul>
         </p>
       </div>
-      <form class='form' action="{% url 'clocktypes' %}" method="GET">
-        {% csrf_token %}
-        <input type="hidden" id="id_repairer_id" name="repairer_id" value="{{ repairer.id }}">
-        <input class='btn btn-primary' type='submit' value="Display Repairer Estimates">
-      </form>
+      <a class='btn btn-primary' href="{% url 'clocktypes' %}?repairer_id={{ repairer.id }}">Display Repairer Estimates</a>
       <br>
     </div>
     <br><br>
   </div>
 </div>
 
-  {% endblock content %}
+{% endblock content %}
 
   
 <div class="row">
@@ -160,3 +156,9 @@
   <div class="col"><h4><a href="{% url 'customer_walkthrough' %}">Learn how to becomer a customer</a></h4></div>
   <div class="col"><h4><a href="{% url 'repairer_walkthrough' %}">Learn how to become a repair person</a></h4></div>
 </div>  
+
+<form class='form' action="{% url 'clocktypes' %}" method="GET">
+  {% csrf_token %}
+  <input type="hidden" id="id_repairer_id" name="repairer_id" value="{{ repairer.id }}">
+  <input class='btn btn-primary' type='submit' value="Display Repairer Estimates">
+</form>
