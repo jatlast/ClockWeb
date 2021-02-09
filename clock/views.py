@@ -50,10 +50,10 @@ clock_fields_viewable_by_everyone = [
         'image_4',
         'image_5',
     ]
-# The least amout of time all repairs take:
+# The least amount of time all repairs take:
 #   10 - talking to customer while taking the clock in from the customer
-#   15 - dissasembly
-#   15 - reasembly
+#   15 - disassembly
+#   15 - reassembly
 #   10 - talking to customer while letting the clock out to the customer
 # ------
 #   40 - total
@@ -84,7 +84,8 @@ clock_fields_viewable_by_everyone = [
 #   30 - setting up at customer's house
 # ------
 #   230 + 40 + 60 = 330 minutes or 5.50 hours total
-#### Double Totals ####
+# 
+# #### Double Totals ####
 # Mechanical Least = 200 minutes or 3.34 hours
 # Quartz Least = 120 minutes or 2.00 hours
 # Grandfather Least = 200 minutes or 3.34 hours
@@ -612,7 +613,7 @@ class ClocktypesListView(ListView):
                 context['estimate_list']['debug'] = est_debug_text
                 context['estimate_list'].push()
         else:
-            context['debug']['text'] = 'user_type = (' + user_type_cookie + ') | repairer_id = (' + str(repairer_id) + ')\n'
+            context['debug']['text'] = 'user_type = (' + context['display_options']['user_type'] + ') | repairer_id = (' + str(repairer_id) + ')\n'
 
         return context
 
