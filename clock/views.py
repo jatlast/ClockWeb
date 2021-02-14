@@ -254,16 +254,16 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
         # Wind interval only includes one day clocks in minimum estimate
         est_debug_text += 'Has wind interval ' + str(clock.wind_interval_days)
         if clock.wind_interval_days == 8:
-            extra_features += 0.10
+            extra_features += 0.20
             est_debug_text += ' == 8'
         elif clock.wind_interval_days == 15:
-            extra_features += 0.25
+            extra_features += 0.35
             est_debug_text += ' == 15'
         elif clock.wind_interval_days == 30:
-            extra_features += 0.50
+            extra_features += 0.60
             est_debug_text += ' == 30'
         elif clock.wind_interval_days == 400:
-            extra_features += 0.75
+            extra_features += 0.95
             est_debug_text += ' == 400'
         else:
             est_debug_text += ' < 8'
@@ -376,7 +376,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Has alarm
     est_debug_text += 'Has alarm: ' + str(clock.has_alarm)
     if clock.has_alarm:
-        extra_features += 0.50
+        extra_features += 0.25
         est_debug_text += ' == True'
     else:
         est_debug_text += ' == False'
@@ -385,7 +385,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Has music box
     est_debug_text += 'Has music box: ' + str(clock.has_music_box)
     if clock.has_music_box:
-        extra_features += 0.50
+        extra_features += 0.35
         est_debug_text += ' == True'
     else:
         est_debug_text += ' == False'
@@ -394,7 +394,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Has activity other
     est_debug_text += 'Has activity other: ' + str(clock.has_activity_other)
     if clock.has_activity_other:
-        extra_features += 0.50
+        extra_features += 0.35
         est_debug_text += ' == True'
     else:
         est_debug_text += ' == False'
@@ -421,7 +421,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Check for Electric...
     est_debug_text += clock.drive_type
     if clock.drive_type == 'Electric':
-        extra_features += 1.5
+        extra_features += 0.90
         est_debug_text += ' == Electric'
     else:
         est_debug_text += ' != Electric'
