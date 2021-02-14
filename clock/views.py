@@ -56,7 +56,7 @@ clock_fields_viewable_by_everyone = [
 #   15 - reassembly
 #   10 - talking to customer while letting the clock out to the customer
 # ------
-#   40 - total
+#   50 - total
 # Mechanical
 #   10 - cleaning solution
 #   10 - rinsing solution
@@ -64,12 +64,12 @@ clock_fields_viewable_by_everyone = [
 #   15 - checking pivots
 #   15 - oiling back up
 # ------
-#   60 + 40 = 100 minutes or 1.67 hours total
+#   60 + 50 = 110 minutes or 1.84 hours total
 # Quartz
 #   10 - finding replacement movement
 #   10 - finding replacement hands
 # ------
-#   20 + 40 = 60 minutes or 1.00 hours total
+#   20 + 50 = 70 minutes or 1.17 hours total
 # Grandfather
 #   30 - additional dissasembly
 #   30 - additional reasembly
@@ -83,7 +83,7 @@ clock_fields_viewable_by_everyone = [
 #   15 - un-packing at workshop
 #   30 - setting up at customer's house
 # ------
-#   230 + 40 + 60 = 330 minutes or 5.50 hours total
+#   230 + 50 + 60 = 340 minutes or 5.67 hours total
 # 
 # #### Double Totals ####
 # Mechanical Least = 200 minutes or 3.34 hours
@@ -95,10 +95,10 @@ clock_fields_viewable_by_everyone = [
 def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
 
     HOURS_MULTIPLIER = 1.00
-    EXTRAS_MULTIPLIER = 0.50
-    MURPHY_MULTIPLIER = 1.25
-    MECHANICAL_MINIMUM = 1.67
-    QUARTZ_MINIMUM = 1.00
+    EXTRAS_MULTIPLIER = 1.00
+    MURPHY_MULTIPLIER = 1.00
+    MECHANICAL_MINIMUM = 1.84
+    QUARTZ_MINIMUM = 1.17
     GRANDFATHER_MINIMUM = (3.83 + MECHANICAL_MINIMUM)
     MECHANICAL_HOURS = (MECHANICAL_MINIMUM * MURPHY_MULTIPLIER)
     QUARTZ_HOURS = (QUARTZ_MINIMUM * MURPHY_MULTIPLIER)
@@ -107,8 +107,8 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     clock_type_minimum_hours = {
         'Advertising' : (MECHANICAL_HOURS + 0.5),
         'Animated' : (MECHANICAL_HOURS - 0.65),
-        'Anniversary' : (MECHANICAL_HOURS + 0.5),
-        'Atmos' : (MECHANICAL_HOURS + 1.70),
+        'Anniversary' : (MECHANICAL_HOURS),
+        'Atmos' : (MECHANICAL_HOURS + 2.80),
         'Balloon' : MECHANICAL_HOURS,
         'Banjo' : MECHANICAL_HOURS,
         'Beehive' : MECHANICAL_HOURS,
@@ -202,8 +202,9 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
         HOURS_MULTIPLIER = 0.35
     # Same as Clean & Overhaul
     elif repair_type == 'Refurbish Quartz' or repair_type == 'Refurbish Electric' or repair_type == 'Refurbish Mechanical':
-        EXTRAS_MULTIPLIER = 0.50
-        HOURS_MULTIPLIER = 1.00
+        pass
+        # EXTRAS_MULTIPLIER = 0.50
+        # HOURS_MULTIPLIER = 1.00
     elif repair_type == 'Mechanical to Quartz':
         EXTRAS_MULTIPLIER = 0.25
         HOURS_MULTIPLIER = 0.75
@@ -244,7 +245,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
         # Train count only includes single train in minimum estimate
         est_debug_text += 'Has train count ' + str(clock.train_count)
         if clock.train_count > 1:
-            extra_features += (clock.train_count - 1)
+            extra_features += (clock.train_count - 1.50)
             est_debug_text += ' > 1'
         else:
             est_debug_text += ' < 2'
@@ -253,16 +254,16 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
         # Wind interval only includes one day clocks in minimum estimate
         est_debug_text += 'Has wind interval ' + str(clock.wind_interval_days)
         if clock.wind_interval_days == 8:
-            extra_features += 0.50
+            extra_features += 0.10
             est_debug_text += ' == 8'
         elif clock.wind_interval_days == 15:
-            extra_features += 0.75
+            extra_features += 0.25
             est_debug_text += ' == 15'
         elif clock.wind_interval_days == 30:
-            extra_features += 1.00
+            extra_features += 0.50
             est_debug_text += ' == 30'
         elif clock.wind_interval_days == 400:
-            extra_features += 2.00
+            extra_features += 0.75
             est_debug_text += ' == 400'
         else:
             est_debug_text += ' < 8'
@@ -271,10 +272,10 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
         # No strike included in minimum
         est_debug_text += clock.strike_type
         if clock.strike_type == 'Hourly Note':
-            extra_features += 0.125
+            extra_features += 0.10
             est_debug_text += ' == Hourly Note'
         elif clock.strike_type == 'Hourly Chord' or clock.strike_type == 'Bim-Bam':
-            extra_features += 0.25
+            extra_features += 0.20
             est_debug_text += ' == Hourly Chord or Bim-Bam'
         elif clock.strike_type == 'Ships Bell':
             extra_features += 2
@@ -284,7 +285,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
         # Has moon dial
         est_debug_text += 'Has half hour strike: ' + str(clock.has_half_hour_strike)
         if clock.has_half_hour_strike:
-            extra_features += 0.125
+            extra_features += 0.10
             est_debug_text += ' == True'
         else:
             est_debug_text += ' == False'
@@ -293,16 +294,16 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Chime cound is not included in minimum estimate
     est_debug_text += 'Has chime count ' + str(clock.chime_count)
     if clock.chime_count == 1:
-        extra_features += 0.50
+        extra_features += 0.10
         est_debug_text += ' == 1'
     elif clock.chime_count == 2:
-        extra_features += 0.75
+        extra_features += 0.20
         est_debug_text += ' == 2'
     elif clock.chime_count == 3:
-        extra_features += 1.00
+        extra_features += 0.30
         est_debug_text += ' == 3'
     elif clock.chime_count > 3:
-        extra_features += 1.25
+        extra_features += 0.40
         est_debug_text += ' > 3'
     else:
         est_debug_text += ' < 1'
@@ -321,7 +322,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Has self-adjusting beat
     est_debug_text += 'Has self adjusting beat: ' + str(clock.has_self_adjusting_beat)
     if clock.has_self_adjusting_beat:
-        extra_features += -0.25
+        extra_features += -0.10
         est_debug_text += ' == True'
     else:
         est_debug_text += ' == False'
@@ -332,7 +333,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     if clock.has_self_adjusting_strike:
         est_debug_text += ' == True'
     else:
-        extra_features += 0.5
+        extra_features += 0.25
         est_debug_text += ' == False'
     est_debug_text += ' | extras (' + str(round(extra_features,2)) + ')\n'
 
@@ -357,7 +358,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Has calendar
     est_debug_text += 'Has calendar: ' + str(clock.has_calendar)
     if clock.has_calendar:
-        extra_features += 0.5
+        extra_features += 0.50
         est_debug_text += ' == True'
     else:
         est_debug_text += ' == False'
@@ -366,7 +367,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Has moon dial
     est_debug_text += 'Has moon dial: ' + str(clock.has_moon_dial)
     if clock.has_moon_dial:
-        extra_features += 0.25
+        extra_features += 0.10
         est_debug_text += ' == True'
     else:
         est_debug_text += ' == False'
@@ -384,7 +385,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Has music box
     est_debug_text += 'Has music box: ' + str(clock.has_music_box)
     if clock.has_music_box:
-        extra_features += 1
+        extra_features += 0.50
         est_debug_text += ' == True'
     else:
         est_debug_text += ' == False'
@@ -393,7 +394,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Has activity other
     est_debug_text += 'Has activity other: ' + str(clock.has_activity_other)
     if clock.has_activity_other:
-        extra_features += 0.55
+        extra_features += 0.50
         est_debug_text += ' == True'
     else:
         est_debug_text += ' == False'
@@ -402,7 +403,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Has light
     est_debug_text += 'Has light: ' + str(clock.has_light)
     if clock.has_light:
-        extra_features += 0.125
+        extra_features += 0.10
         est_debug_text += ' == True'
     else:
         est_debug_text += ' == False'
@@ -411,7 +412,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Check for Cable or String...
     est_debug_text += clock.drive_type
     if clock.drive_type == 'Cable' or clock.drive_type == 'String':
-        extra_features += 1.5
+        extra_features += 0.75
         est_debug_text += ' == Cable or ' + clock.drive_type + ' == String'
     else:
         est_debug_text += ' != Cable or ' + clock.drive_type + ' != String'
@@ -432,7 +433,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
 
         est_debug_text += str(clock.dial_diameter_centimeters)
         if clock.dial_diameter_centimeters >= 35:
-            extra_features += 1
+            extra_features += 0.50
             est_debug_text += ' >= 35'
         else:
             est_debug_text += ' < 35'
@@ -441,7 +442,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
         est_debug_text += str(clock.has_glass_over_face)
         est_debug_text += 'Has glass/plastic over face: ' + str(clock.has_glass_over_face)
         if clock.has_glass_over_face:
-            extra_features += 1
+            extra_features += 0.50
             est_debug_text += ' == True'
         else:
             est_debug_text += ' == False'
@@ -467,21 +468,22 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
     # Check if Tubular...
     if clock.has_tubes:
         repairer_available = repairer.repairs_tubular_grandfathers
-        extra_features += 5.75
+        extra_features += 2.88
         est_debug_text += 'Has tubes: ' + str(clock.has_tubes) + ' == True | extras (' + str(round(extra_features,2)) + ')\n'
         # Five tubes included in the price
-        if clock.tube_count >= 5:
-            extra_features += 0.50
+        if clock.tube_count > 5:
+            extra_features += 4.27
+            est_debug_text += 'tube_count: ' + str(clock.tube_count) + ' >= 5 | extras (' + str(round(extra_features,2)) + ')\n'
         else:
-            est_debug_text += 'tube_count: ' + str(clock.tube_count) + ' < 5\n'
+            est_debug_text += 'tube_count: ' + str(clock.tube_count) + ' < 5 | extras (' + str(round(extra_features,2)) + ')\n'
     else:
         est_debug_text += 'Has tubes: ' + str(clock.has_tubes) + ' != True | extras (' + str(round(extra_features,2)) + ')\n'
 
     est_debug_text += 'Hours ' + str(est_hours) + ' * ' + str(HOURS_MULTIPLIER) + ')\n'
     est_hours = (est_hours * HOURS_MULTIPLIER)
-    est_debug_text += 'Hours ' + str(est_hours) + ' (extras ' + str(extra_features) + ' * ' + str(EXTRAS_MULTIPLIER) + ')\n'
+    est_debug_text += 'Hours ' + str(est_hours) + ' + (extras ' + str(extra_features) + ' * ' + str(EXTRAS_MULTIPLIER) + ')'
     est_hours += (extra_features * EXTRAS_MULTIPLIER)
-    est_debug_text += ' = ' + str(round(est_hours,2)) + ' Total Hours)\n'
+    est_debug_text += ' = ' + str(round(est_hours,2)) + ' Total Hours\n'
 
     # Determine if repairer works on this clock_type...
     if repairer_available and repair_type != 'Prepair to Move' and repair_type != 'Move Grandfather':
@@ -590,6 +592,7 @@ class ClocktypesListView(ListView):
         if repairer_id:
             context['display_options']['repairer_first_name'] = repairer.first_name
             context['display_options']['repairer_last_name'] = repairer.last_name
+            context['display_options']['repairer_id'] = repairer_id
 
         if context['display_options']['user_type'] == 'repairer' or repairer_id:
             for clocktype in context['clocktypes_list']:
@@ -608,7 +611,8 @@ class ClocktypesListView(ListView):
                 context['estimate_list']['dynamic_estimate_hours'] = est_hours
                 context['estimate_list']['dynamic_estimate'] = math.ceil(est_hours * float(hourly_rate_amount))
                 context['estimate_list']['dynamic_estimate_min'] = math.ceil(est_hours * float(context['repairer_rates']['hourly_rate__min']))
-                context['estimate_list']['dynamic_estimate_max'] = math.ceil(est_hours * float(context['repairer_rates']['hourly_rate__max']))
+                # Add 25% to the maximum so that no actual repairer will ever be the same as the maximum estimate...
+                context['estimate_list']['dynamic_estimate_max'] = math.ceil(est_hours * float(context['repairer_rates']['hourly_rate__max']) * 1.25)
                 context['estimate_list']['dynamic_estimate_avg'] = math.ceil(est_hours * float(context['repairer_rates']['hourly_rate__avg']))
                 context['estimate_list']['debug'] = est_debug_text
                 context['estimate_list'].push()

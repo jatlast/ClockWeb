@@ -53,7 +53,7 @@
       <div class="row align-items-center">
         <div class="col-3">
           {{clocktype.description}}<br><br>
-          {% if display_options.user_type == 'repairer' or display_options.user_type == 'guest' %}
+          {% if display_options.repairer_id or display_options.user_type == 'repairer' or display_options.user_type == 'guest' %}
             <h5>{{ clocktype.id }}: {{clocktype.clock_type}}</h5><br>
           <!-- user_type repairer can see dynamic estimates for all clock types -->
           <!-- user_type cookie repairer = {{ request.COOKIES.user_type }} -->
