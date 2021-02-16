@@ -82,7 +82,7 @@ class WorkorderCreateView(CreateView):
             # Subject
             'A new work order has been created',
             # Message
-            'To view and add to this work order, please login to your account on https://miclockrepair.com\nThank you for allowing MI Clock Repair to assist with your clock repair needs.\n\nJason\njatlast@hotmail.com',
+            'To view and add to this work order, please login to your account on miclockrepair.com\n\nThank you for allowing MI Clock Repair to assist with your clock repair needs.\n\nJason\njatlast@hotmail.com',
             # Fron
             None, # If None, Django will use the value of the DEFAULT_FROM_EMAIL setting
             # To
@@ -265,7 +265,7 @@ class AddonsCreateView(CreateView):
             # Subject
             'Your work order has been updated',
             # Message
-            'To view this work order addon, please login to your account on https://miclockrepair.com\nThank you for allowing MI Clock Repair to assist with your clock repair needs.\n\nJason\njatlast@hotmail.com',
+            'To view this work order addon, please login to your account on miclockrepair.com\n\nThank you for allowing MI Clock Repair to assist with your clock repair needs.\n\nJason\njatlast@hotmail.com',
             # Fron
             None, # If None, Django will use the value of the DEFAULT_FROM_EMAIL setting
             # To
