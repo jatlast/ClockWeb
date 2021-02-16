@@ -8,6 +8,7 @@ from address.models import Address
 from django.template import Context
 from django.urls import reverse
 from datetime import datetime
+from django.core.mail import send_mail
 import traceback
 import math
 
@@ -66,6 +67,30 @@ class WorkorderCreateView(CreateView):
     fields = workorder_fields_viewable_by_everyone
     context_object_name = 'workorder_add'
     template_name = 'workorders/add.html'
+
+    # The sole purpose of this function is to enable the sending of email...
+    def get_success_url(self):
+#        pk = self.kwargs["pk"]
+        pk = self.object.id
+        workorder = Workorder.objects.get(id=pk)
+
+        # send a mail to Customer & Repairer about the added Addon...
+        customer = Customer.objects.get(id=workorder.customer_fk_id)
+        repairer = Repairer.objects.get(id=workorder.repairer_fk_id)
+
+        send_mail(
+            # Subject
+            'A new work order has been created',
+            # Message
+            'To view and add to this work order, please login to your account on https://miclockrepair.com\nThank you for allowing MI Clock Repair to assist with your clock repair needs.\n\nJason\njatlast@hotmail.com',
+            # Fron
+            None, # If None, Django will use the value of the DEFAULT_FROM_EMAIL setting
+            # To
+            [customer.email, repairer.email],
+            fail_silently=False,
+        )
+
+        return reverse("workorder", kwargs={"pk": pk})
 
     # def form_valid(self, form):
     #     dynamic_estimate = self.request.POST.get('dynamic_estimate', '-1')
@@ -231,6 +256,23 @@ class AddonsCreateView(CreateView):
         addon.save()
         workorder.repair_status = self.request.POST.get('repair_status_update', 'PostGetError')
         workorder.save()
+
+        # send a mail to Customer & Repairer about the added Addon...
+        customer = Customer.objects.get(id=workorder.customer_fk_id)
+        repairer = Repairer.objects.get(id=workorder.repairer_fk_id)
+
+        send_mail(
+            # Subject
+            'Your work order has been updated',
+            # Message
+            'To view this work order addon, please login to your account on https://miclockrepair.com\nThank you for allowing MI Clock Repair to assist with your clock repair needs.\n\nJason\njatlast@hotmail.com',
+            # Fron
+            None, # If None, Django will use the value of the DEFAULT_FROM_EMAIL setting
+            # To
+            [customer.email, repairer.email],
+            fail_silently=False,
+        )
+
         return reverse("workorder", kwargs={"pk": workorder_fk})
 
     def get_context_data(self, **kwargs):
