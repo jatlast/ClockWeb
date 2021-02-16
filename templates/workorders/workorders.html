@@ -9,10 +9,14 @@
     {% for workorder in workorders %}
       <div class="row align-items-center">
         <div class="col">
-          {{ workorder.date_created }}
+          <a href="{% url 'workorder' workorder.id %}">{{ workorder.repair_type }}</a>
         </div>
         <div class="col">
-          <a href="{% url 'workorder' workorder.id %}">{{ workorder.repair_type }}</a>
+          {% if request.COOKIES.user_type == 'customer' %}
+            <a href="{% url 'repairer' workorder.repairer_fk_id %}">{{ workorder.repairer_fk }}</a>
+          {% else %}
+          {{ workorder.customer_fk }}
+          {% endif %}
         </div>
         <div class="col">
           <a href="{% url 'clock' workorder.clock_fk_id %}">{{ workorder.clock_fk }}</a>
