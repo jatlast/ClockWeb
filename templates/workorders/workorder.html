@@ -357,7 +357,7 @@
     {% endif %}
 {% endif %}
 
-{% if not addons or workorder.repair_status != 'Paid in Full' %}
+{% if not addons and workorder.repair_status != 'Paid in Full' %}
 <div class="row">
     <div class="col">
         <a class="btn btn-danger" href="{% url 'workorder_delete' workorder.id %}">Delete Workorder</a>
