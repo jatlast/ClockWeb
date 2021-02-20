@@ -50,6 +50,7 @@ class AddressCreateView(CreateView):
     fields = address_fields_viewable_by_everyone
     context_object_name = 'address'
     template_name = 'address/add.html'
+    success_url='/'
 
     def form_valid(self, form):
         longitude = form.cleaned_data['longitude']

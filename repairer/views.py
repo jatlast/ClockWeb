@@ -91,6 +91,7 @@ class RepairerCreateView(CreateView):
     fields = repairer_fields_viewable_by_everyone
     context_object_name = 'repairer_create'
     template_name = 'repairer/create.html'
+    success_url='/'
 
     def form_valid(self, form):
         form.instance.user_fk = self.request.user

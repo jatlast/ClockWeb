@@ -45,7 +45,7 @@ class CustomerCreateView(CreateView):
     fields = customer_fields_viewable_by_everyone
     context_object_name = 'customer_create'
     template_name = 'customer/create.html'
-    success_url='/customers'
+    success_url='/'
 
     def form_valid(self, form):
         form.instance.user_fk = self.request.user
