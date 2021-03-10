@@ -487,7 +487,9 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
 
     # Determine if repairer works on this clock_type...
     if repairer_available and repair_type != 'Prepair to Move' and repair_type != 'Move Grandfather':
-        if str(clock_type) == 'Longcase/Grandfather':
+        if clock.drive_type == 'Quartz':
+            repairer_available = repairer.repairs_most_quartz
+        elif str(clock_type) == 'Longcase/Grandfather':
             repairer_available = repairer.repairs_grandfathers
         elif str(clock_type) == 'Cuckoo':
             repairer_available = repairer.repairs_cuckoos
@@ -497,9 +499,6 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
             repairer_available = repairer.repairs_anniversarys
         else:
             repairer_available = repairer.repairs_most_mechanical
-
-        if repairer_available and clock.drive_type == 'Quartz':
-            repairer_available = repairer.repairs_most_quartz
 
     est_debug_text += 'Available ' + str(repairer_available) + '\n'
 
