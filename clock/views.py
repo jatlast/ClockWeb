@@ -146,6 +146,7 @@ def GetClockRepairHours(repairer, clock, repair_type, distance_from_repairer):
         'Animated' : (MECHANICAL_HOURS - 0.65),
         'Anniversary' : (MECHANICAL_HOURS),
         'Atmos' : (MECHANICAL_HOURS + 2.80),
+        'Automobile' : (MECHANICAL_HOURS),
         'Balloon' : MECHANICAL_HOURS,
         'Banjo' : MECHANICAL_HOURS,
         'Beehive' : MECHANICAL_HOURS,

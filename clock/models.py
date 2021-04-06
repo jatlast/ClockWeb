@@ -11,6 +11,7 @@ class Clocktypes(models.Model):
         ('Animated', 'Animated'),
         ('Anniversary', 'Anniversary'),
         ('Atmos', 'Atmos'),
+        ('Automobile', 'Automobile'),
         ('Balloon', 'Balloon'),
         ('Banjo', 'Banjo'),
         ('Beehive', 'Beehive'),
@@ -57,6 +58,7 @@ class Clocktypes(models.Model):
         ('Desktop','Desktop'),
         ('Floor','Floor'),
         ('Mantel','Mantel'),
+        ('Mounted','Mounted'),
         ('Wall','Wall'),
     ]
 
