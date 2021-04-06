@@ -16,7 +16,7 @@ import traceback
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-clock_fields_viewable_by_everyone = [
+clock_fields_viewable_by_repairer = [
         'nickname',
         'clock_type_fk',
         'footprint',
@@ -50,6 +50,43 @@ clock_fields_viewable_by_everyone = [
         'image_4',
         'image_5',
     ]
+
+clock_fields_viewable_by_customer = [
+        'nickname',
+        # 'clock_type_fk',
+        # 'footprint',
+        # 'dial_diameter_centimeters',
+        # 'has_glass_over_face',
+        # 'train_count',
+        # 'wind_interval_days',
+        # 'drive_type',
+        # 'gear_material',
+        # 'chime_count',
+        # 'strike_type',
+        # 'has_half_hour_strike',
+        # 'has_pendulum',
+        # 'has_self_adjusting_beat',
+        # 'has_self_adjusting_strike',
+        # 'has_second_hand',
+        # 'has_off_at_night',
+        # 'has_calendar',
+        # 'has_moon_dial',
+        # 'has_alarm',
+        # 'has_music_box',
+        # 'has_activity_other',
+        # 'has_light',
+        # 'battery_count',
+        # 'has_tubes',
+        # 'tube_count',
+        # 'choices_are_locked',
+        'image_1',
+        'image_2',
+        'image_3',
+        'image_4',
+        'image_5',
+    ]
+
+    
 # The least amount of time all repairs take:
 #   10 - talking to customer while taking the clock in from the customer
 #   15 - disassembly
@@ -637,10 +674,16 @@ class ClockDetailView(DetailView):
         return context
 
 
-@method_decorator(login_required, name='dispatch')
+#########################
+# For Debugging forms #
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+@method_decorator(csrf_exempt, name='dispatch')
+#########################
+#@method_decorator(login_required, name='dispatch')
 class ClockCreateView(CreateView):
     model = Clock
-    fields = clock_fields_viewable_by_everyone
+    fields = clock_fields_viewable_by_repairer
     context_object_name = 'clock_add'
     template_name = 'clocks/add.html'
 
@@ -654,10 +697,21 @@ class ClockCreateView(CreateView):
     def get_success_url(self):
         return reverse("clock", args=(self.object.id,))
 
+    def get_context_data(self, **kwargs):
+        context = super(ClockCreateView, self).get_context_data(**kwargs)
+        context['form_fields'] = Context()
+        user_type_cookie = self.request.COOKIES.get('user_type')
+        if user_type_cookie == 'repairer':
+            context['form_fields']['viewable'] = clock_fields_viewable_by_repairer
+        else:
+            context['form_fields']['viewable'] = clock_fields_viewable_by_customer
+        return context
+
+
 @method_decorator(login_required, name='dispatch')
 class ClockUpdateView(UpdateView):
     model = Clock
-    fields = clock_fields_viewable_by_everyone
+    fields = clock_fields_viewable_by_repairer
     context_object_name = 'clock_update'
     template_name = 'clocks/update.html'
 

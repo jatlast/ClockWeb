@@ -7,10 +7,42 @@
 {% if user.is_authenticated %}
 <form action="" class='form' method="post" enctype="multipart/form-data">
   {% csrf_token %}
+      <!-- Begin Hidden Fields -->
+      <!-- manually entered -->
+      <!-- using django's as_hidden function -->
+    {{ form.clock_type_fk.as_hidden }}
+    {{ form.footprint.as_hidden }}
+    {{ form.dial_diameter_centimeters.as_hidden }}
+    {{ form.has_glass_over_face.as_hidden }}
+    {{ form.train_count.as_hidden }}
+    {{ form.wind_interval_days.as_hidden }}
+    {{ form.drive_type.as_hidden }}
+    {{ form.gear_material.as_hidden }}
+    {{ form.chime_count.as_hidden }}
+    {{ form.strike_type.as_hidden }}
+    {{ form.has_half_hour_strike.as_hidden }}
+    {{ form.has_pendulum.as_hidden }}
+    {{ form.has_self_adjusting_beat.as_hidden }}
+    {{ form.has_self_adjusting_strike.as_hidden }}
+    {{ form.has_second_hand.as_hidden }}
+    {{ form.has_off_at_night.as_hidden }}
+    {{ form.has_calendar.as_hidden }}
+    {{ form.has_moon_dial.as_hidden }}
+    {{ form.has_alarm.as_hidden }}
+    {{ form.has_music_box.as_hidden }}
+    {{ form.has_activity_other.as_hidden }}
+    {{ form.has_light.as_hidden }}
+    {{ form.battery_count.as_hidden }}
+    {{ form.has_tubes.as_hidden }}
+    {{ form.tube_count.as_hidden }}
+    {{ form.choices_are_locked.as_hidden }}
   <div class='col-md-6'>
     <table cellpadding="10" cellspacing="10" border="1">
       {% for field in form.visible_fields %}
-      {% if field.name != 'choices_are_locked' %}
+        <!-- field.name = ({{ field.name }}) -->
+        {% for field_name in form_fields.viewable %}
+        <!-- field_name = ({{ field_name }}) -->
+        {% if field.name == field_name %}
       <tr>
           <th>{{ field.label_tag }}</th>
           <td>
@@ -28,6 +60,7 @@
           </td>
       </tr>
       {% endif %}
+      {% endfor %}
       {% endfor %}
     </table>
   </div>

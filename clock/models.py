@@ -314,7 +314,11 @@ class Clock(models.Model):
 
 
 
+# ClockWeb Docker Up & Down Commands...
+# 	pi@buster:~/Projects/ClockWeb $ sudo docker-compose down --remove-orphans
+# 	pi@buster:~/Projects/ClockWeb $ sudo docker-compose -f docker-compose-pi.yml up -d
 
+# pi@buster:~/Projects/ClockWeb $ sudo docker exec -it clockweb_djangoapp_1 python manage.py collectstatic
 
 # Tell Django to disreguard previous migrations then re-migrate...
 # General
