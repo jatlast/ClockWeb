@@ -79,7 +79,7 @@ services:
     ports:
       - 25432:5432
 #     - 5432
-    restart: on-failure
+    restart: always
     healthcheck:
       test: "exit 0"
 
