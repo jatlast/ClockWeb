@@ -35,10 +35,26 @@ services:
 
       - "DJANGO_ADMIN_URL=admin/"
 
-      # Amazon's (AWS) Simple Email Service Settings
-      - "EMAIL_HOST_KEY=smtpout.secureserver.net"
-      - "EMAIL_HOST_USER_KEY=admin@email.com"
-      - "EMAIL_HOST_PASSWORD_KEY=SomePW"
+      # 20240811 Dev - Simple Email Service Settings
+      # - "EMAIL_HOST_KEY=smtpout.secureserver.net"
+      # - "EMAIL_HOST_USER_KEY=admin@email.com"
+      # - "EMAIL_HOST_PASSWORD_KEY=SomePW"
+      # - "EMAIL_PORT_KEY=587"
+      # - "EMAIL_USE_TLS_KEY=True"
+
+      # 20240811 Prod - Simple Email Service Settings
+      # - "EMAIL_HOST_KEY=smtpout.secureserver.net"
+      # - "EMAIL_HOST_USER_KEY=admin@miclockrepair.com"
+      # - "EMAIL_HOST_PASSWORD_KEY=PhnomPenh0"
+      # - "EMAIL_PORT_KEY=587"
+      # - "EMAIL_USE_TLS_KEY=True"
+
+      # Office 365 via GoDaddy - Simple Email Service Settings (20240811 started service via GoDaddy for $95.88 per year)
+      # 20240811 Prod worked but it went straight to spam folder in Yahoo Mail (jatlast@yahoo.com)
+      # https://learn.microsoft.com/en-us/exchange/mail-flow-best-practices/how-to-set-up-a-multifunction-device-or-application-to-send-email-using-microsoft-365-or-office-365
+      - "EMAIL_HOST_KEY=smtp.office365.com"
+      - "EMAIL_HOST_USER_KEY=info@miclockrepair.com"
+      - "EMAIL_HOST_PASSWORD_KEY=PhnomPenh0"
       - "EMAIL_PORT_KEY=587"
       - "EMAIL_USE_TLS_KEY=True"
 
